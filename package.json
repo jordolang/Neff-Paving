@@ -1,0 +1,30 @@
+{
+  "name": "neff-paving",
+  "version": "1.0.0",
+  "description": "Modern paving company website with video showcase",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["paving", "construction", "website", "video", "animation"],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "aos": "^2.3.4",
+    "framer-motion": "^12.19.1",
+    "gsap": "^3.13.0",
+    "hls.js": "^1.6.5",
+    "lottie-web": "^5.13.0",
+    "plyr": "^3.7.8",
+    "video.js": "^8.23.3",
+    "videojs-contrib-hls": "^5.15.0"
+  }
+}
