@@ -1,0 +1,31 @@
+# Exclude large video files from Vercel deployment
+assets/videos/
+*.mp4
+*.mov
+*.avi
+*.webm
+
+# Development files that aren't needed for build
+node_modules/
+.git/
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Documentation and test files
+test/
+tests/
+docs/
+mockups/
+*.md
+
+# Development tools (keep vite.config.js as it's needed)
+.eslintrc*
+.prettierrc*
+playwright.config.js
+babel.config.js
+
+# Keep source files and styles - they're needed for build
+# src/ and styles/ must be available for Vite build

@@ -2,7 +2,8 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/Neff-Paving/' : '/',
+  base: process.env.NODE_ENV === 'production' ? 
+    (process.env.VITE_DEPLOY_TARGET === 'vercel' ? '/' : '/Neff-Paving/') : '/',
   root: '.',
   build: {
     outDir: 'dist',
