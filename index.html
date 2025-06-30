@@ -206,28 +206,16 @@
                         loop 
                         playsinline
                         preload="auto"
-                        poster="/assets/images/posters/hero-poster-1920x1080.jpg"
+                        poster="assets/images/posters/hero-poster-1920x1080.jpg"
                     >
-                        <!-- Multiple video sources for different quality/device support -->
-                        <source src="/assets/videos/optimized/neff-paving-1080p.mp4" type="video/mp4" media="(min-width: 1200px)">
-                        <source src="/assets/videos/optimized/neff-paving-720p.mp4" type="video/mp4" media="(min-width: 768px)">
-                        <source src="/assets/videos/optimized/neff-paving-480p.mp4" type="video/mp4">
+                        <!-- Multiple video sources using actual neff-paving.mp4 files -->
+                        <source src="assets/videos/optimized/neff-paving-1080p.mp4" type="video/mp4" media="(min-width: 1200px)">
+                        <source src="assets/videos/optimized/neff-paving-720p.mp4" type="video/mp4" media="(min-width: 768px)">
+                        <source src="assets/videos/optimized/neff-paving-480p.mp4" type="video/mp4">
                         
                         <!-- Fallback image for very old browsers -->
-                        <img src="/assets/images/posters/hero-poster-1920x1080.jpg" alt="Neff Paving - Professional paving services" />
+                        <img src="assets/images/posters/hero-poster-1920x1080.jpg" alt="Neff Paving - Professional paving services" />
                     </video>
-                    
-                    <!-- Video controls overlay -->
-                    <div class="video-controls">
-                        <button id="video-toggle" class="video-toggle-btn" aria-label="Play/Pause video">
-                            <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                            <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
-                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
                 
                 <div class="hero-overlay">
