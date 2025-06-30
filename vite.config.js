@@ -9,31 +9,24 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: true,
     // Code splitting optimization
+    // Copy blog posts and JSON to dist
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html')
       },
       output: {
-        // Manual chunking for better caching
-        manualChunks: {
-          vendor: ['gsap', 'aos'],
-          video: ['plyr', 'hls.js', 'video.js'],
-          utils: ['lottie-web']
-        },
-        // Asset naming for better caching
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
-            return `images/[name]-[hash][extname]`
+          if (/md|json/i.test(ext)) {
+            return `blog-posts/[name][extname]`
           }
-          if (/mp4|webm|ogg|mov/i.test(ext)) {
-            return `videos/[name]-[hash][extname]`
+          if (assetInfo.name.endsWith('.mp4')) {
+            // Add content hash for videos
+            return 'assets/videos/[name]-[hash][extname]'
           }
           return `assets/[name]-[hash][extname]`
-        },
-        chunkFileNames: 'js/[name]-[hash].js',
-        entryFileNames: 'js/[name]-[hash].js'
+        }
       }
     },
     // Compression and minification
@@ -53,7 +46,11 @@ export default defineConfig({
     port: 3000,
     open: true,
     // Enable compression in dev
-    compress: true
+    compress: true,
+    headers: {
+      // Development server headers
+      'Cache-Control': 'no-cache'
+    }
   },
   resolve: {
     alias: {

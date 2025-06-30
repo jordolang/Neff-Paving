@@ -6,11 +6,11 @@
   "main": "src/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "VITE_DEPLOY_TIME=$(date +%s) vite build",
     "build:vercel": "vite build --mode vercel",
     "vercel-build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist",
+    "deploy": "vite build && gh-pages -d dist",
     "test": "jest --config=test/jest.config.js",
     "test:unit": "jest --config=test/jest.config.js --selectProjects='Unit Tests'",
     "test:integration": "jest --config=test/jest.config.js --selectProjects='Integration Tests'",

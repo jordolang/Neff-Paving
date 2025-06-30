@@ -10,6 +10,11 @@ import { inject } from '@vercel/analytics'
 // Import blog system
 import './blog-system.js'
 
+// Cache-busting utility
+function getVideoCacheBuster() {
+    return `?v=${import.meta.env.VITE_DEPLOY_TIME || Date.now()}`
+}
+
 // Import animation libraries
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -19,6 +24,9 @@ import 'aos/dist/aos.css'
 // Import video player
 import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
+
+// Import VideoManager for error handling
+import VideoManager from './video-manager.js'
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
@@ -39,6 +47,7 @@ class NeffPavingApp {
         // Initialize Vercel Speed Insights
         injectSpeedInsights()
         
+        this.initVideoSources()
         this.initLoadingAnimation()
         this.initAnimations()
         this.initVideoPlayer()
@@ -54,6 +63,24 @@ class NeffPavingApp {
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
         this.initBlogSystem()
+    }
+    
+    initVideoSources() {
+        // Initialize video sources with cache-busting URLs
+        const sources = [
+            `/assets/videos/optimized/neff-paving-1080p.mp4${getVideoCacheBuster()}`,
+            `/assets/videos/optimized/neff-paving-720p.mp4${getVideoCacheBuster()}`,
+            `/assets/videos/optimized/neff-paving-480p.mp4${getVideoCacheBuster()}`
+        ]
+        
+        // Set the source URLs with cache-busting parameters
+        const video1080p = document.getElementById('video-source-1080p')
+        const video720p = document.getElementById('video-source-720p')
+        const video480p = document.getElementById('video-source-480p')
+        
+        if (video1080p) video1080p.src = sources[0]
+        if (video720p) video720p.src = sources[1]
+        if (video480p) video480p.src = sources[2]
     }
     
     initSectionAnimations() {
@@ -173,6 +200,22 @@ class NeffPavingApp {
         const heroVideo = document.getElementById('hero-video')
         
         if (heroVideo) {
+            // Set loading="lazy" for performance
+            heroVideo.loading = 'lazy'
+            
+            // Preload lowest quality first
+            const lowestQualitySource = heroVideo.querySelector('source[type="video/mp4"]:last-of-type')
+            if (lowestQualitySource) {
+                lowestQualitySource.setAttribute('preload', 'auto')
+            }
+            
+            // Add error handling
+            heroVideo.addEventListener('error', (e) => {
+                console.error('Video loading error:', e)
+                // Attempt reload with cache-buster
+                this.reloadVideoWithNewCacheBuster(heroVideo)
+            })
+            
             // Set video attributes for autoplay
             heroVideo.muted = true
             heroVideo.loop = true
@@ -208,6 +251,15 @@ class NeffPavingApp {
             // Store video reference
             this.heroVideo = heroVideo
         }
+    }
+    
+    reloadVideoWithNewCacheBuster(video) {
+        const sources = video.getElementsByTagName('source')
+        Array.from(sources).forEach(source => {
+            const currentSrc = source.src.split('?')[0]
+            source.src = `${currentSrc}?v=${Date.now()}`
+        })
+        video.load()
     }
     
     loadVideoSources(video) {

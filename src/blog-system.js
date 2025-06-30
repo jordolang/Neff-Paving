@@ -114,7 +114,7 @@ class BlogSystem {
     // Get list of available blog posts
     async getPostList() {
         try {
-            const response = await fetch('/blog-posts.json');
+            const response = await fetch('/Neff-Paving/blog-posts.json');
             if (!response.ok) {
                 throw new Error('Failed to fetch blog posts list');
             }
@@ -134,7 +134,7 @@ class BlogSystem {
     // Load a specific blog post
     async loadPost(filename) {
         try {
-            const response = await fetch(`/blog-posts/${filename}`);
+            const response = await fetch(`/Neff-Paving/${filename}`);
             if (!response.ok) {
                 throw new Error(`Failed to load post: ${filename}`);
             }
