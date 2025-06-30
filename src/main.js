@@ -4,6 +4,9 @@ import '../styles/main.css'
 // Import Vercel Speed Insights
 import { injectSpeedInsights } from '@vercel/speed-insights'
 
+// Import Vercel Analytics
+import { Analytics } from "@vercel/analytics/next"
+
 // Import blog system
 import './blog-system.js'
 
@@ -163,68 +166,37 @@ class NeffPavingApp {
     }
 
     initVideoPlayer() {
-        // Initialize hero video with autoplay and loop
+        // Initialize hero video with autoplay and loop - no user controls
         const heroVideo = document.getElementById('hero-video')
-        const videoToggle = document.getElementById('video-toggle')
-        const playIcon = videoToggle.querySelector('.play-icon')
-        const pauseIcon = videoToggle.querySelector('.pause-icon')
         
         if (heroVideo) {
-            // Ensure video attributes are set correctly
+            // Set video attributes for autoplay
             heroVideo.muted = true
             heroVideo.loop = true
             heroVideo.autoplay = true
             heroVideo.playsInline = true
+            heroVideo.setAttribute('playsinline', '')
+            heroVideo.setAttribute('webkit-playsinline', '')
             
-            // Force autoplay after DOM is ready
-            setTimeout(() => {
+            // Force autoplay after a short delay
+            const attemptPlay = () => {
                 heroVideo.play().catch(error => {
-                    console.log('Autoplay prevented:', error)
-                    // Show play button if autoplay fails
-                    playIcon.style.display = 'block'
-                    pauseIcon.style.display = 'none'
+                    console.log('Autoplay blocked by browser:', error)
+                    // Try again after user interaction
+                    document.addEventListener('click', () => {
+                        heroVideo.play().catch(e => console.log('Manual play failed:', e))
+                    }, { once: true })
                 })
-            }, 100)
+            }
             
-            // Video toggle functionality
-            videoToggle.addEventListener('click', () => {
-                if (heroVideo.paused) {
-                    heroVideo.play().then(() => {
-                        playIcon.style.display = 'none'
-                        pauseIcon.style.display = 'block'
-                    }).catch(error => {
-                        console.log('Play failed:', error)
-                    })
-                } else {
-                    heroVideo.pause()
-                    playIcon.style.display = 'block'
-                    pauseIcon.style.display = 'none'
-                }
-            })
+            // Try to play when video is loaded
+            if (heroVideo.readyState >= 3) {
+                attemptPlay()
+            } else {
+                heroVideo.addEventListener('canplaythrough', attemptPlay, { once: true })
+            }
             
-            // Update button state when video events occur
-            heroVideo.addEventListener('pause', () => {
-                playIcon.style.display = 'block'
-                pauseIcon.style.display = 'none'
-            })
-            
-            heroVideo.addEventListener('play', () => {
-                playIcon.style.display = 'none'
-                pauseIcon.style.display = 'block'
-            })
-            
-            // Ensure video is playing and show correct controls
-            heroVideo.addEventListener('loadeddata', () => {
-                if (!heroVideo.paused) {
-                    playIcon.style.display = 'none'
-                    pauseIcon.style.display = 'block'
-                } else {
-                    playIcon.style.display = 'block'
-                    pauseIcon.style.display = 'none'
-                }
-            })
-            
-            // Handle video ended event (should not occur with loop=true, but just in case)
+            // Ensure video loops continuously
             heroVideo.addEventListener('ended', () => {
                 heroVideo.currentTime = 0
                 heroVideo.play()
@@ -411,16 +383,6 @@ class NeffPavingApp {
             }
         })
         
-        // Floating animation for video controls
-        if (!prefersReducedMotion) {
-            gsap.to('.video-toggle-btn', {
-                y: -5,
-                duration: 2,
-                ease: 'power2.inOut',
-                yoyo: true,
-                repeat: -1
-            })
-        }
         
         // Smooth reveal animation for sections
         gsap.utils.toArray('section').forEach((section, index) => {

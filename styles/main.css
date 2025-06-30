@@ -980,38 +980,6 @@ main {
     transition: opacity 0.5s ease;
 }
 
-/* Video controls */
-.video-controls {
-    position: absolute;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 3;
-}
-
-.video-toggle-btn {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    color: var(--white);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-    backdrop-filter: blur(10px);
-}
-
-.video-toggle-btn:hover {
-    background: rgba(0, 0, 0, 0.7);
-    transform: scale(1.1);
-}
-
-.video-toggle-btn svg {
-    width: 24px;
-    height: 24px;
-}
 
 /* Hero overlay */
 .hero-overlay {
@@ -1183,15 +1151,6 @@ footer {
         align-items: center;
     }
     
-    .video-controls {
-        bottom: 1rem;
-        right: 1rem;
-    }
-    
-    .video-toggle-btn {
-        width: 40px;
-        height: 40px;
-    }
     
     nav ul {
         flex-direction: column;
@@ -1257,7 +1216,7 @@ footer {
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('/assets/images/posters/hero-poster-1920x1080.jpg') center/cover no-repeat;
+            background: url('assets/images/posters/hero-poster-1920x1080.jpg') center/cover no-repeat;
             z-index: 1;
         }
     }
