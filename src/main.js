@@ -5,7 +5,7 @@ import '../styles/main.css'
 import { injectSpeedInsights } from '@vercel/speed-insights'
 
 // Import Vercel Analytics
-import { Analytics } from "@vercel/analytics/next"
+import { inject } from '@vercel/analytics'
 
 // Import blog system
 import './blog-system.js'
@@ -33,6 +33,9 @@ class NeffPavingApp {
     }
 
     init() {
+        // Initialize Vercel Analytics
+        inject()
+        
         // Initialize Vercel Speed Insights
         injectSpeedInsights()
         
