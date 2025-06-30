@@ -1,6 +1,9 @@
 // Import CSS
 import '../styles/main.css'
 
+// Import Vercel Speed Insights
+import { injectSpeedInsights } from '@vercel/speed-insights'
+
 // Import blog system
 import './blog-system.js'
 
@@ -27,6 +30,9 @@ class NeffPavingApp {
     }
 
     init() {
+        // Initialize Vercel Speed Insights
+        injectSpeedInsights()
+        
         this.initLoadingAnimation()
         this.initAnimations()
         this.initVideoPlayer()
