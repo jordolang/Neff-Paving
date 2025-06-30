@@ -2,6 +2,7 @@
   "name": "neff-paving",
   "version": "1.0.0",
   "description": "Professional paving services website",
+  "type": "module",
   "main": "src/main.js",
   "scripts": {
     "dev": "vite",
