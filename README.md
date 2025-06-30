@@ -31,6 +31,16 @@ neff-paving/
 └── README.md          # This file
 ```
 
+## 🔀 Repository Structure
+
+**Important**: This repository uses a structured branching strategy for safe development and deployment:
+
+- **`deployment`** - Production code deployed to GitHub Pages
+- **`main`** - Stable, tested code ready for production  
+- **`development`** - Active development and new features
+
+For development work, please use the `development` branch. See [Branching Strategy](docs/deployment/branching-strategy.md) for complete details.
+
 ## Technologies Used
 
 ### Build Tools
