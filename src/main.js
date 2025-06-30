@@ -15,6 +15,34 @@ function getVideoCacheBuster() {
     return `?v=${import.meta.env.VITE_DEPLOY_TIME || Date.now()}`
 }
 
+// Video performance tracking
+function trackVideoPerformance(video) {
+    const metrics = {
+        loadStart: Date.now(),
+        firstFrame: null,
+        errors: 0,
+        qualityShifts: 0
+    }
+    
+    video.addEventListener('loadeddata', () => {
+        metrics.firstFrame = Date.now() - metrics.loadStart
+        
+        // Send to Vercel Analytics
+        if (typeof va !== 'undefined') {
+            va.track('video_loaded', {
+                loadTime: metrics.firstFrame,
+                quality: video.videoWidth + 'p',
+                errors: metrics.errors,
+                cacheBuster: new URL(video.currentSrc).searchParams.get('v')
+            })
+        }
+    })
+    
+    video.addEventListener('error', () => {
+        metrics.errors++
+    })
+}
+
 // Import animation libraries
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -250,6 +278,9 @@ class NeffPavingApp {
             
             // Store video reference
             this.heroVideo = heroVideo
+            
+            // Track video performance
+            trackVideoPerformance(heroVideo)
         }
     }
     

@@ -28,6 +28,10 @@
   ],
   "author": "Neff Paving",
   "license": "ISC",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.10",
     "@stripe/stripe-js": "^7.4.0",
@@ -47,6 +51,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.23.0",
     "@jest/globals": "^29.7.0",
+    "@types/node": "^24.0.7",
     "@vitejs/plugin-legacy": "^7.0.0",
     "babel-jest": "^29.7.0",
     "eslint": "^9.16.0",

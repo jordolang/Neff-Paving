@@ -4,6 +4,34 @@ import { resolve } from 'path'
 export default defineConfig({
   base: '/Neff-Paving/',
   root: '.',
+  server: {
+    port: 3000,
+    open: true,
+    // Enable compression in dev
+    compress: true,
+    headers: {
+      // Development server headers
+      'Cache-Control': 'no-cache'
+    }
+  },
+  resolve: {
+    alias: {
+      '@': '/src',
+      '@assets': '/assets',
+      '@styles': '/styles',
+      '@scripts': '/scripts'
+    }
+  },
+  define: {
+    global: 'globalThis',
+  },
+  assetsInclude: ['**/*.mp4', '**/*.webm', '**/*.ogg', '**/*.mov'],
+  // Performance optimizations
+  optimizeDeps: {
+    include: ['gsap', 'aos', 'plyr'],
+    exclude: ['@vite/client', '@vite/env']
+  },
+  // Handle Node.js built-ins
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -27,7 +55,8 @@ export default defineConfig({
           }
           return `assets/[name]-[hash][extname]`
         }
-      }
+      },
+      // Remove external Node.js built-ins to let Vite handle them
     },
     // Compression and minification
     minify: 'terser',
@@ -40,31 +69,9 @@ export default defineConfig({
     // Asset inlining threshold
     assetsInlineLimit: 4096,
     // Enable CSS code splitting
-    cssCodeSplit: true
-  },
-  server: {
-    port: 3000,
-    open: true,
-    // Enable compression in dev
-    compress: true,
-    headers: {
-      // Development server headers
-      'Cache-Control': 'no-cache'
-    }
-  },
-  resolve: {
-    alias: {
-      '@': '/src',
-      '@assets': '/assets',
-      '@styles': '/styles',
-      '@scripts': '/scripts'
-    }
-  },
-  assetsInclude: ['**/*.mp4', '**/*.webm', '**/*.ogg', '**/*.mov'],
-  // Performance optimizations
-  optimizeDeps: {
-    include: ['gsap', 'aos', 'plyr'],
-    exclude: ['@vite/client', '@vite/env']
+    cssCodeSplit: true,
+    // Target modern browsers to avoid polyfill issues
+    target: 'esnext'
   },
   // Plugin configuration
   plugins: [
