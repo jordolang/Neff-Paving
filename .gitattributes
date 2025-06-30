@@ -1,1 +1,1 @@
-*.mp4 filter=lfs diff=lfs merge=lfs -text
+assets/videos/Neff-Paving.mp4 filter=lfs diff=lfs merge=lfs -text
