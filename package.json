@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:vercel": "vite build --mode vercel",
+    "vercel-build": "vite build",
     "preview": "vite preview",
     "test": "jest --config=test/jest.config.js",
     "test:unit": "jest --config=test/jest.config.js --selectProjects='Unit Tests'",
