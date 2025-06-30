@@ -6,7 +6,8 @@
   "main": "src/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "VITE_DEPLOY_TIME=$(date +%s) vite build",
+    "build": "vite build",
+    "build:dev": "VITE_DEPLOY_TIME=$(date +%s) vite build",
     "build:vercel": "vite build --mode vercel",
     "vercel-build": "vite build",
     "preview": "vite preview",
