@@ -1,35 +1,10 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "functions": {
-    "app/api/*.js": {
-      "maxDuration": 30
-    }
-  },
   "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
-    {
-      "source": "/videos/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
     {
       "source": "/(.*)",
       "headers": [
