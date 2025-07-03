@@ -24,6 +24,8 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+    __BUILD_TIMESTAMP__: JSON.stringify(process.env.VITE_BUILD_TIMESTAMP || new Date().toISOString()),
+    __DEPLOY_TIME__: JSON.stringify(process.env.VITE_DEPLOY_TIME || Date.now())
   },
   // Performance optimizations
   optimizeDeps: {
@@ -70,6 +72,31 @@ export default defineConfig({
   },
   // Plugin configuration
   plugins: [
-    // No plugins currently needed - PWA support removed
+    {
+      name: 'replace-build-placeholders',
+      generateBundle(options, bundle) {
+        const buildTimestamp = process.env.VITE_BUILD_TIMESTAMP || new Date().toISOString();
+        const deployTime = process.env.VITE_DEPLOY_TIME || Date.now();
+        
+        for (const fileName in bundle) {
+          if (fileName.endsWith('.html')) {
+            const htmlFile = bundle[fileName];
+            if (htmlFile.source) {
+              // Replace timestamp placeholders
+              htmlFile.source = htmlFile.source.replace(
+                /{{ BUILD_TIMESTAMP }}/g,
+                buildTimestamp
+              );
+              
+              // Add cache-busting query parameters to assets
+              htmlFile.source = htmlFile.source.replace(
+                /(href|src)="([^"]+\.(css|js|jpg|jpeg|png|gif|svg|webp|mp4|webm))"/g,
+                `$1="$2?v=${deployTime}"`
+              );
+            }
+          }
+        }
+      }
+    }
   ]
 })
