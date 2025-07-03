@@ -19,21 +19,6 @@ test.describe('Performance Tests', () => {
     expect(loadTime).toBeLessThan(3000)
   })
 
-  test('hero video lazy loads properly', async ({ page }) => {
-    const video = page.locator('#hero-video')
-    
-    // Video should be present but not necessarily loaded yet
-    await expect(video).toBeVisible()
-    
-    // Check video attributes
-    await expect(video).toHaveAttribute('autoplay')
-    await expect(video).toHaveAttribute('muted')
-    await expect(video).toHaveAttribute('loop')
-    await expect(video).toHaveAttribute('playsinline')
-    
-    // Video should have poster
-    await expect(video).toHaveAttribute('poster')
-  })
 
   test('images load with lazy loading', async ({ page }) => {
     // Scroll to gallery section to trigger lazy loading
@@ -144,17 +129,17 @@ test.describe('Performance Tests', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     
-    // Hero video should not autoplay with reduced motion
-    const video = page.locator('#hero-video')
-    const autoplay = await video.getAttribute('autoplay')
+    // Check that animations are disabled or reduced
+    const heroContent = page.locator('.hero-content')
+    await expect(heroContent).toBeVisible()
     
-    // With reduced motion, autoplay might be disabled by JS
-    // This is tested by checking if the video is paused
-    await page.waitForTimeout(1000) // Wait for JS to process
-    const isPaused = await video.evaluate(v => v.paused)
+    // Verify reduced motion styles are applied
+    const animationDuration = await heroContent.evaluate(el => 
+      window.getComputedStyle(el).animationDuration
+    )
     
-    // Video should be paused when reduced motion is preferred
-    expect(isPaused).toBe(true)
+    // Animation duration should be minimal with reduced motion
+    expect(animationDuration === '0s' || animationDuration === 'none').toBe(true)
   })
 
   test('preload directives are present', async ({ page }) => {
@@ -190,13 +175,17 @@ test.describe('Mobile Performance', () => {
   test('mobile images are appropriately sized', async ({ page }) => {
     await page.goto('/')
     
-    // Check hero video poster
-    const video = page.locator('#hero-video')
-    await expect(video).toBeVisible()
+    // Check that images are properly optimized for mobile
+    const galleryImages = page.locator('.gallery-item img')
     
-    // On mobile, video might be replaced with poster for performance
-    const posterSrc = await video.getAttribute('poster')
-    expect(posterSrc).toContain('hero-poster')
+    if (await galleryImages.count() > 0) {
+      const firstImage = galleryImages.first()
+      await expect(firstImage).toHaveAttribute('loading', 'lazy')
+      
+      // Check that alt attributes are present
+      const altText = await firstImage.getAttribute('alt')
+      expect(altText).toBeTruthy()
+    }
   })
 
   test('mobile navigation is accessible', async ({ page }) => {

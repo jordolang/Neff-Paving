@@ -41,12 +41,9 @@
     "aos": "^2.3.4",
     "framer-motion": "^11.13.5",
     "gsap": "^3.12.8",
-    "hls.js": "^1.5.20",
     "lottie-web": "^5.13.0",
     "pdf-lib": "^1.17.1",
-    "plyr": "^3.7.8",
-    "stripe": "^18.2.1",
-    "video.js": "^8.23.3"
+    "stripe": "^18.2.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.0",

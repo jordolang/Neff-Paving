@@ -111,30 +111,129 @@ class BlogSystem {
         this.categories = new Set();
     }
     
-    // Get list of available blog posts
-    async getPostList() {
-        try {
-            const response = await fetch('/Neff-Paving/blog-posts.json');
-            if (!response.ok) {
-                throw new Error('Failed to fetch blog posts list');
+    // Get hardcoded blog post data (simpler than fetching markdown files)
+    getBlogPostsData() {
+        return [
+            {
+                slug: 'how-to-create-a-blog-post',
+                filename: '2025-07-03-how-to-create-a-blog-post.md',
+                title: 'How to Create a Blog Post for Neff Paving',
+                date: '2025-07-03',
+                category: 'Guide',
+                readTime: '4 min read',
+                excerpt: 'Learn how to create effective blog posts for Neff Paving, complete with structure, images, and metadata.',
+                image: '/assets/images/blog/guideline-image.jpg',
+                featured: true,
+                content: `
+                    <h1>How to Create a Blog Post for Neff Paving</h1>
+                    <p>Creating a blog post for Neff Paving is simple if you follow these guidelines. Here is a step-by-step guide to help you format your posts properly.</p>
+                    <h2>Frontmatter</h2>
+                    <p>Each blog post must start with a section of metadata at the top of the file. This section, known as frontmatter, should be enclosed by <code>---</code> and include key information like title, date, category, and other attributes.</p>
+                    <h2>Content</h2>
+                    <p>The content of your post is written in Markdown format. It can include headers, lists, links, and images.</p>
+                    <h3>Headers</h3>
+                    <p>Use <code>#</code> for main titles, <code>##</code> for subtitles, and so on.</p>
+                    <h3>Lists</h3>
+                    <p>Use <code>-</code> or <code>*</code> for lists, and <code>1.</code>, <code>2.</code>, <code>3.</code> for numbered lists.</p>
+                    <h3>Images</h3>
+                    <p>Include images by specifying their path relative to the assets folder.</p>
+                    <h2>Final Tips</h2>
+                    <ul>
+                        <li>Ensure all images are optimized and in <code>/assets/images/blog/</code></li>
+                        <li>Preview your post in the development environment to catch any formatting issues</li>
+                    </ul>
+                    <p>With these guidelines, you can create engaging and properly formatted blog posts for Neff Paving.</p>
+                `
+            },
+            {
+                slug: 'asphalt-maintenance-guide',
+                filename: '2024-12-15-asphalt-maintenance-guide.md',
+                title: 'Understanding Asphalt Maintenance: A Complete Guide',
+                date: '2024-12-15',
+                category: 'Maintenance',
+                readTime: '5 min read',
+                excerpt: 'Learn how regular maintenance can extend the life of your pavement by 50% or more. Discover the key signs to watch for and timing for different maintenance services.',
+                image: '/assets/images/blog/asphalt-maintenance-guide.jpg',
+                featured: true,
+                content: `
+                    <h1>Understanding Asphalt Maintenance: A Complete Guide</h1>
+                    <p>Regular maintenance is the key to extending your pavement's lifespan by 50% or more. Most property owners don't realize that simple preventive measures can save thousands of dollars in reconstruction costs.</p>
+                    <h2>Key Signs Your Pavement Needs Attention</h2>
+                    <ul>
+                        <li><strong>Small cracks (less than 1/4 inch):</strong> Perfect for crack sealing</li>
+                        <li><strong>Fading color:</strong> Indicates it's time for seal coating</li>
+                        <li><strong>Rough texture:</strong> May need resurfacing</li>
+                        <li><strong>Standing water:</strong> Drainage issues require immediate attention</li>
+                    </ul>
+                    <h2>Maintenance Timeline</h2>
+                    <p><strong>Year 1-3:</strong> Monitor and perform minor crack sealing as needed.</p>
+                    <p><strong>Year 3-5:</strong> Apply seal coat to protect surface and restore appearance.</p>
+                    <p><strong>Year 5-10:</strong> Consider resurfacing if significant wear is present.</p>
+                    <p><strong>Year 10+:</strong> Evaluate for reconstruction vs. continued maintenance.</p>
+                    <p><em>Need professional maintenance advice? Contact Neff Paving for a free assessment of your property's needs.</em></p>
+                `
+            },
+            {
+                slug: 'paving-material-selection',
+                filename: '2024-12-08-paving-material-selection.md',
+                title: 'Choosing the Right Paving Solutions for Your Property',
+                date: '2024-12-08',
+                category: 'Materials',
+                readTime: '7 min read',
+                excerpt: 'Not all paving materials are created equal. Discover the best practices for selecting materials based on traffic load, climate, and budget considerations.',
+                image: '/assets/images/blog/paving-material-selection.jpg',
+                featured: false,
+                content: `
+                    <h1>Choosing the Right Paving Solutions for Your Property</h1>
+                    <p>Not all paving materials are created equal. The right choice depends on traffic load, climate conditions, budget, and aesthetic preferences. Here's your complete guide to making the best decision.</p>
+                    <h2>Asphalt: The Versatile Choice</h2>
+                    <p><strong>Best for:</strong> Driveways, parking lots, and roads</p>
+                    <p><strong>Pros:</strong> Cost-effective, quick installation, easy to repair, good for Ohio's freeze-thaw cycles</p>
+                    <p><strong>Cons:</strong> Requires regular maintenance, can soften in extreme heat</p>
+                    <p><strong>Lifespan:</strong> 15-20 years with proper maintenance</p>
+                    <h2>Concrete: The Durable Option</h2>
+                    <p><strong>Best for:</strong> High-traffic areas, decorative applications</p>
+                    <p><strong>Pros:</strong> Very durable, low maintenance, can be decoratively stamped</p>
+                    <p><strong>Cons:</strong> Higher upfront cost, can crack in freeze-thaw cycles</p>
+                    <p><strong>Lifespan:</strong> 25-30 years</p>
+                    <p><em>Unsure which material is right for your project? Our experts can evaluate your specific needs and recommend the best solution.</em></p>
+                `
+            },
+            {
+                slug: 'winter-paving-preparation',
+                filename: '2024-12-01-winter-paving-preparation.md',
+                title: 'Preparing Your Pavement for Winter Weather',
+                date: '2024-12-01',
+                category: 'Seasonal',
+                readTime: '6 min read',
+                excerpt: 'Ohio winters can be harsh on pavement. Learn essential preparation steps and protective measures to minimize winter damage and extend surface life.',
+                image: '/assets/images/blog/winter-paving-preparation.jpg',
+                featured: false,
+                content: `
+                    <h1>Preparing Your Pavement for Winter Weather</h1>
+                    <p>Ohio winters can be brutal on pavement. Freeze-thaw cycles, snow plowing, and de-icing chemicals all take their toll. Proper preparation can prevent costly spring repairs.</p>
+                    <h2>Pre-Winter Inspection Checklist</h2>
+                    <ul>
+                        <li>✅ Seal all cracks larger than 1/8 inch</li>
+                        <li>✅ Ensure proper drainage to prevent ice formation</li>
+                        <li>✅ Check and repair any potholes</li>
+                        <li>✅ Apply seal coat if it's been more than 3 years</li>
+                        <li>✅ Clear debris from drainage systems</li>
+                    </ul>
+                    <h2>Snow Removal Best Practices</h2>
+                    <p><strong>Use the Right Equipment:</strong> Rubber-edged plows prevent surface damage. Metal edges should only be used on heavily deteriorated surfaces.</p>
+                    <p><strong>Plow Early and Often:</strong> Remove snow before it becomes compacted. Multiple light passes are better than one heavy push.</p>
+                    <p><strong>Avoid Over-Salting:</strong> Excessive salt can damage both asphalt and concrete. Use sand for traction when temperatures are extremely low.</p>
+                    <p><em>Don't wait until spring to address winter damage. Contact us for emergency repairs and spring maintenance planning.</em></p>
+                `
             }
-            const data = await response.json();
-            return data.posts || [];
-        } catch (error) {
-            console.error('Error fetching post list:', error);
-            // Fallback to hardcoded list
-            return [
-                '2024-12-15-asphalt-maintenance-guide.md',
-                '2024-12-08-paving-material-selection.md',
-                '2024-12-01-winter-paving-preparation.md'
-            ];
-        }
+        ];
     }
     
     // Load a specific blog post
     async loadPost(filename) {
         try {
-            const response = await fetch(`/Neff-Paving/${filename}`);
+            const response = await fetch(`/blog-posts/${filename}`);
             if (!response.ok) {
                 throw new Error(`Failed to load post: ${filename}`);
             }
@@ -142,8 +241,11 @@ class BlogSystem {
             const markdown = await response.text();
             const parsed = SimpleMarkdownParser.parse(markdown);
             
+            // Create slug from filename
+            const slug = filename.replace('.md', '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
+            
             return {
-                slug: filename.replace('.md', ''),
+                slug: slug,
                 filename,
                 ...parsed.frontmatter,
                 content: parsed.content
@@ -152,6 +254,17 @@ class BlogSystem {
             console.error('Error loading post:', error);
             return null;
         }
+    }
+    
+    // Get list of available blog posts
+    async getPostList() {
+        // Return hardcoded list of blog post files
+        return [
+            '2025-07-03-how-to-create-a-blog-post.md',
+            '2024-12-15-asphalt-maintenance-guide.md',
+            '2024-12-08-paving-material-selection.md',
+            '2024-12-01-winter-paving-preparation.md'
+        ];
     }
     
     // Load all blog posts
@@ -168,7 +281,9 @@ class BlogSystem {
         }
         
         // Sort by date (newest first)
-        this.posts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (posts.length > 0) {
+            this.posts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
         return this.posts;
     }
     
@@ -247,7 +362,18 @@ class BlogSystem {
     
     // Initialize blog system
     async init() {
-        await this.loadAllPosts();
+        // Use hardcoded data for now but load from markdown files
+        const hardcodedPosts = this.getBlogPostsData();
+        this.posts = hardcodedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Also try to load from markdown files
+        try {
+            await this.loadAllPosts();
+        } catch (error) {
+            console.log('Using hardcoded blog data as fallback');
+            // If markdown loading fails, keep the hardcoded data
+        }
+        
         console.log(`Blog system initialized with ${this.posts.length} posts`);
         return this;
     }

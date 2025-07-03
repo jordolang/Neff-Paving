@@ -25,10 +25,9 @@ export default defineConfig({
   define: {
     global: 'globalThis',
   },
-  assetsInclude: ['**/*.mp4', '**/*.webm', '**/*.ogg', '**/*.mov'],
   // Performance optimizations
   optimizeDeps: {
-    include: ['gsap', 'aos', 'plyr'],
+    include: ['gsap', 'aos'],
     exclude: ['@vite/client', '@vite/env']
   },
   // Handle Node.js built-ins
@@ -48,10 +47,6 @@ export default defineConfig({
           const ext = info[info.length - 1]
           if (/md|json/i.test(ext)) {
             return `blog-posts/[name][extname]`
-          }
-          if (assetInfo.name.endsWith('.mp4')) {
-            // Add content hash for videos
-            return 'assets/videos/[name]-[hash][extname]'
           }
           return `assets/[name]-[hash][extname]`
         }

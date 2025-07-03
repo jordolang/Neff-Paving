@@ -10,51 +10,13 @@ import { inject } from '@vercel/analytics'
 // Import blog system
 import './blog-system.js'
 
-// Cache-busting utility
-function getVideoCacheBuster() {
-    return `?v=${import.meta.env.VITE_DEPLOY_TIME || Date.now()}`
-}
-
-// Video performance tracking
-function trackVideoPerformance(video) {
-    const metrics = {
-        loadStart: Date.now(),
-        firstFrame: null,
-        errors: 0,
-        qualityShifts: 0
-    }
-    
-    video.addEventListener('loadeddata', () => {
-        metrics.firstFrame = Date.now() - metrics.loadStart
-        
-        // Send to Vercel Analytics
-        if (typeof va !== 'undefined') {
-            va.track('video_loaded', {
-                loadTime: metrics.firstFrame,
-                quality: video.videoWidth + 'p',
-                errors: metrics.errors,
-                cacheBuster: new URL(video.currentSrc).searchParams.get('v')
-            })
-        }
-    })
-    
-    video.addEventListener('error', () => {
-        metrics.errors++
-    })
-}
-
 // Import animation libraries
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
-// Import video player
-import Plyr from 'plyr'
-import 'plyr/dist/plyr.css'
 
-// Import VideoManager for error handling
-import VideoManager from './video-manager.js'
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
@@ -75,10 +37,8 @@ class NeffPavingApp {
         // Initialize Vercel Speed Insights
         injectSpeedInsights()
         
-        this.initVideoSources()
         this.initLoadingAnimation()
         this.initAnimations()
-        this.initVideoPlayer()
         this.initScrollEffects()
         this.initRevealOnScroll()
         this.initNavigation()
@@ -93,23 +53,6 @@ class NeffPavingApp {
         this.initBlogSystem()
     }
     
-    initVideoSources() {
-        // Initialize video sources with cache-busting URLs
-        const sources = [
-            `/assets/videos/optimized/neff-paving-1080p.mp4${getVideoCacheBuster()}`,
-            `/assets/videos/optimized/neff-paving-720p.mp4${getVideoCacheBuster()}`,
-            `/assets/videos/optimized/neff-paving-480p.mp4${getVideoCacheBuster()}`
-        ]
-        
-        // Set the source URLs with cache-busting parameters
-        const video1080p = document.getElementById('video-source-1080p')
-        const video720p = document.getElementById('video-source-720p')
-        const video480p = document.getElementById('video-source-480p')
-        
-        if (video1080p) video1080p.src = sources[0]
-        if (video720p) video720p.src = sources[1]
-        if (video480p) video480p.src = sources[2]
-    }
     
     initSectionAnimations() {
         // Enhanced animations for new sections
@@ -148,19 +91,11 @@ class NeffPavingApp {
             })
         })
         
-        // Contact method cards
+        // Contact method cards - no animation delay for immediate display
         document.querySelectorAll('.contact-method').forEach((method, index) => {
-            gsap.from(method, {
-                y: 40,
-                opacity: 0,
-                duration: 0.6,
-                delay: index * 0.1,
-                scrollTrigger: {
-                    trigger: method,
-                    start: 'top 85%',
-                    toggleActions: 'play none none reverse'
-                }
-            })
+            // Remove any hidden state that might be set
+            method.style.opacity = '1'
+            method.style.transform = 'none'
         })
         
         // Stats counter animation
@@ -223,163 +158,16 @@ class NeffPavingApp {
         })
     }
 
-    initVideoPlayer() {
-        // Initialize hero video with autoplay and loop - no user controls
-        const heroVideo = document.getElementById('hero-video')
-        
-        if (heroVideo) {
-            // Set loading="lazy" for performance
-            heroVideo.loading = 'lazy'
-            
-            // Preload lowest quality first
-            const lowestQualitySource = heroVideo.querySelector('source[type="video/mp4"]:last-of-type')
-            if (lowestQualitySource) {
-                lowestQualitySource.setAttribute('preload', 'auto')
-            }
-            
-            // Add error handling
-            heroVideo.addEventListener('error', (e) => {
-                console.error('Video loading error:', e)
-                // Attempt reload with cache-buster
-                this.reloadVideoWithNewCacheBuster(heroVideo)
-            })
-            
-            // Set video attributes for autoplay
-            heroVideo.muted = true
-            heroVideo.loop = true
-            heroVideo.autoplay = true
-            heroVideo.playsInline = true
-            heroVideo.setAttribute('playsinline', '')
-            heroVideo.setAttribute('webkit-playsinline', '')
-            
-            // Force autoplay after a short delay
-            const attemptPlay = () => {
-                heroVideo.play().catch(error => {
-                    console.log('Autoplay blocked by browser:', error)
-                    // Try again after user interaction
-                    document.addEventListener('click', () => {
-                        heroVideo.play().catch(e => console.log('Manual play failed:', e))
-                    }, { once: true })
-                })
-            }
-            
-            // Try to play when video is loaded
-            if (heroVideo.readyState >= 3) {
-                attemptPlay()
-            } else {
-                heroVideo.addEventListener('canplaythrough', attemptPlay, { once: true })
-            }
-            
-            // Ensure video loops continuously
-            heroVideo.addEventListener('ended', () => {
-                heroVideo.currentTime = 0
-                heroVideo.play()
-            })
-            
-            // Store video reference
-            this.heroVideo = heroVideo
-            
-            // Track video performance
-            trackVideoPerformance(heroVideo)
-        }
-    }
     
-    reloadVideoWithNewCacheBuster(video) {
-        const sources = video.getElementsByTagName('source')
-        Array.from(sources).forEach(source => {
-            const currentSrc = source.src.split('?')[0]
-            source.src = `${currentSrc}?v=${Date.now()}`
-        })
-        video.load()
-    }
     
-    loadVideoSources(video) {
-        // Lazy load video sources based on viewport and connection
-        const sources = video.querySelectorAll('source[data-src]')
-        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
-        
-        // Check if reduced motion is preferred
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        
-        if (prefersReducedMotion) {
-            // Don't autoplay if user prefers reduced motion
-            video.autoplay = false
-            video.muted = false
-        }
-        
-        // Load appropriate quality based on connection
-        let targetQuality = '1080p'
-        if (connection) {
-            const effectiveType = connection.effectiveType
-            if (effectiveType === 'slow-2g' || effectiveType === '2g') {
-                targetQuality = '480p'
-            } else if (effectiveType === '3g') {
-                targetQuality = '720p'
-            }
-        }
-        
-        // Load sources based on media queries and connection
-        sources.forEach(source => {
-            const mediaQuery = source.getAttribute('media')
-            if (!mediaQuery || window.matchMedia(mediaQuery).matches) {
-                const dataSrc = source.getAttribute('data-src')
-                if (dataSrc && this.shouldLoadQuality(dataSrc, targetQuality)) {
-                    source.src = dataSrc
-                }
-            }
-        })
-        
-        // Load video when it enters viewport
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    video.load()
-                    observer.unobserve(video)
-                }
-            })
-        }, { threshold: 0.1 })
-        
-        observer.observe(video)
-    }
     
-    shouldLoadQuality(src, targetQuality) {
-        // Helper to determine if this quality should be loaded
-        if (src.includes(targetQuality)) return true
-        if (targetQuality === '480p' && !src.includes('720p') && !src.includes('1080p')) return true
-        if (targetQuality === '720p' && !src.includes('1080p') && src.includes('720p')) return true
-        return false
-    }
     
-    handleVideoVisibility(video) {
-        // Pause video when not visible for performance
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting && !video.paused) {
-                    video.pause()
-                }
-            })
-        }, { threshold: 0.2 })
-        
-        observer.observe(video)
-    }
 
     initScrollEffects() {
         // Check if user prefers reduced motion
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         
         if (!prefersReducedMotion) {
-            // Parallax effect for hero video background
-            gsap.to('#hero-video', {
-                yPercent: -20,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: '#hero',
-                    start: 'top bottom',
-                    end: 'bottom top',
-                    scrub: 1
-                }
-            })
-            
             // Parallax effect for hero content
             gsap.to('.hero-content', {
                 yPercent: 10,
