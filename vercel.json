@@ -27,7 +27,7 @@
   ],
   "headers": [
     {
-      "source": "/assets/images/(.*)\\.(?:jpg|jpeg|png|gif|webp|ico)$",
+      "source": "/assets/images/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "source": "/assets/fonts/(.*)\\.(?:woff|woff2|ttf|eot)$",
+      "source": "/assets/fonts/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "source": "/assets/videos/(.*)\\.(?:mp4|webm|ogg)$",
+      "source": "/assets/videos/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -70,7 +70,7 @@
       ]
     },
     {
-      "source": "/assets/styles/(.*)\\.css$",
+      "source": "/assets/styles/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -87,7 +87,7 @@
       ]
     },
     {
-      "source": "/(?:entries|chunks)/(.*)\\.js$",
+      "source": "/(entries|chunks)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -104,7 +104,7 @@
       ]
     },
     {
-      "source": "/assets/(.*)\\.svg$",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -121,7 +121,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(?:html|json)$",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
