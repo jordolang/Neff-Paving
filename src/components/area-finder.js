@@ -458,7 +458,7 @@ export class AreaFinder {
             const coordinates = this.getShapeCoordinates(this.currentShape);
             
             // Send to backend for calculation
-            const response = await fetch('/backend/routes/maps', {
+            const response = await fetch('/api/maps/calculate-area', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
