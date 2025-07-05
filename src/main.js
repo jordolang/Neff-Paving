@@ -8,7 +8,8 @@ import { injectSpeedInsights } from '@vercel/speed-insights'
 import { inject } from '@vercel/analytics'
 
 // Import blog system
-import './blog-system.js'
+import { BlogSystem } from './blog-system.js';
+import { AreaFinder } from './components/area-finder.js';
 
 // Import animation libraries
 import { gsap } from 'gsap'
