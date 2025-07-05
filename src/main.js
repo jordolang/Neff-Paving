@@ -550,41 +550,63 @@ class NeffPavingApp {
         })
     }
     
-    showSuccessMessage() {
+    showSuccessMessage(message = 'Thank You!', type = 'success') {
+        // Remove any existing success message
+        const existingMessage = document.querySelector('.success-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
         // Create success message
         const successDiv = document.createElement('div')
-        successDiv.className = 'success-message'
+        successDiv.className = `success-message alert alert-${type === 'success' ? 'success' : 'warning'}`
         successDiv.style.cssText = `
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--success-green);
-            color: white;
-            padding: var(--spacing-xl);
-            border-radius: var(--border-radius-lg);
-            text-align: center;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#d4edda' : '#fff3cd'};
+            color: ${type === 'success' ? '#155724' : '#856404'};
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 10000;
-            box-shadow: var(--shadow-lg);
+            border: 1px solid ${type === 'success' ? '#c3e6cb' : '#ffeaa7'};
+            max-width: 400px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         `
+        
         successDiv.innerHTML = `
-            <h3 style="margin-bottom: var(--spacing-md); color: white;">Thank You!</h3>
-            <p style="margin-bottom: var(--spacing-md);">Your request has been submitted successfully.</p>
-            <p style="font-size: 14px;">We'll contact you within 2 business hours.</p>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 600;">${type === 'success' ? '✅ ' : '⚠️ '}${message}</h4>
+                    <p style="margin: 0; font-size: 0.9rem;">
+                        ${type === 'success' 
+                            ? 'Your estimate request has been submitted successfully. We\'ll contact you within 2 business hours with a detailed quote.'
+                            : 'Your form has been submitted. If you don\'t hear from us within 24 hours, please call us directly.'
+                        }
+                    </p>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" 
+                        style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit; margin-left: 1rem;">×</button>
+            </div>
         `
         
         document.body.appendChild(successDiv)
         
-        // Remove after 5 seconds
+        // Auto-remove after 8 seconds
         setTimeout(() => {
-            successDiv.remove()
-        }, 5000)
+            if (successDiv.parentElement) {
+                successDiv.remove()
+            }
+        }, 8000)
         
         // Animate in
-        gsap.fromTo(successDiv, 
-            { scale: 0, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' }
-        )
+        if (typeof gsap !== 'undefined') {
+            gsap.fromTo(successDiv, 
+                { x: 400, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' }
+            )
+        }
     }
     
     checkServiceArea(zipCode) {
