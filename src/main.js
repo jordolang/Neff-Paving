@@ -1049,6 +1049,49 @@ class NeffPavingApp {
         }, 5000)
     }
     
+    initAreaFinder() {
+        // Initialize area finder if container exists
+        const mapContainer = document.querySelector('.map-placeholder')
+        if (mapContainer) {
+            // Replace the placeholder with area finder
+            mapContainer.innerHTML = `
+                <div id="area-finder-container">
+                    <h4>Project Area Calculator</h4>
+                    <p>Draw the area of your project on the map to get an accurate estimate.</p>
+                </div>
+            `
+            
+            try {
+                this.areaFinderInstance = new AreaFinder('area-finder-container', {
+                    showCalculator: true,
+                    showAddressSearch: true,
+                    showAreaInfo: true,
+                    onAreaCalculated: (areaData) => {
+                        console.log('Area calculated:', areaData)
+                        this.updateProjectSizeFromArea(areaData)
+                    }
+                })
+            } catch (error) {
+                console.error('Error initializing area finder:', error)
+                mapContainer.innerHTML = `
+                    <div class="error-message">
+                        <p>Unable to load map. Please enter project size manually in the form above.</p>
+                    </div>
+                `
+            }
+        }
+    }
+    
+    updateProjectSizeFromArea(areaData) {
+        const projectSizeInput = document.getElementById('project-size')
+        if (projectSizeInput && areaData.areaInSquareFeet) {
+            projectSizeInput.value = `${Math.round(areaData.areaInSquareFeet)} sq ft`
+            
+            // Trigger input event to update any listeners
+            projectSizeInput.dispatchEvent(new Event('input', { bubbles: true }))
+        }
+    }
+
     async initBlogSystem() {
         try {
             // Initialize blog system
