@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
-export default defineConfig({
-  base: '/Neff-Paving/',
+export default defineConfig(({ mode }) => ({
+  base: mode === 'vercel' ? '/' : '/Neff-Paving/',
   root: '.',
   server: {
     port: 3000,
@@ -99,4 +99,4 @@ export default defineConfig({
       }
     }
   ]
-})
+}))
