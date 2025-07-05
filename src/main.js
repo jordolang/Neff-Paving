@@ -28,6 +28,7 @@ class NeffPavingApp {
         this.scrollRevealElements = []
         this.isLoading = false
         this.formProgress = 0
+        this.areaFinderInstance = null
         this.init()
     }
 
