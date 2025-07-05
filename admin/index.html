@@ -5,337 +5,424 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neff Paving - Admin Dashboard</title>
     
-    <!-- Vuexy Theme CSS -->
-    <link rel="stylesheet" href="https://demos.themeselection.com/vuexy-html-admin-template/assets/vendor/css/core.css">
-    <link rel="stylesheet" href="https://demos.themeselection.com/vuexy-html-admin-template/assets/vendor/css/theme-default.css">
-    <link rel="stylesheet" href="https://demos.themeselection.com/vuexy-html-admin-template/assets/css/demo.css">
-    
-    <!-- Icon fonts -->
-    <link rel="stylesheet" href="https://demos.themeselection.com/vuexy-html-admin-template/assets/vendor/fonts/boxicons.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Custom CSS -->
     <style>
+        :root {
+            --primary-color: #7367f0;
+            --secondary-color: #82868b;
+            --success-color: #28c76f;
+            --info-color: #00cfe8;
+            --warning-color: #ff9f43;
+            --danger-color: #ea5455;
+            --dark-color: #4b4b4b;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a54d9 100%);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .sidebar .brand {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .sidebar .brand h4 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats-card {
+            transition: transform 0.2s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #f0f2f5;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+
         .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        .stats-card {
-            transition: transform 0.2s;
+
+        .content-section {
+            display: none;
         }
-        
-        .stats-card:hover {
-            transform: translateY(-2px);
+
+        .content-section.active {
+            display: block;
         }
-        
-        .map-container {
-            height: 400px;
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a54d9 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             width: 100%;
-            border-radius: 8px;
-            overflow: hidden;
+            max-width: 400px;
         }
-        
-        .area-info {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
-        
-        .nav-link.active {
-            background-color: #7367f0 !important;
-            color: white !important;
+
+        .login-header h3 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .avatar-initial {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .bg-label-primary { background-color: var(--primary-color); }
+        .bg-label-success { background-color: var(--success-color); }
+        .bg-label-info { background-color: var(--info-color); }
+        .bg-label-warning { background-color: var(--warning-color); }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: var(--dark-color);
+            background-color: #f8f9fa;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Layout wrapper -->
-    <div class="layout-wrapper layout-content-navbar">
-        <div class="layout-container">
-            <!-- Menu -->
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
-                <div class="app-brand demo">
-                    <a href="#" class="app-brand-link">
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Neff Paving</span>
-                    </a>
+    <div id="app-container">
+        <!-- Login Screen (shown by default) -->
+        <div id="login-screen">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <h3>Neff Paving Admin</h3>
+                        <p class="text-muted">Please sign-in to your account</p>
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                    </form>
                 </div>
+            </div>
+        </div>
 
-                <div class="menu-inner-shadow"></div>
-
-                <ul class="menu-inner py-1">
-                    <li class="menu-item active">
-                        <a href="#dashboard" class="menu-link" data-section="dashboard">
-                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                            <div data-i18n="Analytics">Dashboard</div>
+        <!-- Admin Dashboard (hidden by default) -->
+        <div id="admin-dashboard" style="display: none;">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="brand">
+                    <h4>Neff Paving</h4>
+                    <small>Admin Panel</small>
+                </div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard">
+                            <i>📊</i> Dashboard
                         </a>
                     </li>
-                    
-                    <li class="menu-item">
-                        <a href="#estimates" class="menu-link" data-section="estimates">
-                            <i class="menu-icon tf-icons bx bx-file"></i>
-                            <div data-i18n="Estimates">Estimates</div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="estimates">
+                            <i>📋</i> Estimates
                         </a>
                     </li>
-                    
-                    <li class="menu-item">
-                        <a href="#jobs" class="menu-link" data-section="jobs">
-                            <i class="menu-icon tf-icons bx bx-task"></i>
-                            <div data-i18n="Jobs">Jobs</div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="jobs">
+                            <i>⚒️</i> Jobs
                         </a>
                     </li>
-                    
-                    <li class="menu-item">
-                        <a href="#customers" class="menu-link" data-section="customers">
-                            <i class="menu-icon tf-icons bx bx-user"></i>
-                            <div data-i18n="Customers">Customers</div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="customers">
+                            <i>👥</i> Customers
                         </a>
                     </li>
-                    
-                    <li class="menu-item">
-                        <a href="#maps" class="menu-link" data-section="maps">
-                            <i class="menu-icon tf-icons bx bx-map"></i>
-                            <div data-i18n="Maps">Service Areas</div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="maps">
+                            <i>🗺️</i> Service Areas
                         </a>
                     </li>
                 </ul>
-            </aside>
+            </nav>
 
-            <!-- Layout container -->
-            <div class="layout-page">
-                <!-- Navbar -->
-                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
-                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
-                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                            <i class="bx bx-menu bx-sm"></i>
-                        </a>
-                    </div>
-
-                    <div class="navbar-nav-right d-flex align-items-center">
-                        <span class="fw-semibold d-none d-sm-block">Admin Panel</span>
-                        
-                        <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                                    <div class="avatar avatar-online">
-                                        <span class="avatar-initial rounded-circle bg-label-primary">A</span>
-                                    </div>
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Top Navbar -->
+                <nav class="navbar navbar-expand-lg">
+                    <div class="container-fluid">
+                        <span class="navbar-brand">Admin Dashboard</span>
+                        <div class="navbar-nav ms-auto">
+                            <div class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                    <div class="avatar-initial bg-label-primary me-2">A</div>
+                                    Admin
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="javascript:void(0);">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <span class="avatar-initial rounded-circle bg-label-primary">A</span>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block">Admin</span>
-                                                    <small class="text-muted">Administrator</small>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="javascript:void(0);" onclick="logout()">
-                                            <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
-                                        </a>
-                                    </li>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="adminDashboard.logout()">Logout</a></li>
                                 </ul>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
                     </div>
                 </nav>
 
-                <!-- Content wrapper -->
-                <div class="content-wrapper">
-                    <!-- Content -->
-                    <div class="container-xxl flex-grow-1 container-p-y">
-                        <!-- Dashboard Section -->
-                        <div id="dashboard-section" class="content-section">
-                            <div class="row">
-                                <div class="col-lg-8 mb-4 order-0">
-                                    <div class="card">
-                                        <div class="d-flex align-items-end row">
-                                            <div class="col-sm-7">
-                                                <div class="card-body">
-                                                    <h5 class="card-title text-primary">Welcome to Admin Dashboard! 🎉</h5>
-                                                    <p class="mb-4">
-                                                        You have <span class="fw-bold" id="pending-estimates">0</span> pending estimates.
-                                                        Check your estimates and manage your projects efficiently.
-                                                    </p>
-                                                    <a href="#estimates" class="btn btn-sm btn-outline-primary" data-section="estimates">View Estimates</a>
-                                                </div>
+                <!-- Content Sections -->
+                <div class="container-fluid p-4">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard-section" class="content-section active">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h2>Welcome to Admin Dashboard! 🎉</h2>
+                                <p class="text-muted">Manage your paving business efficiently</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-success mb-2">📋</div>
+                                        <h5 class="card-title">Active Jobs</h5>
+                                        <h3 id="active-jobs">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-info mb-2">💰</div>
+                                        <h5 class="card-title">Revenue</h5>
+                                        <h3 id="total-revenue">$0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-warning mb-2">📄</div>
+                                        <h5 class="card-title">Pending Estimates</h5>
+                                        <h3 id="pending-estimates">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-primary mb-2">📊</div>
+                                        <h5 class="card-title">Total Projects</h5>
+                                        <h3 id="total-projects">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Recent Activities</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="recent-activities">
+                                            <div class="text-center">
+                                                <div class="loading-spinner"></div>
+                                                <p class="mt-2">Loading activities...</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="col-lg-4 col-md-4 order-1">
-                                    <div class="row">
-                                        <div class="col-lg-6 col-md-12 col-6 mb-4">
-                                            <div class="card stats-card">
-                                                <div class="card-body">
-                                                    <div class="card-title d-flex align-items-start justify-content-between">
-                                                        <div class="avatar flex-shrink-0">
-                                                            <span class="avatar-initial rounded bg-label-success">
-                                                                <i class="bx bx-task"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <span class="fw-semibold d-block mb-1">Active Jobs</span>
-                                                    <h3 class="card-title mb-2" id="active-jobs">0</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-lg-6 col-md-12 col-6 mb-4">
-                                            <div class="card stats-card">
-                                                <div class="card-body">
-                                                    <div class="card-title d-flex align-items-start justify-content-between">
-                                                        <div class="avatar flex-shrink-0">
-                                                            <span class="avatar-initial rounded bg-label-info">
-                                                                <i class="bx bx-dollar"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <span class="fw-semibold d-block mb-1">Revenue</span>
-                                                    <h3 class="card-title mb-2" id="total-revenue">$0</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
-                            
-                            <!-- Recent Activities -->
-                            <div class="card mt-4">
-                                <h5 class="card-header">Recent Activities</h5>
-                                <div class="card-body">
-                                    <div id="recent-activities">
-                                        <div class="text-center">
-                                            <div class="loading-spinner"></div>
-                                            <p class="mt-2">Loading activities...</p>
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+
+                    <!-- Estimates Section -->
+                    <div id="estimates-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Estimate Requests</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Customer</th>
+                                                <th>Service Type</th>
+                                                <th>Address</th>
+                                                <th>Size</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="estimates-table">
+                                            <tr>
+                                                <td colspan="6" class="text-center">
+                                                    <div class="loading-spinner"></div>
+                                                    <span class="ms-2">Loading estimates...</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Estimates Section -->
-                        <div id="estimates-section" class="content-section" style="display: none;">
-                            <div class="card">
-                                <h5 class="card-header">Estimate Requests</h5>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-borderless">
-                                            <thead>
-                                                <tr>
-                                                    <th>Customer</th>
-                                                    <th>Service Type</th>
-                                                    <th>Address</th>
-                                                    <th>Size</th>
-                                                    <th>Status</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="estimates-table">
-                                                <tr>
-                                                    <td colspan="6" class="text-center">
-                                                        <div class="loading-spinner"></div>
-                                                        <p class="mt-2">Loading estimates...</p>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                    <!-- Jobs Section -->
+                    <div id="jobs-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Scheduled Jobs</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Job scheduling functionality</p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Jobs Section -->
-                        <div id="jobs-section" class="content-section" style="display: none;">
-                            <div class="card">
-                                <h5 class="card-header">Scheduled Jobs</h5>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-borderless">
-                                            <thead>
-                                                <tr>
-                                                    <th>Job Title</th>
-                                                    <th>Customer</th>
-                                                    <th>Start Date</th>
-                                                    <th>Status</th>
-                                                    <th>Cost</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="jobs-table">
-                                                <tr>
-                                                    <td colspan="6" class="text-center">
-                                                        <div class="loading-spinner"></div>
-                                                        <p class="mt-2">Loading jobs...</p>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                    <!-- Customers Section -->
+                    <div id="customers-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Customer Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Customer management functionality</p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Customers Section -->
-                        <div id="customers-section" class="content-section" style="display: none;">
-                            <div class="card">
-                                <h5 class="card-header">Customer Management</h5>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-borderless">
-                                            <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>Email</th>
-                                                    <th>Phone</th>
-                                                    <th>Address</th>
-                                                    <th>Projects</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="customers-table">
-                                                <tr>
-                                                    <td colspan="6" class="text-center">
-                                                        <div class="loading-spinner"></div>
-                                                        <p class="mt-2">Loading customers...</p>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                    <!-- Maps Section -->
+                    <div id="maps-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Service Area Management</h5>
                             </div>
-                        </div>
-
-                        <!-- Maps Section -->
-                        <div id="maps-section" class="content-section" style="display: none;">
-                            <div class="card">
-                                <h5 class="card-header">Service Area Management</h5>
-                                <div class="card-body">
-                                    <p>Manage service areas and visualize project locations on the map.</p>
-                                    <div id="admin-map" class="map-container"></div>
+                            <div class="card-body">
+                                <p>Service area maps and management</p>
+                                <div id="admin-map" style="height: 400px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="text-muted">Map will load here</span>
                                 </div>
                             </div>
                         </div>
@@ -345,8 +432,8 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://demos.themeselection.com/vuexy-html-admin-template/assets/vendor/js/bootstrap.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./admin.js"></script>
 </body>
 </html>
