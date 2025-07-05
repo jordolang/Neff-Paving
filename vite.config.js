@@ -41,7 +41,8 @@ export default defineConfig(({ mode }) => ({
     // Copy blog posts and JSON to dist
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html')
+        main: resolve(__dirname, 'index.html'),
+        admin: resolve(__dirname, 'admin/index.html')  // Add admin entry point
       },
       output: {
         assetFileNames: (assetInfo) => {

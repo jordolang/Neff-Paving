@@ -66,6 +66,8 @@
     body {
       font-family: 'Oswald', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
+    
+    /* Fallback fonts and basic styling */
     </style>
     
     <!-- Stylesheet -->
@@ -166,8 +168,8 @@
       ]
     }
     </script>
-  <script type="module" crossorigin src="/Neff-Paving/assets/main-B_By9hxx.js"></script>
-  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/main-7SWjugC9.css">
+  <script type="module" crossorigin src="/Neff-Paving/assets/main-NzePpbp7.js"></script>
+  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/main-DTyP-ILZ.css">
 </head>
 <body>
     <div id="app">
@@ -202,6 +204,16 @@
                     <a href="https://twitter.com/neffpaving" target="_blank" aria-label="X (Twitter)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                    <a href="/admin" 
+                       class="admin-link" 
+                       aria-label="Admin Panel Access" 
+                       role="button" 
+                       tabindex="0"
+                       data-tooltip="Admin Panel">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                         </svg>
                     </a>
                 </div>
@@ -1504,5 +1516,18 @@
         });
     </script>
     
+    
+    <script>
+        document.querySelector('.admin-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Check if already authenticated
+            const isAuthenticated = localStorage.getItem('neffPavingAdminAuth');
+            if (isAuthenticated) {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/admin/login';
+            }
+        });
+    </script>
 </body>
 </html>

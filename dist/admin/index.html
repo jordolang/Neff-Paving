@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neff Paving - Admin Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #7367f0;
+            --secondary-color: #82868b;
+            --success-color: #28c76f;
+            --info-color: #00cfe8;
+            --warning-color: #ff9f43;
+            --danger-color: #ea5455;
+            --dark-color: #4b4b4b;
+            --light-color: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a54d9 100%);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .sidebar .brand {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        .sidebar .brand h4 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats-card {
+            transition: transform 0.2s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #f0f2f5;
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a54d9 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h3 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .avatar-initial {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .bg-label-primary { background-color: var(--primary-color); }
+        .bg-label-success { background-color: var(--success-color); }
+        .bg-label-info { background-color: var(--info-color); }
+        .bg-label-warning { background-color: var(--warning-color); }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: var(--dark-color);
+            background-color: #f8f9fa;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <!-- Login Screen (shown by default) -->
+        <div id="login-screen">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <h3>Neff Paving Admin</h3>
+                        <p class="text-muted">Please sign-in to your account</p>
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard (hidden by default) -->
+        <div id="admin-dashboard" style="display: none;">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="brand">
+                    <h4>Neff Paving</h4>
+                    <small>Admin Panel</small>
+                </div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="dashboard">
+                            <i>📊</i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="estimates">
+                            <i>📋</i> Estimates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="jobs">
+                            <i>⚒️</i> Jobs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="customers">
+                            <i>👥</i> Customers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="maps">
+                            <i>🗺️</i> Service Areas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Top Navbar -->
+                <nav class="navbar navbar-expand-lg">
+                    <div class="container-fluid">
+                        <span class="navbar-brand">Admin Dashboard</span>
+                        <div class="navbar-nav ms-auto">
+                            <div class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                    <div class="avatar-initial bg-label-primary me-2">A</div>
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="adminDashboard.logout()">Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                <!-- Content Sections -->
+                <div class="container-fluid p-4">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard-section" class="content-section active">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h2>Welcome to Admin Dashboard! 🎉</h2>
+                                <p class="text-muted">Manage your paving business efficiently</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-success mb-2">📋</div>
+                                        <h5 class="card-title">Active Jobs</h5>
+                                        <h3 id="active-jobs">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-info mb-2">💰</div>
+                                        <h5 class="card-title">Revenue</h5>
+                                        <h3 id="total-revenue">$0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-warning mb-2">📄</div>
+                                        <h5 class="card-title">Pending Estimates</h5>
+                                        <h3 id="pending-estimates">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stats-card">
+                                    <div class="card-body text-center">
+                                        <div class="avatar-initial bg-label-primary mb-2">📊</div>
+                                        <h5 class="card-title">Total Projects</h5>
+                                        <h3 id="total-projects">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Recent Activities</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="recent-activities">
+                                            <div class="text-center">
+                                                <div class="loading-spinner"></div>
+                                                <p class="mt-2">Loading activities...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estimates Section -->
+                    <div id="estimates-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Estimate Requests</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Customer</th>
+                                                <th>Service Type</th>
+                                                <th>Address</th>
+                                                <th>Size</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="estimates-table">
+                                            <tr>
+                                                <td colspan="6" class="text-center">
+                                                    <div class="loading-spinner"></div>
+                                                    <span class="ms-2">Loading estimates...</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jobs Section -->
+                    <div id="jobs-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Scheduled Jobs</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Job scheduling functionality</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customers Section -->
+                    <div id="customers-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Customer Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Customer management functionality</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Maps Section -->
+                    <div id="maps-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Service Area Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Service area maps and management</p>
+                                <div id="admin-map" style="height: 400px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="text-muted">Map will load here</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./admin.js"></script>
+</body>
+</html>

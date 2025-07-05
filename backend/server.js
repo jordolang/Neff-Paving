@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { Pool } = require('pg');
 require('dotenv').config();
 
@@ -19,12 +20,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Add after existing middleware
+app.use('/admin', express.static(path.join(__dirname, '../dist/admin')));
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/estimates', require('./routes/estimates'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/maps', require('./routes/maps'));
+
+// Add catch-all route for admin SPA
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/admin/index.html'));
+});
 
 // Health check
 app.get('/api/health', async (req, res) => {
