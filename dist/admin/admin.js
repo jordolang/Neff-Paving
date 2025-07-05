@@ -1,6 +1,9 @@
 class AdminDashboard {
     constructor() {
-        this.apiBase = 'http://localhost:8001/api';
+        // Use production URL when deployed to Vercel, localhost for development
+        this.apiBase = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8001/api'
+            : `${window.location.protocol}//${window.location.hostname}/api`;
         this.token = localStorage.getItem('admin_token');
         this.currentSection = 'dashboard';
         

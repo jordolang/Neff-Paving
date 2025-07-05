@@ -264,14 +264,14 @@ class NeffPavingApp {
             }, '-=0.4')
         
         // Services section animations
-        gsap.from('.services-grid .service-card', {
+        gsap.from('.asphalt-service-grid .service-card, .concrete-service-container .service-card', {
             y: 80,
             opacity: 0,
             duration: 1,
             stagger: 0.2,
             ease: 'power3.out',
             scrollTrigger: {
-                trigger: '.services-grid',
+                trigger: '.services-section',
                 start: 'top 80%',
                 toggleActions: 'play none none reverse'
             }
