@@ -96,7 +96,9 @@ class AdminDashboard {
             if (result.success) {
                 localStorage.setItem('admin_token', result.token);
                 this.token = result.token;
-                location.reload(); // Reload to show main interface
+                
+                // Instead of reloading, show the admin interface
+                this.showAdminInterface();
             } else {
                 alert('Login failed: ' + result.message);
             }
@@ -104,6 +106,235 @@ class AdminDashboard {
             console.error('Login error:', error);
             alert('Login failed. Please try again.');
         }
+    }
+
+    showAdminInterface() {
+        // Replace the login page with the full admin interface
+        document.body.innerHTML = `
+            <div class="layout-wrapper layout-content-navbar">
+                <div class="layout-container">
+                    <!-- Menu -->
+                    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                        <div class="app-brand demo">
+                            <a href="#" class="app-brand-link">
+                                <span class="app-brand-text demo menu-text fw-bolder ms-2">Neff Paving</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-inner-shadow"></div>
+
+                        <ul class="menu-inner py-1">
+                            <li class="menu-item active">
+                                <a href="#dashboard" class="menu-link" data-section="dashboard">
+                                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                                    <div data-i18n="Analytics">Dashboard</div>
+                                </a>
+                            </li>
+                            
+                            <li class="menu-item">
+                                <a href="#estimates" class="menu-link" data-section="estimates">
+                                    <i class="menu-icon tf-icons bx bx-file"></i>
+                                    <div data-i18n="Estimates">Estimates</div>
+                                </a>
+                            </li>
+                            
+                            <li class="menu-item">
+                                <a href="#jobs" class="menu-link" data-section="jobs">
+                                    <i class="menu-icon tf-icons bx bx-task"></i>
+                                    <div data-i18n="Jobs">Jobs</div>
+                                </a>
+                            </li>
+                            
+                            <li class="menu-item">
+                                <a href="#customers" class="menu-link" data-section="customers">
+                                    <i class="menu-icon tf-icons bx bx-user"></i>
+                                    <div data-i18n="Customers">Customers</div>
+                                </a>
+                            </li>
+                            
+                            <li class="menu-item">
+                                <a href="#maps" class="menu-link" data-section="maps">
+                                    <i class="menu-icon tf-icons bx bx-map"></i>
+                                    <div data-i18n="Maps">Service Areas</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </aside>
+
+                    <!-- Layout container -->
+                    <div class="layout-page">
+                        <!-- Navbar -->
+                        <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                            <div class="navbar-nav-right d-flex align-items-center">
+                                <span class="fw-semibold d-none d-sm-block">Admin Panel</span>
+                                
+                                <ul class="navbar-nav flex-row align-items-center ms-auto">
+                                    <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                        <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);">
+                                            <div class="avatar avatar-online">
+                                                <span class="avatar-initial rounded-circle bg-label-primary">A</span>
+                                            </div>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="javascript:void(0);" onclick="adminDashboard.logout()">
+                                                    <i class="bx bx-power-off me-2"></i>
+                                                    <span class="align-middle">Log Out</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+
+                        <!-- Content wrapper -->
+                        <div class="content-wrapper">
+                            <!-- Content -->
+                            <div class="container-xxl flex-grow-1 container-p-y">
+                                <!-- Dashboard Section -->
+                                <div id="dashboard-section" class="content-section">
+                                    <div class="row">
+                                        <div class="col-lg-8 mb-4 order-0">
+                                            <div class="card">
+                                                <div class="d-flex align-items-end row">
+                                                    <div class="col-sm-7">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title text-primary">Welcome to Admin Dashboard! 🎉</h5>
+                                                            <p class="mb-4">
+                                                                You have <span class="fw-bold" id="pending-estimates">0</span> pending estimates.
+                                                                Check your estimates and manage your projects efficiently.
+                                                            </p>
+                                                            <a href="#estimates" class="btn btn-sm btn-outline-primary" data-section="estimates">View Estimates</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-4 col-md-4 order-1">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-12 col-6 mb-4">
+                                                    <div class="card stats-card">
+                                                        <div class="card-body">
+                                                            <div class="card-title d-flex align-items-start justify-content-between">
+                                                                <div class="avatar flex-shrink-0">
+                                                                    <span class="avatar-initial rounded bg-label-success">
+                                                                        📋
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <span class="fw-semibold d-block mb-1">Active Jobs</span>
+                                                            <h3 class="card-title mb-2" id="active-jobs">0</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-lg-6 col-md-12 col-6 mb-4">
+                                                    <div class="card stats-card">
+                                                        <div class="card-body">
+                                                            <div class="card-title d-flex align-items-start justify-content-between">
+                                                                <div class="avatar flex-shrink-0">
+                                                                    <span class="avatar-initial rounded bg-label-info">
+                                                                        💰
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <span class="fw-semibold d-block mb-1">Revenue</span>
+                                                            <h3 class="card-title mb-2" id="total-revenue">$0</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Recent Activities -->
+                                    <div class="card mt-4">
+                                        <h5 class="card-header">Recent Activities</h5>
+                                        <div class="card-body">
+                                            <div id="recent-activities">
+                                                <div class="text-center">
+                                                    <div class="loading-spinner"></div>
+                                                    <p class="mt-2">Loading activities...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Estimates Section -->
+                                <div id="estimates-section" class="content-section" style="display: none;">
+                                    <div class="card">
+                                        <h5 class="card-header">Estimate Requests</h5>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-borderless">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Customer</th>
+                                                            <th>Service Type</th>
+                                                            <th>Address</th>
+                                                            <th>Size</th>
+                                                            <th>Status</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="estimates-table">
+                                                        <tr>
+                                                            <td colspan="6" class="text-center">
+                                                                <div class="loading-spinner"></div>
+                                                                <p class="mt-2">Loading estimates...</p>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Jobs Section -->
+                                <div id="jobs-section" class="content-section" style="display: none;">
+                                    <div class="card">
+                                        <h5 class="card-header">Scheduled Jobs</h5>
+                                        <div class="card-body">
+                                            <div id="jobs-content">Loading jobs...</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customers Section -->
+                                <div id="customers-section" class="content-section" style="display: none;">
+                                    <div class="card">
+                                        <h5 class="card-header">Customer Management</h5>
+                                        <div class="card-body">
+                                            <div id="customers-content">Loading customers...</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Maps Section -->
+                                <div id="maps-section" class="content-section" style="display: none;">
+                                    <div class="card">
+                                        <h5 class="card-header">Service Area Management</h5>
+                                        <div class="card-body">
+                                            <p>Manage service areas and visualize project locations on the map.</p>
+                                            <div id="admin-map" class="map-container"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Re-setup event listeners
+        this.setupEventListeners();
+        this.showSection('dashboard');
+        this.loadDashboardData();
     }
 
     setupEventListeners() {
