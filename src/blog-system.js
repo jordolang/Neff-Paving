@@ -380,5 +380,10 @@ class BlogSystem {
 }
 
 // Export for use in other modules
-window.BlogSystem = BlogSystem;
-window.SimpleMarkdownParser = SimpleMarkdownParser;
+export { BlogSystem, SimpleMarkdownParser };
+
+// Also attach to window for backward compatibility
+if (typeof window !== 'undefined') {
+    window.BlogSystem = BlogSystem;
+    window.SimpleMarkdownParser = SimpleMarkdownParser;
+}
