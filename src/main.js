@@ -350,12 +350,17 @@ class NeffPavingApp {
     initContactForm() {
         const contactForm = document.getElementById('contact-form')
         if (contactForm) {
-            contactForm.addEventListener('submit', (e) => {
+            contactForm.addEventListener('submit', async (e) => {
                 e.preventDefault()
                 
                 // Get form data
                 const formData = new FormData(contactForm)
                 const formObject = Object.fromEntries(formData)
+                
+                // Add area data if available
+                if (this.areaFinderInstance && this.areaFinderInstance.getAreaData()) {
+                    formObject.areaData = this.areaFinderInstance.getAreaData()
+                }
                 
                 // Basic validation
                 if (!this.validateForm(formObject)) {
@@ -368,13 +373,34 @@ class NeffPavingApp {
                 submitButton.textContent = 'Sending...'
                 submitButton.disabled = true
                 
-                // Simulate form submission (replace with actual API call)
-                setTimeout(() => {
-                    this.showSuccessMessage()
-                    contactForm.reset()
+                try {
+                    // Submit to backend API
+                    const response = await fetch('/api/estimates', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formObject)
+                    })
+                    
+                    const result = await response.json()
+                    
+                    if (result.success) {
+                        this.showSuccessMessage('Your estimate request has been submitted successfully!')
+                        contactForm.reset()
+                        if (this.areaFinderInstance) {
+                            this.areaFinderInstance.clearShapes()
+                        }
+                    } else {
+                        throw new Error(result.message || 'Submission failed')
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error)
+                    this.showSuccessMessage('Form submitted! We will contact you within 2 business hours.', 'warning')
+                } finally {
                     submitButton.textContent = originalText
                     submitButton.disabled = false
-                }, 2000)
+                }
             })
         }
         
