@@ -2702,6 +2702,16 @@ img[src]:not([src=""]) ~ *::before {
         height: 16px;
     }
     
+    .social-links .admin-link {
+        margin-left: 1rem;
+        padding-left: 1rem;
+    }
+    
+    .social-links .admin-link svg {
+        width: 20px;
+        height: 20px;
+    }
+    
     .team-grid,
     .cert-grid,
     .contact-methods {
@@ -2775,4 +2785,25 @@ img[src]:not([src=""]) ~ *::before {
     .reasons-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Tooltip styles for accessibility */
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
 }
