@@ -35,7 +35,9 @@ jobs:
       run: npm ci
     
     - name: Build
-      run: npm run build
+      run: |
+        echo "VITE_PLATFORM=github" >> .env
+        npm run build:github
       env:
         VITE_DEPLOY_TIME: ${{ github.run_number }}
         VITE_BUILD_TIMESTAMP: ${{ github.event.head_commit.timestamp }}

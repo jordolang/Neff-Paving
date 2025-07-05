@@ -11,6 +11,10 @@ import { inject } from '@vercel/analytics'
 import { BlogSystem } from './blog-system.js';
 import { AreaFinder } from './components/area-finder.js';
 
+// Import asset loading utilities
+import { assetLoader } from './utils/asset-loader.js';
+import { initializeAssetOptimization } from './utils/base-url.js';
+
 // Import animation libraries
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -33,11 +37,17 @@ class NeffPavingApp {
     }
 
     init() {
+        // Initialize asset optimization first
+        initializeAssetOptimization()
+        
         // Initialize Vercel Analytics
         inject()
         
         // Initialize Vercel Speed Insights
         injectSpeedInsights()
+        
+        // Preload critical assets
+        this.preloadCriticalAssets()
         
         this.initLoadingAnimation()
         this.initAnimations()
@@ -53,6 +63,39 @@ class NeffPavingApp {
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
         this.initBlogSystem()
+        this.initLazyLoading()
+    }
+    
+    /**
+     * Preload critical assets for better performance
+     */
+    preloadCriticalAssets() {
+        const criticalAssets = [
+            { path: '/assets/images/hero-bg.jpg', type: 'image', priority: 'high' },
+            { path: '/assets/videos/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
+            { path: '/assets/images/logo.png', type: 'image', priority: 'high' }
+        ];
+        
+        assetLoader.preloadCriticalAssets(criticalAssets);
+    }
+    
+    /**
+     * Initialize lazy loading for images and videos
+     */
+    initLazyLoading() {
+        // Convert existing images to lazy loading
+        document.querySelectorAll('img[src]').forEach(img => {
+            const src = img.src;
+            if (src && !src.startsWith('data:') && !img.hasAttribute('data-no-lazy')) {
+                img.dataset.src = src;
+                img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB2aWV3Qm94PSIwIDAgMSAxIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9IiNGOEY5RkEiIGQ9Ik0wIDBoMXYxSDB6Ii8+PC9zdmc+';
+                img.loading = 'lazy';
+                img.classList.add('lazy-load');
+            }
+        });
+        
+        // Add lazy loading observer
+        assetLoader.addLazyImages();
     }
     
     

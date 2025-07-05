@@ -61,7 +61,10 @@ export default {
     '../src/services/sync-service.js',
     '../src/services/contract-service.js',
     '../src/services/payment-service.js',
-    '../src/services/estimate-service.js'
+    '../src/services/estimate-service.js',
+    '../src/utils/asset-loader.js',
+    '../index.html',
+    '../admin/index.html'
   ],
   
   // Ignore patterns
@@ -124,6 +127,13 @@ export default {
       testMatch: ['<rootDir>/e2e/**/*.test.js'],
       setupFilesAfterEnv: ['<rootDir>/setup/e2e.setup.js'],
       testTimeout: 60000
+    },
+    {
+      displayName: 'Deployment Tests',
+      testMatch: ['<rootDir>/deployment.test.js'],
+      setupFilesAfterEnv: ['<rootDir>/setup/jest.setup.js'],
+      testEnvironment: 'node',
+      testTimeout: 30000
     }
   ]
 };

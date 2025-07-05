@@ -1,3 +1,143 @@
+# Neff Paving Testing Strategy
+
+## Overview
+
+This directory contains comprehensive testing for the Neff Paving website, including deployment platform tests, asset loading verification, routing functionality, and component rendering tests.
+
+## Test Structure
+
+### Deployment Tests (`deployment.test.js`)
+
+The deployment tests ensure that the website is ready for production deployment across different platforms (GitHub Pages, Vercel, etc.).
+
+#### Key Test Areas:
+
+1. **Services Section Rendering**
+   - Verifies services section exists and displays correctly
+   - Tests service categories (asphalt, concrete)
+   - Validates pricing information and contact integration
+   - Checks content quality and completeness
+
+2. **Admin Panel Accessibility**
+   - Tests admin link accessibility and attributes
+   - Validates admin panel structure and navigation
+   - Ensures proper authentication handling
+   - Verifies responsive design and Bootstrap integration
+
+3. **Asset Loading**
+   - Critical CSS and JavaScript asset preloading
+   - Font preloading configuration
+   - Image optimization and lazy loading
+   - Performance optimization verification
+
+4. **Routing Functionality**
+   - Navigation structure validation
+   - Anchor link configuration
+   - Services page redirect setup
+   - SEO metadata and canonical URLs
+
+5. **Performance and Accessibility**
+   - Image alt attributes
+   - Accessibility attributes on interactive elements
+   - Meta tag configuration
+   - Structured data (JSON-LD) validation
+
+## Test Utilities
+
+### Deployment Helpers (`utils/deployment-helpers.js`)
+
+Comprehensive testing utilities for deployment readiness:
+
+- **AssetTestHelper**: Tests asset loading, preloading, and optimization
+- **RoutingTestHelper**: Validates navigation and routing configuration
+- **AdminTestHelper**: Tests admin panel structure and accessibility
+- **ServicesTestHelper**: Validates services section content and functionality
+- **PerformanceTestHelper**: Tests performance optimizations and SEO
+- **DeploymentTestRunner**: Orchestrates complete deployment verification
+
+## Running Tests
+
+### All Tests
+```bash
+npm test
+```
+
+### Deployment Tests Only
+```bash
+npm run test:deployment
+```
+
+### Test Categories
+```bash
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+```
+
+### Coverage Report
+```bash
+npm run test:coverage
+```
+
+### Watch Mode
+```bash
+npm run test:watch
+```
+
+## Automated Checks
+
+The deployment tests automatically verify:
+
+### Asset Loading
+- ✅ CSS stylesheets are properly linked
+- ✅ JavaScript files are loaded
+- ✅ Font preloading is configured
+- ✅ Images have proper loading attributes
+- ✅ Performance optimizations are in place
+
+### Routing Functionality
+- ✅ Navigation links work correctly
+- ✅ Anchor links point to valid sections
+- ✅ Services page redirects properly
+- ✅ Canonical URLs are set
+- ✅ External links open in new tabs
+
+### Admin Panel Access
+- ✅ Admin link is accessible and properly labeled
+- ✅ Authentication handling is implemented
+- ✅ Admin panel structure is complete
+- ✅ Navigation sections are available
+- ✅ Responsive design is configured
+
+### Services Section Rendering
+- ✅ Services section displays all categories
+- ✅ Service details are comprehensive
+- ✅ Pricing information is available
+- ✅ Contact integration works
+- ✅ SEO structure is proper
+
+### Performance and Accessibility
+- ✅ Images have alt attributes
+- ✅ Interactive elements have proper ARIA labels
+- ✅ Meta tags are configured
+- ✅ Structured data is present and valid
+- ✅ Font optimization is enabled
+
+## Dependencies
+
+- **Jest**: Test framework
+- **JSDOM**: DOM environment for Node.js testing
+- **@jest/globals**: Jest global functions for ES modules
+
+## Contributing
+
+When adding new features or making changes:
+
+1. Update deployment tests if they affect routing, assets, or core functionality
+2. Add appropriate test utilities to the helpers file
+3. Ensure all tests pass before deployment
+4. Update this README if test structure changes
+
 # Job Scheduling Test Suite
 
 This comprehensive test suite covers the job scheduling infrastructure for the Neff Paving Company system, testing the complete workflow from contract creation to job completion.
