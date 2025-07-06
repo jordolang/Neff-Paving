@@ -320,49 +320,57 @@
         }
     </style>
     
-    <!-- Fix asset paths for production builds -->
-    <script>
-        // Fix potential asset path issues in production
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            // Production environment fixes
-            const style = document.createElement('style');
-            style.textContent = `
-                /* Force service cards to be visible in production */
-                .services-section * {
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                }
+    <!-- Production fix script -->
+    <script type="module">
+        // Fix for production deployment issues
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force show services section on production builds
+            const servicesSection = document.querySelector('.services-section');
+            if (servicesSection) {
+                servicesSection.style.visibility = 'visible';
+                servicesSection.style.opacity = '1';
                 
-                /* Override any display issues */
-                .service-card,
-                .asphalt-service-grid,
-                .concrete-service-container,
-                .service-hero,
-                .service-hero-content,
-                .asphalt-features-grid,
-                .concrete-features-grid {
-                    display: block !important;
-                    visibility: visible !important;
-                    opacity: 1 !important;
-                }
+                // Force show all service cards
+                const serviceCards = servicesSection.querySelectorAll('.service-card');
+                serviceCards.forEach(card => {
+                    card.style.visibility = 'visible';
+                    card.style.opacity = '1';
+                    card.style.display = 'block';
+                });
                 
-                /* Ensure grid layouts work */
-                .asphalt-service-grid,
-                .concrete-service-container {
-                    display: grid !important;
-                }
+                // Force show grid containers
+                const grids = servicesSection.querySelectorAll('.asphalt-service-grid, .concrete-service-container');
+                grids.forEach(grid => {
+                    grid.style.display = 'grid';
+                    grid.style.visibility = 'visible';
+                    grid.style.opacity = '1';
+                });
                 
-                .asphalt-features-grid,
-                .concrete-features-grid {
-                    display: grid !important;
-                }
+                // Force show feature grids
+                const featureGrids = servicesSection.querySelectorAll('.asphalt-features-grid, .concrete-features-grid');
+                featureGrids.forEach(grid => {
+                    grid.style.display = 'grid';
+                    grid.style.visibility = 'visible';
+                    grid.style.opacity = '1';
+                });
                 
-                .service-hero {
-                    display: flex !important;
-                }
-            `;
-            document.head.appendChild(style);
-        }
+                // Force show service heroes
+                const heroes = servicesSection.querySelectorAll('.service-hero');
+                heroes.forEach(hero => {
+                    hero.style.display = 'flex';
+                    hero.style.visibility = 'visible';
+                    hero.style.opacity = '1';
+                });
+            }
+            
+            // Disable Google Maps to prevent errors
+            if (typeof google !== 'undefined') {
+                // Maps is loaded, we can continue
+            } else {
+                // Prevent map initialization errors
+                window.google = window.google || {};
+            }
+        });
     </script>
     <script type="application/ld+json">
     {
