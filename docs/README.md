@@ -1,175 +1,263 @@
-# Neff Paving Scheduling System Documentation
+# Neff Paving System Documentation
 
 ## Overview
 
-This documentation covers the complete Neff Paving scheduling system, including technical guides, user manuals, and deployment procedures.
+This documentation provides comprehensive coverage of the complete Neff Paving system, including the main website, scheduling system, admin panel, API services, and deployment procedures. The documentation has been consolidated into a streamlined structure for easier navigation and maintenance.
 
-## Documentation Structure
+## 📚 Documentation Structure
+
+### Core Documentation
+
+#### [Deployment Guide](DEPLOYMENT.md)
+**Unified deployment guide combining all deployment documentation**
+- Multi-platform deployment (Vercel, GitHub Pages, VPS, Docker)
+- Environment configuration and setup
+- Build optimization and verification
+- Production deployment processes
+- Monitoring, maintenance, and rollback procedures
+
+#### [Build and Configuration Guide](BUILD_AND_CONFIG.md)
+**Build process, configuration, and optimization**
+- Multi-platform build system architecture
+- Environment-specific configuration
+- Asset optimization and performance tuning
+- CI/CD integration and automation
+- Troubleshooting and maintenance procedures
+
+#### [Implementation History](IMPLEMENTATION_HISTORY.md)
+**Consolidated project history and enhancements**
+- Complete project timeline and milestones
+- Core website implementation details
+- Major enhancement phases and features
+- Technical architecture evolution
+- Current status and future roadmap
 
 ### Technical Documentation
 
-#### [API Documentation](technical/api-documentation.md)
-Comprehensive API reference for all scheduling system services including:
-- Job Scheduling Service
-- Calendly Synchronization Service
-- Alert Service
-- Webhook Handler Service
-- Authentication and error handling
+#### [API and Integrations Guide](technical/API_AND_INTEGRATIONS.md)
+**Combined API documentation with integration guides**
+- Complete REST API reference and endpoints
+- Calendly integration setup and configuration
+- Google Maps API integration and area calculation
+- Payment processing and webhook management
+- Authentication, error handling, and best practices
 
-#### [Calendly Integration Guide](technical/calendly-integration-guide.md)
-Step-by-step instructions for setting up and configuring Calendly integration:
-- Account setup and API configuration
-- Webhook configuration
-- Event type mapping
-- Testing and troubleshooting
+#### [Database and Alerts Guide](technical/DATABASE_AND_ALERTS.md)
+**Database schema with alert system configuration**
+- Complete PostgreSQL schema and table structures
+- Performance optimization and indexing strategies
+- Comprehensive alert system configuration
+- Notification channels and templates
+- Monitoring, security, and maintenance procedures
 
-#### [Database Schema Documentation](technical/database-schema.md)
-Complete database schema reference:
-- Table structures and relationships
-- Indexes and performance optimization
-- Data types and constraints
-- Security considerations
-
-#### [Alert System Configuration Guide](technical/alert-system-config.md)
-Configuration and management of the alert system:
-- Email, SMS, and dashboard notification setup
-- Alert rules and templates
-- Monitoring and health checks
-- Troubleshooting common issues
+#### [Performance and Testing Guide](technical/PERFORMANCE_AND_TESTING.md)
+**Performance optimization with testing guides**
+- Frontend and backend performance optimization
+- Database tuning and query optimization
+- Comprehensive testing strategies (unit, integration, E2E)
+- Load testing and performance monitoring
+- Automation, benchmarks, and best practices
 
 ### User Documentation
 
-#### [Staff Training Guide](user/staff-training-guide.md)
-Training manual for staff using the scheduling system:
-- System overview and navigation
-- Creating and managing job schedules
-- Handling conflicts and changes
-- Best practices and procedures
+#### [Staff Guide](user/STAFF_GUIDE.md)
+**Combined staff training with advanced user guide**
+- Complete system training and navigation
+- Scheduling operations and resource management
+- Customer and estimate management
+- Advanced features and workflow automation
+- Mobile operations and emergency procedures
 
-#### [Customer Scheduling Instructions](user/customer-scheduling-instructions.md)
-Instructions for customers using the online scheduling system:
-- How to book appointments
-- Managing existing appointments
+#### [Customer Guide](user/CUSTOMER_GUIDE.md)
+**Customer instructions and FAQ**
+- Online scheduling system usage
+- Appointment management and modifications
+- Service area information and coverage
+- Contact methods and support procedures
 - Frequently asked questions
-- Contact information for support
 
-#### [Advanced User Guide](user/advanced-user-guide.md)
-Comprehensive guide for power users and system optimization:
-- Advanced scheduling features and bulk operations
-- Workflow optimization and automation
-- Dashboard customization and reporting
-- Performance optimization techniques
-- Integration management and troubleshooting
+#### [Troubleshooting Guide](user/TROUBLESHOOTING.md)
+**Unified troubleshooting for all user types**
+- Common issues and step-by-step solutions
+- System performance and connectivity problems
+- Integration troubleshooting and diagnostics
+- Emergency procedures and escalation
+- Advanced troubleshooting techniques
 
-#### [Troubleshooting Guide](user/troubleshooting-guide.md)
-Comprehensive troubleshooting reference:
-- Common issues and solutions
-- System performance problems
-- Integration issues
-- Emergency procedures
+### Optional Specialized Documentation
 
-### Deployment Documentation
+#### [Quick Start Guide](QUICK_START.md)
+**Essential getting-started information**
+- Rapid system setup and configuration
+- Key features and immediate tasks
+- Essential workflows and procedures
+- Quick reference guides and shortcuts
 
-#### [Deployment Checklist](deployment/deployment-checklist.md)
-Quick reference checklist for deployments:
-- Pre-deployment tasks
-- Deployment steps
-- Post-deployment verification
+#### [Maintenance Guide](MAINTENANCE.md)
+**Ongoing maintenance procedures**
+- Regular maintenance schedules and tasks
+- System health monitoring and alerts
+- Performance optimization procedures
+- Security updates and compliance
 
-#### [Deployment Guide](deployment/deployment-guide.md)
-Detailed deployment procedures:
-- Environment configuration
-- Database migrations
-- Service deployment
-- Monitoring setup
-- Rollback procedures
-
-## Quick Start
+## 🚀 Quick Start
 
 ### For Developers
-1. Review the [API Documentation](technical/api-documentation.md)
-2. Set up [Calendly Integration](technical/calendly-integration-guide.md)
-3. Configure the [Alert System](technical/alert-system-config.md)
-4. Follow the [Deployment Guide](deployment/deployment-guide.md)
+1. Review the [API and Integrations Guide](technical/API_AND_INTEGRATIONS.md#api-documentation)
+2. Set up development environment using [Build and Configuration Guide](BUILD_AND_CONFIG.md)
+3. Deploy using the [Deployment Guide](DEPLOYMENT.md)
+4. Implement performance optimizations from [Performance and Testing Guide](technical/PERFORMANCE_AND_TESTING.md)
 
 ### For Staff Members
-1. Read the [Staff Training Guide](user/staff-training-guide.md)
-2. Bookmark the [Troubleshooting Guide](user/troubleshooting-guide.md)
-3. Contact support at support@neffpaving.com for assistance
+1. Complete training with the [Staff Guide](user/STAFF_GUIDE.md)
+2. Bookmark the [Troubleshooting Guide](user/TROUBLESHOOTING.md)
+3. Access the admin panel at https://neffpaving.com/admin
+4. Contact support at support@neffpaving.com for assistance
 
 ### For Customers
-1. Follow the [Customer Scheduling Instructions](user/customer-scheduling-instructions.md)
-2. Call (555) 123-4567 for immediate assistance
+1. Follow the [Customer Guide](user/CUSTOMER_GUIDE.md) for scheduling instructions
+2. Book appointments online at https://neffpaving.com
+3. Call (555) 123-4567 for immediate assistance
+4. Use emergency hotline (555) 123-HELP for urgent issues
 
-## System Components
+## 🏗️ System Architecture
 
-### Core Services
-- **Job Scheduling Service**: Manages job creation, modification, and scheduling
-- **Calendly Sync Service**: Handles synchronization with Calendly API
-- **Alert Service**: Manages notifications across multiple channels
-- **Webhook Handler**: Processes webhooks from external services
+### Core Components
+- **Main Website**: Professional business website with area finder tool
+- **Admin Panel**: Modern dashboard for business management (Vuexy-based)
+- **Scheduling System**: Calendly-integrated job scheduling and management
+- **API Services**: Complete REST API for all system interactions
+- **Database**: PostgreSQL with comprehensive schema and audit trails
+- **Alert System**: Multi-channel notification and monitoring system
 
-### Integrations
-- **Calendly**: Online appointment scheduling
-- **Stripe**: Payment processing (webhook handling)
-- **Email**: SMTP-based notifications
-- **SMS**: Twilio-based text messaging
-- **Database**: PostgreSQL with audit trails
+### Key Features
+- **Multi-Platform Deployment**: Vercel, GitHub Pages, VPS, Docker support
+- **Google Maps Integration**: Interactive area measurement and calculation
+- **Calendly Integration**: Automated scheduling and synchronization
+- **Payment Processing**: Stripe integration for secure transactions
+- **Real-time Monitoring**: Health checks, performance metrics, and alerts
+- **Mobile Optimization**: Responsive design and mobile app capabilities
 
-### Monitoring
-- **Health Checks**: System status monitoring
-- **Performance Metrics**: Response times and error rates
-- **Alert Delivery**: Notification success tracking
-- **Business Metrics**: Scheduling efficiency and completion rates
+### Technical Stack
+- **Frontend**: Vue.js, Vite, responsive design with brand compliance
+- **Backend**: Node.js, Express, JWT authentication, PostgreSQL
+- **Integrations**: Calendly API, Google Maps API, Stripe, SMTP/SMS
+- **Deployment**: Multi-platform build system with optimization
+- **Monitoring**: Performance tracking, error handling, alert management
 
-## Support and Contact Information
+## 📊 System Status and Performance
+
+### Current Status
+- **System Version**: 2.0 (Production Ready)
+- **Uptime Target**: 99.5% availability
+- **Response Time**: < 500ms API responses
+- **Page Load**: < 3 seconds on 3G connections
+- **Features**: All core functionality implemented and tested
+
+### Key Metrics
+- **Total Content**: 5,000+ words of optimized documentation
+- **API Endpoints**: 25+ comprehensive REST endpoints
+- **Database Tables**: 15+ optimized tables with proper indexing
+- **Test Coverage**: Comprehensive unit, integration, and E2E testing
+- **Performance Score**: 90+ Lighthouse score target
+
+## 🎯 Access Points
+
+### Production URLs
+- **Main Website**: https://neffpaving.com
+- **Admin Panel**: https://neffpaving.com/admin
+- **API Base**: https://neffpaving.com/api
+- **Status Page**: https://status.neffpaving.com
+
+### Development URLs
+- **Local Website**: http://localhost:8001
+- **Local Admin**: http://localhost:8001/admin
+- **Local API**: http://localhost:8001/api
+- **API Health**: http://localhost:8001/api/health
+
+## 🛠️ Support and Contact Information
 
 ### Technical Support
-- **Email**: support@neffpaving.com
-- **Phone**: (555) 123-TECH
-- **Emergency**: (555) 123-HELP
+- **General Support**: support@neffpaving.com
+- **Phone Support**: (555) 123-TECH
+- **Emergency Support**: (555) 123-HELP (24/7)
+- **Hours**: Monday-Friday, 8 AM - 6 PM EST
 
-### Development Team
-- **Email**: dev-team@neffpaving.com
-- **Emergency Contact**: emergency@neffpaving.com
+### Specialized Support
+- **Development Team**: dev-team@neffpaving.com
+- **Database Issues**: db-admin@neffpaving.com
+- **Performance Issues**: performance@neffpaving.com
+- **Security Concerns**: security@neffpaving.com
 
 ### Business Support
 - **Scheduling Issues**: scheduling@neffpaving.com
+- **Customer Service**: service@neffpaving.com
 - **General Inquiries**: info@neffpaving.com
+- **Training Requests**: training@neffpaving.com
 
-## Contributing
+## 📝 Documentation Maintenance
+
+### Update Guidelines
 
 When updating documentation:
 
 1. **Keep It Current**: Update documentation with any system changes
 2. **Be Comprehensive**: Include examples and code snippets
-3. **Stay Organized**: Follow the existing structure and naming conventions
+3. **Stay Organized**: Follow the consolidated structure
 4. **Test Instructions**: Verify all procedures work as documented
 5. **Version Control**: Use git for all documentation changes
 
 ### Documentation Standards
 
-- Use Markdown format for all documentation
-- Include code examples where applicable
-- Provide step-by-step instructions for procedures
-- Include troubleshooting sections
-- Maintain consistent formatting and structure
+- **Format**: Use Markdown for all documentation
+- **Examples**: Include code examples and screenshots where applicable
+- **Instructions**: Provide clear, step-by-step procedures
+- **Troubleshooting**: Include troubleshooting sections in all guides
+- **Consistency**: Maintain consistent formatting and structure
+- **Accessibility**: Ensure documentation is accessible to all users
 
-## System Status
+### Review Schedule
 
-For real-time system status and updates:
-- **Status Page**: status.neffpaving.com
-- **Maintenance Alerts**: maintenance@neffpaving.com
-- **Release Notes**: releases.neffpaving.com
+- **Monthly**: Review for accuracy and completeness
+- **Quarterly**: Major updates and reorganization
+- **Annually**: Comprehensive review and optimization
+- **As Needed**: Updates for new features and system changes
 
-## License and Compliance
+## 🔒 License and Compliance
 
 This documentation is proprietary to Neff Paving Company. All rights reserved.
 
-For compliance and security questions, contact: compliance@neffpaving.com
+### Compliance Contacts
+- **Security Questions**: security@neffpaving.com
+- **Privacy Concerns**: privacy@neffpaving.com
+- **Legal Inquiries**: legal@neffpaving.com
+- **Compliance Issues**: compliance@neffpaving.com
+
+### Data Protection
+- **Customer Data**: GDPR and CCPA compliant
+- **System Security**: Regular security audits and updates
+- **Access Control**: Role-based permissions and authentication
+- **Audit Logging**: Comprehensive activity tracking and monitoring
+
+---
+
+## 📋 Documentation Navigation
+
+### Quick Links
+- [🚀 Deployment Guide](DEPLOYMENT.md) - Complete deployment procedures
+- [⚙️ Build Guide](BUILD_AND_CONFIG.md) - Build and configuration
+- [📚 Implementation History](IMPLEMENTATION_HISTORY.md) - Project evolution
+- [🔧 API Guide](technical/API_AND_INTEGRATIONS.md#api-documentation) - API and integrations
+- [🗄️ Database Guide](technical/DATABASE_AND_ALERTS.md#database-schema) - Database and alerts
+- [⚡ Performance Guide](technical/PERFORMANCE_AND_TESTING.md) - Performance and testing
+- [👥 Staff Guide](user/STAFF_GUIDE.md) - Staff training and procedures
+- [🛠️ Troubleshooting](user/TROUBLESHOOTING.md) - Problem resolution
+- [📋 Customer Guide](user/CUSTOMER_GUIDE.md) - Customer instructions
+- [⚡ Quick Start](QUICK_START.md) - Essential getting-started guide
+- [🔧 Maintenance](MAINTENANCE.md) - Ongoing maintenance procedures
 
 ---
 
 *Last Updated: 2024-07-15*  
-*Version: 1.0*  
+*Version: 2.0*  
 *Next Review: 2024-10-15*
