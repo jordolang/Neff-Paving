@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-07-06T16:02:24.065Z",
+  "results": {
+    "phase1": {
+      "css": true,
+      "minification": false,
+      "splitting": false
+    },
+    "phase2": {
+      "images": false,
+      "compression": true,
+      "formats": false
+    },
+    "phase3": {
+      "assetPaths": false,
+      "caching": false,
+      "preloading": false
+    },
+    "errors": []
+  },
+  "recommendations": [
+    "Add WebP format support for images",
+    "Enable enhanced asset processor in vite.config.js",
+    "Implement cache busting for assets",
+    "Add intelligent asset preloading"
+  ]
+}

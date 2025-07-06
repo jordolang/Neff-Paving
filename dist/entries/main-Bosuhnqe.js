@@ -485,7 +485,7 @@ if (typeof window !== "undefined") {
   window.SimpleMarkdownParser = SimpleMarkdownParser;
 }
 const GOOGLE_MAPS_CONFIG = {
-  apiKey: "AIzaSyAmDOZqIBCkAZuQhpsfU7kaFDE3TRcDr4k",
+  apiKey: "AIzaSyDwtECO1lWeBHEBR7oAXNw5G3OYar68ySk",
   libraries: ["drawing", "geometry", "places"]
 };
 const DEFAULT_MAP_OPTIONS = {
@@ -1109,12 +1109,12 @@ class AreaFinder {
     this.container.innerHTML = "";
   }
 }
-const BASE_URL = "/";
-const DEPLOY_MODE = "vercel";
-const BUILD_TIMESTAMP = "2025-07-06T15:52:16.134Z";
-const DEPLOY_TIME = 1751817136134;
-const IS_VERCEL = true;
-const IS_GITHUB_PAGES = false;
+const BASE_URL = "/Neff-Paving/";
+const DEPLOY_MODE = "github";
+const BUILD_TIMESTAMP = "2025-07-06T16:24:23.946Z";
+const DEPLOY_TIME = 1751819063946;
+const IS_VERCEL = false;
+const IS_GITHUB_PAGES = true;
 const shouldDebug = typeof window !== "undefined" && window.location.search.includes("debug=assets");
 if (shouldDebug) {
   console.group("🛠️ Build-time Variables Check");
@@ -1154,7 +1154,7 @@ function getBaseUrl() {
 }
 function createUrl(path) {
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-  const baseUrl = "/";
+  const baseUrl = BASE_URL.endsWith("/") ? BASE_URL : BASE_URL + "/";
   const result = baseUrl + cleanPath;
   return result.replace(/([^:])\/{2,}/g, "$1/");
 }
@@ -1175,9 +1175,16 @@ function getAssetPath(assetPath, options = {}) {
     return assetPath;
   }
   const cleanPath = assetPath.startsWith("/") ? assetPath.slice(1) : assetPath;
-  {
+  if (forceAbsolute || DEPLOY_MODE === "vercel" || IS_VERCEL) {
     resolvedPath = "/" + cleanPath;
     if (isDebug) console.log("🔵 Vercel absolute path:", resolvedPath);
+  } else if (useRelative && DEPLOY_MODE === "github") {
+    const baseUrl = BASE_URL.endsWith("/") ? BASE_URL.slice(0, -1) : BASE_URL;
+    resolvedPath = baseUrl + "/" + cleanPath;
+    if (isDebug) console.log("🟣 GitHub relative path:", resolvedPath);
+  } else {
+    resolvedPath = "/" + cleanPath;
+    if (isDebug) console.log("⚪ Default absolute path:", resolvedPath);
   }
   resolvedPath = resolvedPath.replace(/([^:])\/{2,}/g, "$1/");
   if (addCacheBusting && config.cacheStrategy !== "none") {
@@ -1634,13 +1641,13 @@ if (document.readyState === "loading") {
 function debugAssetPaths() {
   console.group("🔍 Asset Path Debug Information");
   console.log("📋 Build-time Variables:");
-  console.log("  __BASE_URL__:", "/");
-  console.log("  __DEPLOY_MODE__:", "vercel");
-  console.log("  __BUILD_TIMESTAMP__:", "2025-07-06T15:52:16.134Z");
-  console.log("  __DEPLOY_TIME__:", 1751817136134);
-  console.log("  __IS_VERCEL__:", true);
-  console.log("  __IS_GITHUB_PAGES__:", false);
-  console.log("  __PLATFORM__:", "vercel");
+  console.log("  __BASE_URL__:", "/Neff-Paving/");
+  console.log("  __DEPLOY_MODE__:", "github");
+  console.log("  __BUILD_TIMESTAMP__:", "2025-07-06T16:24:23.946Z");
+  console.log("  __DEPLOY_TIME__:", 1751819063946);
+  console.log("  __IS_VERCEL__:", false);
+  console.log("  __IS_GITHUB_PAGES__:", true);
+  console.log("  __PLATFORM__:", "github");
   console.log("\n📊 Computed Values:");
   console.log("  BASE_URL:", BASE_URL);
   console.log("  DEPLOY_MODE:", DEPLOY_MODE);
@@ -1689,16 +1696,16 @@ function debugAssetPaths() {
   console.log("  Current environment config:", getEnvironmentConfig());
   console.log("\n🚀 Deployment Scenarios:");
   {
-    console.log("  🔵 Vercel deployment detected");
-    console.log("    Sample asset path:", getAssetPath("/assets/images/test.jpg", { forceAbsolute: true }));
+    console.log("  🟣 GitHub Pages deployment detected");
+    console.log("    Sample asset path:", getAssetPath("/assets/images/test.jpg", { useRelative: true }));
   }
   console.groupEnd();
   return {
     buildVars: {
-      baseUrl: "/",
-      deployMode: "vercel",
-      isVercel: true,
-      isGitHub: false
+      baseUrl: "/Neff-Paving/",
+      deployMode: "github",
+      isVercel: false,
+      isGitHub: true
     },
     computedValues: {
       BASE_URL,
@@ -4977,4 +4984,4 @@ class NeffPavingApp {
 document.addEventListener("DOMContentLoaded", () => {
   new NeffPavingApp();
 });
-//# sourceMappingURL=main-TdUs09N5.js.map
+//# sourceMappingURL=main-Bosuhnqe.js.map

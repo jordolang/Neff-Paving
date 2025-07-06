@@ -142,7 +142,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     // Compression and minification
-    minify: mode === 'production' ? 'terser' : false,
+    minify: mode === 'production' || mode === 'vercel' ? 'terser' : false,
     terserOptions: {
       compress: {
         drop_console: mode === 'production',
@@ -155,6 +155,8 @@ export default defineConfig(({ mode }) => {
     },
     // Enable CSS code splitting for better caching
     cssCodeSplit: true,
+    // CSS minification
+    cssMinify: mode === 'production' || mode === 'vercel',
     // Target modern browsers for better performance
     target: ['es2020', 'chrome70', 'firefox78', 'safari13']
   },

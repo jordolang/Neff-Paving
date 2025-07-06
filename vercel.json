@@ -1,5 +1,5 @@
 {
-  "buildCommand": "vite build --mode vercel",
+  "buildCommand": "npm run build:optimized:vercel",
   "outputDirectory": "dist",
   "env": {
     "NODE_ENV": "production",

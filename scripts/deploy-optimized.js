@@ -58,12 +58,24 @@ class AssetOptimizer {
       // Step 5: Create deployment reports
       await this.createDeploymentReport();
       
+      // Step 6: Verify build integrity
+      await this.verifyBuild();
+      
       console.log('✅ Deployment completed successfully!');
       this.printStats();
       
     } catch (error) {
-      console.error('❌ Deployment failed:', error);
-      process.exit(1);
+      console.error('❌ Optimized deployment failed:', error);
+      console.log('🔄 Attempting fallback to standard build...');
+      
+      try {
+        await this.fallbackBuild();
+        console.log('✅ Fallback deployment completed successfully!');
+      } catch (fallbackError) {
+        console.error('❌ Fallback deployment also failed:', fallbackError);
+        await this.createErrorReport(error, fallbackError);
+        process.exit(1);
+      }
     }
   }
 
@@ -424,6 +436,201 @@ class AssetOptimizer {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  async fallbackBuild() {
+    console.log('⚡ Running fallback build...');
+    
+    // Clean any partially built assets
+    if (await fs.pathExists(config.buildDir)) {
+      await fs.remove(config.buildDir);
+    }
+    
+    // Run standard build without optimizations
+    const fallbackEnv = {
+      ...process.env,
+      NODE_ENV: config.mode,
+      OPTIMIZE_ASSETS: 'false',
+      ENABLE_COMPRESSION: 'false',
+      VITE_BUILD_TIMESTAMP: this.buildTimestamp,
+      VITE_DEPLOY_TIME: this.deployTime.toString(),
+      VITE_DEPLOY_PLATFORM: config.platform
+    };
+    
+    const buildCommand = config.platform === 'vercel' 
+      ? 'npm run build:vercel' 
+      : 'npm run build:github';
+    
+    console.log(`Running fallback: ${buildCommand}`);
+    execSync(buildCommand, { 
+      stdio: 'inherit', 
+      env: fallbackEnv,
+      cwd: projectRoot 
+    });
+    
+    // Create basic manifest without optimization
+    await this.generateBasicManifest();
+    
+    // Create fallback report
+    await this.createFallbackReport();
+  }
+  
+  async verifyBuild() {
+    console.log('🔍 Verifying build integrity...');
+    
+    const criticalFiles = [
+      'index.html',
+      'admin/index.html'
+    ];
+    
+    for (const file of criticalFiles) {
+      const filePath = path.join(config.buildDir, file);
+      if (!(await fs.pathExists(filePath))) {
+        throw new Error(`Critical file missing: ${file}`);
+      }
+      
+      // Check file size (should not be empty)
+      const stats = await fs.stat(filePath);
+      if (stats.size === 0) {
+        throw new Error(`Critical file is empty: ${file}`);
+      }
+    }
+    
+    // Verify at least some assets exist
+    const hasAssets = await this.verifyAssets();
+    if (!hasAssets) {
+      console.warn('⚠️  Warning: No assets found in build output');
+    }
+    
+    console.log('✓ Build verification passed');
+  }
+  
+  async verifyAssets() {
+    const assetDirs = [
+      path.join(config.buildDir, 'assets'),
+      path.join(config.buildDir, 'chunks'),
+      path.join(config.buildDir, 'entries')
+    ];
+    
+    for (const dir of assetDirs) {
+      if (await fs.pathExists(dir)) {
+        const files = await fs.readdir(dir);
+        if (files.length > 0) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+  
+  async generateBasicManifest() {
+    console.log('📋 Generating basic manifest...');
+    
+    const manifest = {
+      buildTime: this.buildTimestamp,
+      deployTime: this.deployTime,
+      platform: config.platform,
+      buildType: 'fallback',
+      assets: []
+    };
+    
+    try {
+      const allFiles = await this.getAllFiles(config.buildDir);
+      
+      for (const filePath of allFiles) {
+        const relativePath = path.relative(config.buildDir, filePath);
+        const stats = await fs.stat(filePath);
+        
+        manifest.assets.push({
+          path: relativePath,
+          size: stats.size,
+          lastModified: stats.mtime.toISOString()
+        });
+      }
+    } catch (error) {
+      console.warn('Warning: Could not generate complete manifest:', error.message);
+    }
+    
+    await fs.writeFile(
+      path.join(config.buildDir, 'asset-manifest.json'),
+      JSON.stringify(manifest, null, 2)
+    );
+  }
+  
+  async createFallbackReport() {
+    const report = {
+      deployment: {
+        timestamp: this.buildTimestamp,
+        deployTime: this.deployTime,
+        platform: config.platform,
+        mode: config.mode,
+        buildType: 'fallback'
+      },
+      fallback: {
+        reason: 'Optimized build failed',
+        buildDuration: Date.now() - this.deployTime
+      }
+    };
+    
+    await fs.writeFile(
+      path.join(config.buildDir, 'deployment-report.json'),
+      JSON.stringify(report, null, 2)
+    );
+  }
+  
+  async createErrorReport(primaryError, fallbackError) {
+    const report = {
+      deployment: {
+        timestamp: this.buildTimestamp,
+        deployTime: this.deployTime,
+        platform: config.platform,
+        mode: config.mode,
+        status: 'failed'
+      },
+      errors: {
+        primary: {
+          message: primaryError.message,
+          stack: primaryError.stack,
+          timestamp: new Date().toISOString()
+        },
+        fallback: {
+          message: fallbackError.message,
+          stack: fallbackError.stack,
+          timestamp: new Date().toISOString()
+        }
+      },
+      troubleshooting: {
+        suggestions: [
+          'Check Node.js version compatibility',
+          'Verify all dependencies are installed',
+          'Check available disk space',
+          'Review build logs for specific errors',
+          'Try running build locally first'
+        ]
+      }
+    };
+    
+    // Try to write error report even if build directory doesn't exist
+    try {
+      await fs.ensureDir(config.buildDir);
+      await fs.writeFile(
+        path.join(config.buildDir, 'error-report.json'),
+        JSON.stringify(report, null, 2)
+      );
+    } catch (writeError) {
+      console.error('Could not write error report:', writeError.message);
+    }
+    
+    // Also write to project root as backup
+    try {
+      await fs.writeFile(
+        path.join(projectRoot, 'last-deployment-error.json'),
+        JSON.stringify(report, null, 2)
+      );
+    } catch (writeError) {
+      console.error('Could not write backup error report:', writeError.message);
+    }
   }
 
   printStats() {

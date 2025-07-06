@@ -16,6 +16,9 @@
     "build:optimized:github": "DEPLOY_PLATFORM=github node scripts/deploy-optimized.js",
     "build:optimized:vercel": "DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
     "vercel-build": "DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
+    "verify:build": "node scripts/verify-build.js",
+    "test:deployment:script": "node scripts/test-deployment.js",
+    "monitor:deployment": "node scripts/monitor-deployment.js",
     "preview": "vite preview",
     "deploy": "npm run build:github && gh-pages -d dist",
     "deploy:github": "npm run build:github && gh-pages -d dist",
@@ -27,7 +30,7 @@
     "test:coverage": "jest --config=test/jest.config.js --coverage",
     "test:watch": "jest --config=test/jest.config.js --watch",
     "test:ci": "jest --config=test/jest.config.js --ci --coverage --watchAll=false",
-    "test:deployment": "jest --config=test/jest.config.js test/deployment.test.js",
+    "test:deployment:jest": "jest --config=test/jest.config.js test/deployment.test.js",
     "monitor": "node scripts/monitor-platforms.js",
     "monitor:continuous": "node scripts/monitor-platforms.js --continuous"
   },
