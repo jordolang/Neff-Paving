@@ -1,6 +1,6 @@
-// Google Maps Configuration
+// Google Maps Configuration - DISABLED for production builds
 export const GOOGLE_MAPS_CONFIG = {
-  apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyAmDOZqIBCkAZuQhpsfU7kaFDE3TRcDr4k',
+  apiKey: '', // Disabled for now
   version: 'weekly',
   libraries: ['drawing', 'geometry', 'places'],
   region: 'US',
