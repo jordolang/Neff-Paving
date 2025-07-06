@@ -134,13 +134,10 @@ export default defineConfig(({ mode }) => {
           return `entries/[name]-[hash].js`
         },
         
-        // Manual chunks for better code splitting
+        // Manual chunks for better code splitting - simplified
         manualChunks: {
           // Vendor chunks
-          'vendor-animation': ['gsap', 'aos'],
-          'vendor-vercel': ['@vercel/analytics', '@vercel/speed-insights'],
-          // Utilities
-          'utils': ['./src/utils/base-url.js']
+          'vendor': ['gsap', 'aos']
         }
       },
     },
@@ -163,6 +160,8 @@ export default defineConfig(({ mode }) => {
   },
   // Enhanced plugin configuration
   plugins: [
+    // Temporarily commented out enhanced-asset-processor plugin as it may be breaking paths
+    /*
     {
       name: 'enhanced-asset-processor',
       async writeBundle(options, bundle) {
@@ -295,6 +294,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     }
+    */
   ]
   };
 });

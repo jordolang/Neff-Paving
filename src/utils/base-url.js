@@ -8,6 +8,23 @@ export const BASE_URL = typeof __BASE_URL__ !== 'undefined' ? __BASE_URL__ : '/N
 export const DEPLOY_MODE = typeof __DEPLOY_MODE__ !== 'undefined' ? __DEPLOY_MODE__ : 'github';
 export const BUILD_TIMESTAMP = typeof __BUILD_TIMESTAMP__ !== 'undefined' ? __BUILD_TIMESTAMP__ : Date.now();
 export const DEPLOY_TIME = typeof __DEPLOY_TIME__ !== 'undefined' ? __DEPLOY_TIME__ : Date.now();
+export const IS_VERCEL = typeof __IS_VERCEL__ !== 'undefined' ? __IS_VERCEL__ : false;
+export const IS_GITHUB_PAGES = typeof __IS_GITHUB_PAGES__ !== 'undefined' ? __IS_GITHUB_PAGES__ : false;
+
+// Debug build-time variables in development or with debug flag
+const shouldDebug = (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+  (typeof window !== 'undefined' && window.location.search.includes('debug=assets'));
+
+if (shouldDebug) {
+  console.group('🛠️ Build-time Variables Check');
+  console.log('BASE_URL:', BASE_URL);
+  console.log('DEPLOY_MODE:', DEPLOY_MODE);
+  console.log('IS_VERCEL:', IS_VERCEL);
+  console.log('IS_GITHUB_PAGES:', IS_GITHUB_PAGES);
+  console.log('BUILD_TIMESTAMP:', BUILD_TIMESTAMP);
+  console.log('DEPLOY_TIME:', DEPLOY_TIME);
+  console.groupEnd();
+}
 
 // Asset type configurations for different environments
 const ASSET_CONFIG = {
@@ -59,10 +76,13 @@ export function createUrl(path) {
   // Remove leading slash if present to avoid double slashes
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
-  // Ensure base URL ends with slash
-  const baseUrl = BASE_URL.endsWith('/') ? BASE_URL : BASE_URL + '/';
+  // Ensure base URL ends with slash, but handle special case where BASE_URL is '/'
+  const baseUrl = BASE_URL === '/' ? '/' : (BASE_URL.endsWith('/') ? BASE_URL : BASE_URL + '/');
   
-  return baseUrl + cleanPath;
+  const result = baseUrl + cleanPath;
+  
+  // Fix any double slashes (except after protocol)
+  return result.replace(/([^:])\/{2,}/g, '$1/');
 }
 
 /**
@@ -72,6 +92,13 @@ export function createUrl(path) {
  * @returns {string} The environment-specific asset path
  */
 export function getAssetPath(assetPath, options = {}) {
+  const isDebug = (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+    (typeof window !== 'undefined' && window.location.search.includes('debug=assets'));
+  
+  if (isDebug) {
+    console.log('🔧 getAssetPath called with:', { assetPath, options, DEPLOY_MODE, BASE_URL });
+  }
+  
   const config = getEnvironmentConfig();
   const {
     useRelative = config.useRelativePaths,
@@ -84,23 +111,30 @@ export function getAssetPath(assetPath, options = {}) {
   // Handle different path types
   if (assetPath.startsWith('http://') || assetPath.startsWith('https://')) {
     // External URL - return as-is
+    if (isDebug) console.log('↩️  External URL, returning as-is:', assetPath);
     return assetPath;
   }
 
   // Remove leading slash for processing
   const cleanPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
 
-  if (forceAbsolute || DEPLOY_MODE === 'vercel') {
-    // Use absolute paths from root
+  if (forceAbsolute || DEPLOY_MODE === 'vercel' || IS_VERCEL) {
+    // Use absolute paths from root for Vercel
     resolvedPath = '/' + cleanPath;
-  } else if (useRelative && DEPLOY_MODE === 'github') {
+    if (isDebug) console.log('🔵 Vercel absolute path:', resolvedPath);
+  } else if (useRelative && (DEPLOY_MODE === 'github' || IS_GITHUB_PAGES)) {
     // Use relative paths with base URL for GitHub Pages
-    const baseUrl = BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL;
+    const baseUrl = BASE_URL === '/' ? '' : (BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL);
     resolvedPath = baseUrl + '/' + cleanPath;
+    if (isDebug) console.log('🟣 GitHub relative path:', resolvedPath);
   } else {
     // Default to absolute path
     resolvedPath = '/' + cleanPath;
+    if (isDebug) console.log('⚪ Default absolute path:', resolvedPath);
   }
+
+  // Fix any double slashes (except after protocol)
+  resolvedPath = resolvedPath.replace(/([^:])\/{2,}/g, '$1/');
 
   // Add cache busting for non-development environments
   if (addCacheBusting && config.cacheStrategy !== 'none') {
@@ -109,6 +143,7 @@ export function getAssetPath(assetPath, options = {}) {
     resolvedPath += `${separator}v=${timestamp}`;
   }
 
+  if (isDebug) console.log('✅ Final resolved path:', resolvedPath);
   return resolvedPath;
 }
 

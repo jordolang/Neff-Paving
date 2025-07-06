@@ -10,24 +10,8 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/services",
-      "destination": "/services/index.html"
-    },
-    {
-      "source": "/services/(.*)",
-      "destination": "/services/$1"
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin/index.html"
-    },
-    {
-      "source": "/admin/(.*)",
-      "destination": "/admin/$1"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
+      "source": "/(admin|services)/(.*)",
+      "destination": "/$1/$2"
     }
   ],
   "headers": [
@@ -82,42 +66,17 @@
           "value": "public, max-age=31536000, immutable"
         },
         {
-          "key": "Content-Type",
-          "value": "text/css; charset=utf-8"
-        },
-        {
           "key": "Vary",
           "value": "Accept-Encoding"
         }
       ]
     },
     {
-      "source": "/(entries|chunks)/(.*)",
+      "source": "/assets/js/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Content-Type",
-          "value": "application/javascript; charset=utf-8"
-        },
-        {
-          "key": "Vary",
-          "value": "Accept-Encoding"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, must-revalidate"
-        },
-        {
-          "key": "Content-Type",
-          "value": "image/svg+xml; charset=utf-8"
         },
         {
           "key": "Vary",
@@ -132,15 +91,6 @@
           "key": "Cache-Control",
           "value": "public, max-age=3600, must-revalidate"
         },
-        {
-          "key": "Content-Type",
-          "value": "text/html; charset=utf-8"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"

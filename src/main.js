@@ -15,6 +15,9 @@ import { AreaFinder } from './components/area-finder.js';
 import { assetLoader } from './utils/asset-loader.js';
 import { initializeAssetOptimization } from './utils/base-url.js';
 
+// Import debug utilities (for development)
+import { debugAssetPaths, testAssetLoading, fixDoubleSlashes } from './debug-assets.js';
+
 // Import animation libraries
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
