@@ -1,4 +1,4 @@
-// Import CSS
+// Import CSS - using absolute path for better deployment compatibility
 import '../styles/main.css'
 
 // Import Vercel Speed Insights

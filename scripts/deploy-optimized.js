@@ -15,11 +15,19 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 // Configuration
+// Detect platform more reliably
+const detectPlatform = () => {
+  if (process.env.VERCEL || process.env.VERCEL_ENV || process.env.VERCEL_URL) return 'vercel';
+  if (process.env.DEPLOY_PLATFORM) return process.env.DEPLOY_PLATFORM;
+  if (process.env.GITHUB_ACTIONS) return 'github';
+  return 'vercel'; // Default to vercel
+};
+
 const config = {
   buildDir: path.join(projectRoot, 'dist'),
   assetsDir: path.join(projectRoot, 'dist', 'assets'),
   mode: process.env.NODE_ENV || 'production',
-  platform: process.env.DEPLOY_PLATFORM || 'vercel',
+  platform: detectPlatform(),
   enableOptimization: process.env.OPTIMIZE_ASSETS !== 'false',
   enableCompression: process.env.ENABLE_COMPRESSION !== 'false',
   enableCacheBusting: process.env.CACHE_BUSTING !== 'false'
@@ -96,7 +104,9 @@ class AssetOptimizer {
       NODE_ENV: config.mode,
       VITE_BUILD_TIMESTAMP: this.buildTimestamp,
       VITE_DEPLOY_TIME: this.deployTime.toString(),
-      VITE_DEPLOY_PLATFORM: config.platform
+      VITE_DEPLOY_PLATFORM: config.platform,
+      VERCEL: config.platform === 'vercel' ? '1' : undefined,
+      VITE_PLATFORM: config.platform
     };
     
     // Run Vite build

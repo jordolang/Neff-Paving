@@ -4,7 +4,8 @@ import { resolve } from 'path'
 export default defineConfig(({ mode }) => {
   // Dynamic base URL configuration
   const getBaseUrl = () => {
-    if (mode === 'vercel') return '/';
+    // Detect Vercel environment
+    if (mode === 'vercel' || process.env.VERCEL || process.env.VERCEL_ENV || process.env.VERCEL_URL) return '/';
     if (mode === 'github') return '/Neff-Paving/';
     return process.env.VITE_BASE_URL || '/Neff-Paving/';
   };
