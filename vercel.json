@@ -1,6 +1,11 @@
 {
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "vite build --mode vercel",
   "outputDirectory": "dist",
+  "env": {
+    "NODE_ENV": "production",
+    "DEPLOY_PLATFORM": "vercel",
+    "VITE_PLATFORM": "vercel"
+  },
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [

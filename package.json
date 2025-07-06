@@ -27,7 +27,9 @@
     "test:coverage": "jest --config=test/jest.config.js --coverage",
     "test:watch": "jest --config=test/jest.config.js --watch",
     "test:ci": "jest --config=test/jest.config.js --ci --coverage --watchAll=false",
-    "test:deployment": "jest --config=test/jest.config.js test/deployment.test.js"
+    "test:deployment": "jest --config=test/jest.config.js test/deployment.test.js",
+    "monitor": "node scripts/monitor-platforms.js",
+    "monitor:continuous": "node scripts/monitor-platforms.js --continuous"
   },
   "keywords": [
     "paving",

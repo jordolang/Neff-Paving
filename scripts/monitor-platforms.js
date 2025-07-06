@@ -17,7 +17,7 @@ const projectRoot = path.join(__dirname, '..');
 const platforms = {
     github: {
         name: 'GitHub Pages',
-        url: 'https://neff-paving.github.io',
+        url: 'https://jordolang.github.io/Neff-Paving',
         healthEndpoint: '/api/health',
         servicesEndpoint: '/api/services/status',
         adminEndpoint: '/admin',
@@ -26,7 +26,7 @@ const platforms = {
     },
     vercel: {
         name: 'Vercel',
-        url: 'https://neff-paving.vercel.app',
+        url: 'https://neff-paving-mw8o6dkn5-jordan-langs-projects.vercel.app',
         healthEndpoint: '/api/health',
         servicesEndpoint: '/api/services/status',
         adminEndpoint: '/admin',
