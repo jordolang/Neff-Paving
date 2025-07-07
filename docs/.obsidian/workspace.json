@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DEPLOYMENT_GUIDE.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DEPLOYMENT_GUIDE"
+              "title": "README"
             }
           }
         ]
@@ -170,6 +170,24 @@
   },
   "active": "b739224862941ab6",
   "lastOpenFiles": [
+    "dev/CONTENT_STRATEGY.md",
+    "dev/LATEST_ENHANCEMENTS.md",
+    "dev/IMPLEMENTATION_SUMMARY.md",
+    "dev/STEP_7_COMPLETION_SUMMARY.md",
+    "dev/STEP_7_MIGRATION_COMPLETE.md",
+    "dev/STEP_7_COMPLETE.md",
+    "dev/COMPREHENSIVE_FILE_ANALYSIS.md",
+    "user/customer-scheduling-instructions.md",
+    "user/HERO_VIDEO_GUIDE.md",
+    "user/IMAGE_REQUIREMENTS.md",
+    "user/staff-training-guide.md",
+    "user/TROUBLESHOOTING.md",
+    "user/troubleshooting-guide.md",
+    "user/STAFF_GUIDE.md",
+    "user/QUICK_START.md",
+    "user/CUSTOMER_GUIDE.md",
+    "user/brand-style-guide.md",
+    "user/advanced-user-guide.md",
     "DEPLOYMENT_FIX_README.md",
     "contract-generation-system.md",
     "CONTENT_STRATEGY.md",
