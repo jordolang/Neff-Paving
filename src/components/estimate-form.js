@@ -23,11 +23,9 @@ export class EstimateForm {
 
     init() {
         this.render();
-this.attachEventListeners();
-this.formatPricingDisplay();
+        this.attachEventListeners();
         this.loadMeasurementData();
-this.updateSubmitButtonState();
-this.calculatePricing();
+        this.updateSubmitButtonState();
     }
 
     render() {
