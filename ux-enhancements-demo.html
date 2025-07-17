@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Boundary Drawing - UX Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .demo-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .feature-card h3 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .feature-card ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .feature-card li {
+            padding: 0.25rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .feature-card li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .demo-section h2 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .controls-demo {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .demo-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .demo-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .demo-btn.secondary {
+            background: #6b7280;
+        }
+        
+        .demo-btn.secondary:hover {
+            background: #4b5563;
+        }
+        
+        .demo-btn.danger {
+            background: #dc2626;
+        }
+        
+        .demo-btn.danger:hover {
+            background: #b91c1c;
+        }
+        
+        .demo-btn.success {
+            background: #10b981;
+        }
+        
+        .demo-btn.success:hover {
+            background: #059669;
+        }
+        
+        .app-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .keyboard-shortcuts {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 1rem;
+        }
+        
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .shortcut-item kbd {
+            background: #e2e8f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: monospace;
+        }
+        
+        .mobile-demo {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .mobile-demo h4 {
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .mobile-feature {
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        
+        .mobile-feature .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-container {
+                padding: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-demo {
+                flex-direction: column;
+            }
+            
+            .demo-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>🎨 Enhanced Boundary Drawing</h1>
+        <p>Comprehensive UX enhancements for geospatial boundary drawing with interactive tutorials, visual feedback, and mobile optimization</p>
+    </div>
+    
+    <div class="demo-container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>📚 Interactive Tutorial</h3>
+                <ul>
+                    <li>Auto-start for first-time users</li>
+                    <li>Step-by-step guidance</li>
+                    <li>Progress tracking</li>
+                    <li>Skip and restart options</li>
+                    <li>Mobile-optimized instructions</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>💡 Drawing Hints</h3>
+                <ul>
+                    <li>Contextual hints during drawing</li>
+                    <li>Click feedback with animations</li>
+                    <li>Double-click to finish</li>
+                    <li>Vertex highlights</li>
+                    <li>Live area preview</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>👁️ Visual Feedback</h3>
+                <ul>
+                    <li>Vertex highlighting</li>
+                    <li>Real-time area preview</li>
+                    <li>Click animations</li>
+                    <li>Progress indicators</li>
+                    <li>Status notifications</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>❌ Error Handling</h3>
+                <ul>
+                    <li>User-friendly error messages</li>
+                    <li>Boundary validation</li>
+                    <li>Input validation</li>
+                    <li>Network error handling</li>
+                    <li>Recovery suggestions</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>✅ Confirmation Dialogs</h3>
+                <ul>
+                    <li>Area calculation confirmation</li>
+                    <li>Clear all confirmation</li>
+                    <li>Boundary submission</li>
+                    <li>Mobile-friendly gestures</li>
+                    <li>Swipe to dismiss</li>
+                </ul>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📱 Mobile Optimization</h3>
+                <ul>
+                    <li>Touch-friendly interface</li>
+                    <li>Responsive design</li>
+                    <li>Gesture support</li>
+                    <li>Mobile-specific tutorials</li>
+                    <li>Optimized controls</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🎮 Interactive Demo Controls</h2>
+            <p>Try out the various UX enhancements using the controls below:</p>
+            
+            <div class="controls-demo">
+                <button class="demo-btn" onclick="startTutorial()">
+                    <span>📚</span> Start Tutorial
+                </button>
+                <button class="demo-btn secondary" onclick="showDrawingHints()">
+                    <span>💡</span> Show Drawing Hints
+                </button>
+                <button class="demo-btn success" onclick="showConfirmationDialog()">
+                    <span>✅</span> Confirmation Dialog
+                </button>
+                <button class="demo-btn danger" onclick="showErrorDemo()">
+                    <span>❌</span> Error Demo
+                </button>
+                <button class="demo-btn" onclick="showKeyboardShortcuts()">
+                    <span>⌨️</span> Keyboard Shortcuts
+                </button>
+                <button class="demo-btn secondary" onclick="showMobileDemo()">
+                    <span>📱</span> Mobile Demo
+                </button>
+            </div>
+            
+            <div class="keyboard-shortcuts">
+                <h4>⌨️ Keyboard Shortcuts</h4>
+                <div class="shortcuts-grid">
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+C</kbd>
+                        <span>Clear all drawings</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+S</kbd>
+                        <span>Save current state</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+V</kbd>
+                        <span>Toggle visual controls</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl+H</kbd>
+                        <span>Show help</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Enter</kbd>
+                        <span>Finish drawing</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Escape</kbd>
+                        <span>Cancel drawing</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mobile-demo">
+                <h4>📱 Mobile-Specific Features</h4>
+                <div class="mobile-features">
+                    <div class="mobile-feature">
+                        <span class="icon">👆</span>
+                        <div>Tap to Draw</div>
+                    </div>
+                    <div class="mobile-feature">
+                        <span class="icon">👆👆</span>
+                        <div>Double-tap to Finish</div>
+                    </div>
+                    <div class="mobile-feature">
+                        <span class="icon">🤏</span>
+                        <div>Pinch to Zoom</div>
+                    </div>
+                    <div class="mobile-feature">
+                        <span class="icon">👋</span>
+                        <div>Swipe to Dismiss</div>
+                    </div>
+                    <div class="mobile-feature">
+                        <span class="icon">📲</span>
+                        <div>Touch Feedback</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🗺️ Enhanced Area Finder</h2>
+            <div class="app-container">
+                <div id="enhanced-area-finder"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { EnhancedAreaFinder } from './src/components/enhanced-area-finder.js';
+        import { TutorialSystem } from './src/components/tutorial-system.js';
+        import { ErrorHandler } from './src/components/error-handler.js';
+        import { ConfirmationDialog } from './src/components/confirmation-dialog.js';
+        
+        // Initialize the enhanced area finder
+        const areaFinder = new EnhancedAreaFinder('enhanced-area-finder', {
+            showCalculator: true,
+            showAddressSearch: true,
+            showAreaInfo: true,
+            enableVisualAccuracy: true,
+            onAreaCalculated: (data) => {
+                console.log('Area calculated:', data);
+            }
+        });
+        
+        // Initialize demo components
+        const tutorialSystem = new TutorialSystem();
+        const errorHandler = new ErrorHandler();
+        const confirmationDialog = new ConfirmationDialog();
+        
+        // Initialize the area finder
+        areaFinder.init().catch(error => {
+            console.error('Failed to initialize area finder:', error);
+        });
+        
+        // Demo functions
+        window.startTutorial = () => {
+            tutorialSystem.startTutorial();
+        };
+        
+        window.showDrawingHints = () => {
+            errorHandler.showToast('Drawing hints are active! Click on the map to see contextual hints.', 'info');
+        };
+        
+        window.showConfirmationDialog = () => {
+            confirmationDialog.showConfirmation({
+                title: 'Demo Confirmation',
+                message: 'This is a demonstration of the confirmation dialog system with mobile-friendly features.',
+                confirmText: 'Looks Great!',
+                cancelText: 'Close',
+                type: 'info',
+                showIcon: true
+            });
+        };
+        
+        window.showErrorDemo = () => {
+            errorHandler.handleError('demo', 'This is a demo error message', {
+                component: 'UX Demo',
+                action: 'Error demonstration'
+            });
+        };
+        
+        window.showKeyboardShortcuts = () => {
+            confirmationDialog.showConfirmation({
+                title: 'Keyboard Shortcuts',
+                message: `
+                    <div style="text-align: left;">
+                        <h4>Drawing Controls:</h4>
+                        <ul>
+                            <li><kbd>Ctrl+C</kbd> - Clear all drawings</li>
+                            <li><kbd>Ctrl+S</kbd> - Save current state</li>
+                            <li><kbd>Ctrl+V</kbd> - Toggle visual controls</li>
+                            <li><kbd>Ctrl+H</kbd> - Show help</li>
+                        </ul>
+                        <h4>Drawing Operations:</h4>
+                        <ul>
+                            <li><kbd>Enter</kbd> - Finish drawing</li>
+                            <li><kbd>Escape</kbd> - Cancel drawing</li>
+                            <li><kbd>Backspace</kbd> - Undo last point</li>
+                            <li><kbd>Ctrl+Z</kbd> - Undo last point</li>
+                        </ul>
+                    </div>
+                `,
+                confirmText: 'Got it!',
+                cancelText: '',
+                type: 'info',
+                showIcon: true,
+                enableHTML: true,
+                customButtons: [{
+                    id: 'close',
+                    text: 'Close',
+                    type: 'secondary',
+                    onClick: () => {}
+                }]
+            });
+        };
+        
+        window.showMobileDemo = () => {
+            confirmationDialog.showConfirmation({
+                title: 'Mobile Features',
+                message: `
+                    <div style="text-align: left;">
+                        <h4>Touch Gestures:</h4>
+                        <ul>
+                            <li>👆 <strong>Tap</strong> - Add drawing point</li>
+                            <li>👆👆 <strong>Double-tap</strong> - Finish drawing</li>
+                            <li>🤏 <strong>Pinch</strong> - Zoom in/out</li>
+                            <li>👋 <strong>Drag</strong> - Pan the map</li>
+                            <li>👋 <strong>Swipe down</strong> - Dismiss dialogs</li>
+                        </ul>
+                        <h4>Mobile Optimizations:</h4>
+                        <ul>
+                            <li>📱 Responsive design</li>
+                            <li>📲 Touch-friendly controls</li>
+                            <li>🎯 Larger touch targets</li>
+                            <li>📏 Optimized layouts</li>
+                        </ul>
+                    </div>
+                `,
+                confirmText: 'Try it out!',
+                cancelText: 'Close',
+                type: 'info',
+                showIcon: true,
+                enableHTML: true
+            });
+        };
+        
+        // Add some demo styling
+        const style = document.createElement('style');
+        style.textContent = `
+            kbd {
+                background: #e2e8f0;
+                padding: 0.25rem 0.5rem;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                font-family: monospace;
+                border: 1px solid #cbd5e1;
+            }
+            
+            .demo-confirmation-content ul {
+                margin: 1rem 0;
+                padding-left: 1.5rem;
+            }
+            
+            .demo-confirmation-content li {
+                margin: 0.5rem 0;
+            }
+            
+            .demo-confirmation-content h4 {
+                color: #374151;
+                margin: 1rem 0 0.5rem 0;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Show initial welcome message
+        setTimeout(() => {
+            errorHandler.showToast('Welcome to the Enhanced Boundary Drawing Demo! 🎉', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>

@@ -87,7 +87,9 @@ export default defineConfig(({ mode }) => {
         main: resolve(__dirname, 'index.html'),
         services: resolve(__dirname, 'services/index.html'),
         admin: resolve(__dirname, 'admin/index.html'),
-        '404': resolve(__dirname, '404.html')
+        '404': resolve(__dirname, '404.html'),
+        'estimate-form': resolve(__dirname, 'estimate-form.html'),
+        'estimate-form-demo': resolve(__dirname, 'estimate-form-demo.html')
       },
       output: {
         // Optimized asset file naming with cache-friendly hashes

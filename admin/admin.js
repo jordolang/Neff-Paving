@@ -143,6 +143,12 @@ class AdminDashboard {
             case 'maps':
                 this.loadMaps();
                 break;
+            case 'blog-posts':
+            case 'blog-all-posts':
+            case 'blog-add-new':
+            case 'blog-categories':
+                this.loadBlogSection(sectionName);
+                break;
         }
     }
 
@@ -253,6 +259,84 @@ class AdminDashboard {
     loadMaps() {
         // Placeholder for maps functionality
         console.log('Loading maps...');
+    }
+
+    async loadBlogSection(sectionName) {
+        // Load blog manager if not already loaded
+        if (!window.blogManager) {
+            await this.loadBlogManager();
+        }
+        
+        // Load specific blog section data
+        if (window.blogManager) {
+            switch(sectionName) {
+                case 'blog-posts':
+                    // Load blog dashboard stats
+                    this.loadBlogStats();
+                    break;
+                case 'blog-all-posts':
+                    window.blogManager.loadBlogPosts();
+                    break;
+                case 'blog-categories':
+                    window.blogManager.loadCategories();
+                    break;
+                case 'blog-add-new':
+                    // Initialize rich text editor if not already done
+                    if (!window.blogManager.quillEditor) {
+                        setTimeout(() => {
+                            window.blogManager.initializeQuillEditor();
+                            window.blogManager.setupSEOForm();
+                        }, 100);
+                    }
+                    break;
+            }
+        }
+    }
+
+    async loadBlogManager() {
+        try {
+            // Load the blog manager script
+            const script = document.createElement('script');
+            script.src = './cms/blog.js';
+            script.type = 'module';
+            
+            return new Promise((resolve, reject) => {
+                script.onload = () => {
+                    console.log('Blog manager loaded successfully');
+                    resolve();
+                };
+                script.onerror = () => {
+                    console.error('Failed to load blog manager');
+                    reject();
+                };
+                document.head.appendChild(script);
+            });
+        } catch (error) {
+            console.error('Error loading blog manager:', error);
+        }
+    }
+
+    async loadBlogStats() {
+        try {
+            const response = await fetch(`${this.apiBase}/cms/blog/stats`, {
+                headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Update blog stats in the dashboard
+                const totalPosts = document.getElementById('total-posts');
+                const publishedPosts = document.getElementById('published-posts');
+                const draftPosts = document.getElementById('draft-posts');
+
+                if (totalPosts) totalPosts.textContent = result.data.totalPosts || 0;
+                if (publishedPosts) publishedPosts.textContent = result.data.publishedPosts || 0;
+                if (draftPosts) draftPosts.textContent = result.data.draftPosts || 0;
+            }
+        } catch (error) {
+            console.error('Error loading blog stats:', error);
+        }
     }
 
     viewEstimate(id) {

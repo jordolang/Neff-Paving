@@ -31,6 +31,12 @@
     "test:watch": "jest --config=test/jest.config.js --watch",
     "test:ci": "jest --config=test/jest.config.js --ci --coverage --watchAll=false",
     "test:deployment:jest": "jest --config=test/jest.config.js test/deployment.test.js",
+    "test:playwright": "playwright test",
+    "test:playwright:headed": "playwright test --headed",
+    "test:playwright:debug": "playwright test --debug",
+    "test:playwright:ui": "playwright test --ui",
+    "test:workflow": "playwright test tests/estimate-form-workflow.test.js",
+    "test:demo": "playwright test tests/estimate-form-demo.test.js",
     "monitor": "node scripts/monitor-platforms.js",
     "monitor:continuous": "node scripts/monitor-platforms.js --continuous"
   },

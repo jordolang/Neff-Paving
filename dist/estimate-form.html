@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimate Form</title>
+    <style>
+        /* Enhanced Boundary Drawing UI Styles */
+        .measurement-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .measurement-instruction {
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Instructions Panel */
+        .instructions-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .instructions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .instructions-header h4 {
+            margin: 0;
+            color: #334155;
+        }
+
+        .toggle-instructions {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .toggle-instructions:hover {
+            background: #2563eb;
+        }
+
+        .instructions-content {
+            padding: 1rem 1.5rem;
+        }
+
+        .instruction-step {
+            display: flex;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+
+        .instruction-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content strong {
+            color: #1e293b;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        /* Tool Panel */
+        .tool-panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .tool-btn:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .tool-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .tool-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tool-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .tool-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        /* Map Container */
+        .map-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 8px;
+        }
+
+        .overlay-content {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .map-iframe-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Mobile Drawing Help */
+        .mobile-drawing-help {
+            display: none;
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mobile-drawing-help h5 {
+            margin: 0 0 0.5rem 0;
+            color: #92400e;
+        }
+
+        .mobile-drawing-help ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #92400e;
+        }
+
+        .mobile-drawing-help li {
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        /* Boundary Preview */
+        .boundary-preview {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .boundary-preview h4 {
+            margin: 0 0 1rem 0;
+            color: #1e293b;
+        }
+
+        .preview-content {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .preview-map {
+            flex-shrink: 0;
+        }
+
+        .preview-info {
+            flex: 1;
+        }
+
+        .preview-description {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .preview-coordinates {
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* Measurement Results */
+        .measurement-results {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .measurement-results h4 {
+            margin: 0 0 1rem 0;
+            color: #1e293b;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-item.address-item {
+            grid-column: 1 / -1;
+        }
+
+        .result-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .result-content {
+            flex: 1;
+        }
+
+        .result-content label {
+            display: block;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .result-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-right: 0.5rem;
+        }
+
+        .result-unit {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .additional-metrics {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-item label {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .metric-item span {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        /* Boundary Actions */
+        .boundary-actions {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-secondary:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .btn-danger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 2px solid #ef4444;
+            border-radius: 6px;
+            color: #ef4444;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-danger:hover {
+            background: #fef2f2;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: #3b82f6;
+            border: 2px solid #3b82f6;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            white-space: nowrap;
+        }
+
+        /* Success Notification */
+        .success-notification {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-section h3 {
+            margin: 0 0 1rem 0;
+            color: #1e293b;
+            font-size: 1.25rem;
+        }
+
+        .pricing-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .pricing-item:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-item.total {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #1e293b;
+            border-top: 2px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .pricing-item label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .pricing-item.total label {
+            color: #1e293b;
+            font-size: 1rem;
+        }
+
+        .pricing-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        #book-now-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #book-now-button:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        #book-now-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        #confirm-pricing-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        #confirm-pricing-button:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        #confirm-pricing-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .measurement-section {
+                margin: 1rem -1rem;
+                padding: 1rem;
+                border-radius: 0;
+            }
+
+            .tool-group {
+                justify-content: center;
+            }
+
+            .tool-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-content {
+                flex-direction: column;
+            }
+
+            .action-group {
+                flex-direction: column;
+            }
+
+            .btn-secondary,
+            .btn-danger,
+            .btn-primary {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .mobile-drawing-help {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .instruction-step {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-number {
+                margin-bottom: 0.5rem;
+            }
+
+            .instructions-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .tool-btn span {
+                display: none;
+            }
+
+            .result-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+  <script type="module" crossorigin src="/entries/estimate-form-DiAHIFSz.js"></script>
+  <link rel="modulepreload" crossorigin href="/chunks/chunk-YP0FEG5d.js">
+  <link rel="stylesheet" crossorigin href="/assets/styles/main-D25_b4_j.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Estimate Request Form</h2>
+        <form id="estimate-form">
+            <!-- Personal Information -->
+            <fieldset>
+                <legend>Personal Information</legend>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </fieldset>
+
+            <!-- Project Details -->
+            <fieldset>
+                <legend>Project Details</legend>
+                <label for="service-type">Service Type:</label>
+                <select id="service-type" name="service-type" required>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                </select>
+
+                <label for="timeline">Timeline:</label>
+                <input type="date" id="timeline" name="timeline">
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </fieldset>
+
+            <!-- Property Address -->
+            <fieldset>
+                <legend>Property Address</legend>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+
+                <label for="zip">ZIP Code:</label>
+                <input type="text" id="zip" name="zip" required>
+            </fieldset>
+
+            <!-- Hidden Fields for Map Measurement Data -->
+            <input type="hidden" id="area-coordinates" name="area-coordinates">
+            <input type="hidden" id="square-footage" name="square-footage">
+
+            <!-- Confirm Pricing Button -->
+            <button type="button" id="confirm-pricing-button" disabled>Confirm Pricing</button>
+        </form>
+
+        <!-- Pricing Display Section -->
+        <div id="pricing-display" class="pricing-section" style="display: none;">
+            <h3>💰 Pricing Estimate</h3>
+            <div class="pricing-details">
+                <div class="pricing-item">
+                    <label>Project Area:</label>
+                    <span id="pricing-area">--</span> sq ft
+                </div>
+                <div class="pricing-item">
+                    <label>Rate per sq ft:</label>
+                    <span id="pricing-rate">$3.50</span>
+                </div>
+                <div class="pricing-item total">
+                    <label>Total Estimate:</label>
+                    <span id="pricing-total">--</span>
+                </div>
+            </div>
+            <div class="pricing-actions">
+                <button type="submit" id="book-now-button" form="estimate-form" disabled>Book Now</button>
+            </div>
+        </div>
+
+        <!-- Enhanced Boundary Drawing Tool -->
+        <div class="measurement-section">
+            <h3>📐 Draw Your Project Boundary</h3>
+            <p class="measurement-instruction">Use the interactive map below to draw the boundary of your project area. Follow the step-by-step guide to ensure accurate measurements.</p>
+            
+            <!-- Drawing Instructions Panel -->
+            <div class="instructions-panel" id="instructions-panel">
+                <div class="instructions-header">
+                    <h4>📋 Drawing Instructions</h4>
+                    <button type="button" class="toggle-instructions" id="toggle-instructions">Hide</button>
+                </div>
+                <div class="instructions-content" id="instructions-content">
+                    <div class="instruction-step">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <strong>Locate Your Property</strong>
+                            <p>Search for your address or navigate to your property location on the map.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <strong>Select Drawing Tool</strong>
+                            <p>Click the polygon tool to start drawing your boundary.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <span class="step-number">3</span>
+                        <div class="step-content">
+                            <strong>Draw the Boundary</strong>
+                            <p>Click points around your project area. Double-click to finish the polygon.</p>
+                        </div>
+                    </div>
+                    <div class="instruction-step">
+                        <span class="step-number">4</span>
+                        <div class="step-content">
+                            <strong>Review & Confirm</strong>
+                            <p>Check the measurements and edit if needed before confirming.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="measurement-container">
+                <!-- Tool Selection Panel -->
+                <div class="tool-panel">
+                    <div class="tool-group">
+                        <button type="button" class="tool-btn" id="polygon-tool" data-tool="polygon" title="Draw polygon boundary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <span>Polygon</span>
+                        </button>
+                        <button type="button" class="tool-btn" id="edit-tool" data-tool="edit" title="Edit existing boundary" disabled>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            <span>Edit</span>
+                        </button>
+                        <button type="button" class="tool-btn" id="clear-tool" data-tool="clear" title="Clear all boundaries">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                    <div class="tool-status">
+                        <span class="status-indicator" id="tool-status">🔧</span>
+                        <span class="status-text" id="tool-status-text">Select polygon tool to begin drawing</span>
+                    </div>
+                </div>
+
+                <!-- Map Container -->
+                <div class="map-container">
+                    <div class="map-overlay" id="map-overlay">
+                        <div class="overlay-content">
+                            <div class="loading-spinner"></div>
+                            <p>Loading interactive map...</p>
+                        </div>
+                    </div>
+                    <div class="map-iframe-container">
+                        <iframe 
+                            id="boundary-map-iframe" 
+                            src="assets/measurement-3d.html" 
+                            title="Interactive Boundary Drawing Map"
+                            width="100%" 
+                            height="600"
+                            style="border: none; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+                            loading="lazy"
+                            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                        ></iframe>
+                    </div>
+                    <!-- Mobile drawing assistance -->
+                    <div class="mobile-drawing-help" id="mobile-drawing-help">
+                        <div class="help-content">
+                            <h5>📱 Mobile Drawing Tips</h5>
+                            <ul>
+                                <li>Use two fingers to pan the map</li>
+                                <li>Pinch to zoom in/out</li>
+                                <li>Tap precisely on boundary points</li>
+                                <li>Double-tap to finish drawing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boundary Preview Panel -->
+                <div class="boundary-preview" id="boundary-preview" style="display: none;">
+                    <h4>📍 Boundary Preview</h4>
+                    <div class="preview-content">
+                        <div class="preview-map" id="preview-map">
+                            <svg width="200" height="150" viewBox="0 0 200 150" id="preview-svg">
+                                <rect width="200" height="150" fill="#f0f0f0" stroke="#ddd" stroke-width="1"/>
+                                <polygon id="preview-polygon" fill="rgba(59, 130, 246, 0.3)" stroke="#3b82f6" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="preview-info">
+                            <p class="preview-description">Your drawn boundary will appear here</p>
+                            <div class="preview-coordinates" id="preview-coordinates"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculated Metrics Display -->
+                <div class="measurement-results" id="measurement-results" style="display: none;">
+                    <h4>📊 Calculated Metrics</h4>
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <div class="result-icon">📐</div>
+                            <div class="result-content">
+                                <label>Area:</label>
+                                <span id="measured-area" class="result-value">--</span>
+                                <span class="result-unit">sq ft</span>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-icon">📏</div>
+                            <div class="result-content">
+                                <label>Perimeter:</label>
+                                <span id="measured-perimeter" class="result-value">--</span>
+                                <span class="result-unit">ft</span>
+                            </div>
+                        </div>
+                        <div class="result-item address-item">
+                            <div class="result-icon">📍</div>
+                            <div class="result-content">
+                                <label>Location:</label>
+                                <span id="measured-address" class="result-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Metrics -->
+                    <div class="additional-metrics" id="additional-metrics">
+                        <div class="metric-item">
+                            <label>Approximate Material Needed:</label>
+                            <span id="material-estimate">--</span>
+                        </div>
+                        <div class="metric-item">
+                            <label>Boundary Points:</label>
+                            <span id="boundary-points">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boundary Action Buttons -->
+                <div class="boundary-actions" id="boundary-actions" style="display: none;">
+                    <div class="action-group primary-actions">
+                        <button type="button" id="edit-boundary" class="btn-secondary" title="Edit the drawn boundary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Edit Boundary
+                        </button>
+                        <button type="button" id="clear-boundary" class="btn-danger" title="Clear the drawn boundary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Clear All
+                        </button>
+                    </div>
+                    <div class="action-group confirm-actions">
+                        <button type="button" id="confirm-boundary" class="btn-primary" title="Confirm and use this boundary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                            Confirm Boundary
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include map-to-form binding functionality -->
+    
+    <script>
+        // Enhanced form functionality with advanced boundary drawing tools
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('#estimate-form');
+            const confirmPricingButton = document.querySelector('#confirm-pricing-button');
+            const bookNowButton = document.querySelector('#book-now-button');
+            const areaCoordinatesInput = document.querySelector('#area-coordinates');
+            const squareFootageInput = document.querySelector('#square-footage');
+            const pricingDisplay = document.querySelector('#pricing-display');
+            
+            // Pricing variables
+            const RATE_PER_SQ_FT = 3.50;
+            let pricingCalculated = false;
+
+            // Boundary drawing state
+            let currentBoundary = null;
+            let isDrawing = false;
+            let activeToolId = null;
+            let isMobile = window.innerWidth <= 768;
+
+            // UI Elements
+            const elements = {
+                instructionsPanel: document.querySelector('#instructions-panel'),
+                toggleInstructions: document.querySelector('#toggle-instructions'),
+                toolButtons: document.querySelectorAll('.tool-btn'),
+                toolStatus: document.querySelector('#tool-status-text'),
+                mapOverlay: document.querySelector('#map-overlay'),
+                boundaryPreview: document.querySelector('#boundary-preview'),
+                measurementResults: document.querySelector('#measurement-results'),
+                boundaryActions: document.querySelector('#boundary-actions'),
+                mobileHelp: document.querySelector('#mobile-drawing-help'),
+                previewSvg: document.querySelector('#preview-svg'),
+                previewPolygon: document.querySelector('#preview-polygon')
+            };
+
+            // Initialize UI
+            initializeUI();
+            setupEventListeners();
+            checkMobileDevice();
+
+            function initializeUI() {
+                // Hide map overlay after a short delay to simulate loading
+                setTimeout(() => {
+                    if (elements.mapOverlay) {
+                        elements.mapOverlay.style.display = 'none';
+                    }
+                }, 2000);
+
+                // Show mobile help on mobile devices
+                if (isMobile && elements.mobileHelp) {
+                    elements.mobileHelp.style.display = 'block';
+                }
+
+                // Add tooltips to tool buttons
+                addTooltips();
+            }
+
+            function setupEventListeners() {
+                // Instructions toggle
+                if (elements.toggleInstructions) {
+                    elements.toggleInstructions.addEventListener('click', toggleInstructions);
+                }
+
+                // Tool button events
+                elements.toolButtons.forEach(button => {
+                    button.addEventListener('click', handleToolSelection);
+                });
+
+                // Boundary action buttons
+                const editBoundaryBtn = document.querySelector('#edit-boundary');
+                const clearBoundaryBtn = document.querySelector('#clear-boundary');
+                const confirmBoundaryBtn = document.querySelector('#confirm-boundary');
+
+                if (editBoundaryBtn) editBoundaryBtn.addEventListener('click', editBoundary);
+                if (clearBoundaryBtn) clearBoundaryBtn.addEventListener('click', clearBoundary);
+                if (confirmBoundaryBtn) confirmBoundaryBtn.addEventListener('click', confirmBoundary);
+
+                // New button event listeners
+                if (confirmPricingButton) {
+                    confirmPricingButton.addEventListener('click', handleConfirmPricing);
+                }
+                if (bookNowButton) {
+                    bookNowButton.addEventListener('click', handleBookNow);
+                }
+
+                // Form events
+                form.addEventListener('input', updateConfirmPricingButtonState);
+                form.addEventListener('submit', handleFormSubmission);
+
+                // Listen for changes in hidden fields (updated by map binding)
+                if (areaCoordinatesInput) {
+                    areaCoordinatesInput.addEventListener('change', updateConfirmPricingButtonState);
+                }
+                if (squareFootageInput) {
+                    squareFootageInput.addEventListener('change', updateConfirmPricingButtonState);
+                }
+
+                // Window resize events for responsive design
+                window.addEventListener('resize', handleResize);
+            }
+
+            function toggleInstructions() {
+                const content = document.querySelector('#instructions-content');
+                const button = elements.toggleInstructions;
+                
+                if (content.style.display === 'none') {
+                    content.style.display = 'block';
+                    button.textContent = 'Hide';
+                } else {
+                    content.style.display = 'none';
+                    button.textContent = 'Show';
+                }
+            }
+
+            function handleToolSelection(event) {
+                const button = event.currentTarget;
+                const toolId = button.dataset.tool;
+                
+                // Update active tool
+                elements.toolButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                activeToolId = toolId;
+
+                // Update tool status
+                updateToolStatus(toolId);
+
+                // Handle tool-specific actions
+                switch(toolId) {
+                    case 'polygon':
+                        startPolygonDrawing();
+                        break;
+                    case 'edit':
+                        startEditMode();
+                        break;
+                    case 'clear':
+                        clearBoundary();
+                        break;
+                }
+            }
+
+            function updateToolStatus(toolId) {
+                const statusMessages = {
+                    'polygon': '✏️ Click on the map to draw polygon points',
+                    'edit': '✏️ Click and drag points to edit boundary',
+                    'clear': '🗑️ Clearing boundary...',
+                    'default': '🔧 Select a tool to begin'
+                };
+                
+                if (elements.toolStatus) {
+                    elements.toolStatus.textContent = statusMessages[toolId] || statusMessages.default;
+                }
+            }
+
+            function startPolygonDrawing() {
+                isDrawing = true;
+                // Enable polygon drawing tool in iframe
+                sendMessageToMap({ action: 'startPolygonDrawing' });
+            }
+
+            function startEditMode() {
+                if (currentBoundary) {
+                    // Enable edit mode for existing boundary
+                    sendMessageToMap({ action: 'startEditMode', boundary: currentBoundary });
+                } else {
+                    alert('No boundary to edit. Please draw a boundary first.');
+                }
+            }
+
+            function editBoundary() {
+                const editTool = document.querySelector('#edit-tool');
+                if (editTool) {
+                    editTool.disabled = false;
+                    editTool.click();
+                }
+            }
+
+            function clearBoundary() {
+                currentBoundary = null;
+                isDrawing = false;
+                
+                // Clear UI elements
+                hideResultsPanels();
+                clearPreview();
+                clearMetrics();
+                
+                // Clear map
+                sendMessageToMap({ action: 'clearBoundary' });
+                
+                // Update tool status
+                updateToolStatus('default');
+                
+                // Reset tool buttons
+                elements.toolButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.id === 'edit-tool') {
+                        btn.disabled = true;
+                    }
+                });
+            }
+
+            function confirmBoundary() {
+                if (currentBoundary) {
+                    // Update hidden form fields
+                    if (areaCoordinatesInput) {
+                        areaCoordinatesInput.value = JSON.stringify(currentBoundary.coordinates);
+                    }
+                    if (squareFootageInput) {
+                        squareFootageInput.value = currentBoundary.area;
+                    }
+                    
+                    // Trigger change events
+                    areaCoordinatesInput?.dispatchEvent(new Event('change'));
+                    squareFootageInput?.dispatchEvent(new Event('change'));
+                    
+                    // Update status
+                    updateToolStatus('default');
+                    elements.toolStatus.textContent = `✅ Boundary confirmed: ${currentBoundary.area.toLocaleString()} sq ft`;
+                    
+                    // Update form submission button
+                    updateConfirmPricingButtonState();
+                    
+                    // Show success feedback
+                    showSuccessFeedback('Boundary confirmed successfully!');
+                }
+            }
+
+            function updateBoundaryData(data) {
+                currentBoundary = data;
+                
+                // Show results panels
+                showResultsPanels();
+                
+                // Update preview
+                updatePreview(data);
+                
+                // Update metrics
+                updateMetrics(data);
+                
+                // Enable edit tool
+                const editTool = document.querySelector('#edit-tool');
+                if (editTool) {
+                    editTool.disabled = false;
+                }
+            }
+
+            function showResultsPanels() {
+                [elements.boundaryPreview, elements.measurementResults, elements.boundaryActions].forEach(el => {
+                    if (el) el.style.display = 'block';
+                });
+            }
+
+            function hideResultsPanels() {
+                [elements.boundaryPreview, elements.measurementResults, elements.boundaryActions].forEach(el => {
+                    if (el) el.style.display = 'none';
+                });
+            }
+
+            function updatePreview(data) {
+                if (elements.previewPolygon && data.coordinates) {
+                    // Convert coordinates to SVG points
+                    const svgPoints = convertCoordinatesToSVG(data.coordinates);
+                    elements.previewPolygon.setAttribute('points', svgPoints);
+                    
+                    // Update preview info
+                    const previewCoords = document.querySelector('#preview-coordinates');
+                    if (previewCoords) {
+                        previewCoords.textContent = `${data.coordinates.length} points`;
+                    }
+                }
+            }
+
+            function updateMetrics(data) {
+                // Update main metrics
+                const areaEl = document.querySelector('#measured-area');
+                const perimeterEl = document.querySelector('#measured-perimeter');
+                const addressEl = document.querySelector('#measured-address');
+                
+                if (areaEl) areaEl.textContent = data.area.toLocaleString();
+                if (perimeterEl) perimeterEl.textContent = data.perimeter.toLocaleString();
+                if (addressEl) addressEl.textContent = data.address || 'Location detected';
+                
+                // Update additional metrics
+                const materialEl = document.querySelector('#material-estimate');
+                const pointsEl = document.querySelector('#boundary-points');
+                
+                if (materialEl) {
+                    const materialNeeded = Math.ceil(data.area * 1.1); // 10% extra
+                    materialEl.textContent = `${materialNeeded.toLocaleString()} sq ft`;
+                }
+                if (pointsEl) {
+                    pointsEl.textContent = `${data.coordinates.length} points`;
+                }
+            }
+
+            function clearPreview() {
+                if (elements.previewPolygon) {
+                    elements.previewPolygon.setAttribute('points', '');
+                }
+            }
+
+            function clearMetrics() {
+                const metricElements = ['#measured-area', '#measured-perimeter', '#measured-address', '#material-estimate', '#boundary-points'];
+                metricElements.forEach(selector => {
+                    const el = document.querySelector(selector);
+                    if (el) el.textContent = '--';
+                });
+            }
+
+            function convertCoordinatesToSVG(coordinates) {
+                // Simple conversion for preview (this would need actual coordinate transformation)
+                return coordinates.map((coord, index) => {
+                    const x = 50 + (index * 25) % 150;
+                    const y = 50 + (index * 20) % 100;
+                    return `${x},${y}`;
+                }).join(' ');
+            }
+
+            function sendMessageToMap(message) {
+                const iframe = document.querySelector('#boundary-map-iframe');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage(message, '*');
+                }
+            }
+
+            function addTooltips() {
+                // Simple tooltip implementation
+                const tooltipElements = document.querySelectorAll('[title]');
+                tooltipElements.forEach(el => {
+                    el.addEventListener('mouseenter', showTooltip);
+                    el.addEventListener('mouseleave', hideTooltip);
+                });
+            }
+
+            function showTooltip(event) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = event.target.getAttribute('title');
+                tooltip.style.position = 'absolute';
+                tooltip.style.backgroundColor = '#333';
+                tooltip.style.color = 'white';
+                tooltip.style.padding = '8px 12px';
+                tooltip.style.borderRadius = '4px';
+                tooltip.style.fontSize = '14px';
+                tooltip.style.zIndex = '1000';
+                tooltip.style.pointerEvents = 'none';
+                
+                document.body.appendChild(tooltip);
+                
+                const rect = event.target.getBoundingClientRect();
+                tooltip.style.left = rect.left + 'px';
+                tooltip.style.top = (rect.top - tooltip.offsetHeight - 8) + 'px';
+                
+                event.target.tooltipElement = tooltip;
+            }
+
+            function hideTooltip(event) {
+                if (event.target.tooltipElement) {
+                    document.body.removeChild(event.target.tooltipElement);
+                    event.target.tooltipElement = null;
+                }
+            }
+
+            function checkMobileDevice() {
+                isMobile = window.innerWidth <= 768;
+                if (isMobile && elements.mobileHelp) {
+                    elements.mobileHelp.style.display = 'block';
+                }
+            }
+
+            function handleResize() {
+                const wasMobile = isMobile;
+                checkMobileDevice();
+                
+                if (wasMobile !== isMobile) {
+                    // Handle mobile/desktop transition
+                    if (elements.mobileHelp) {
+                        elements.mobileHelp.style.display = isMobile ? 'block' : 'none';
+                    }
+                }
+            }
+
+            function showSuccessFeedback(message) {
+                // Simple success notification
+                const notification = document.createElement('div');
+                notification.className = 'success-notification';
+                notification.textContent = message;
+                notification.style.position = 'fixed';
+                notification.style.top = '20px';
+                notification.style.right = '20px';
+                notification.style.backgroundColor = '#10b981';
+                notification.style.color = 'white';
+                notification.style.padding = '12px 24px';
+                notification.style.borderRadius = '8px';
+                notification.style.zIndex = '1000';
+                notification.style.fontSize = '14px';
+                notification.style.fontWeight = '500';
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 3000);
+            }
+
+            // New pricing functions
+            function handleConfirmPricing() {
+                if (!currentBoundary || !currentBoundary.area) {
+                    alert('Please draw and confirm a boundary first.');
+                    return;
+                }
+                
+                // Calculate pricing
+                const area = currentBoundary.area;
+                const total = area * RATE_PER_SQ_FT;
+                
+                // Update pricing display
+                const pricingArea = document.querySelector('#pricing-area');
+                const pricingTotal = document.querySelector('#pricing-total');
+                
+                if (pricingArea) pricingArea.textContent = area.toLocaleString();
+                if (pricingTotal) pricingTotal.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                
+                // Show pricing display
+                if (pricingDisplay) {
+                    pricingDisplay.style.display = 'block';
+                    pricingDisplay.scrollIntoView({ behavior: 'smooth' });
+                }
+                
+                // Enable book now button
+                if (bookNowButton) {
+                    bookNowButton.disabled = false;
+                }
+                
+                // Optionally disable confirm pricing button to prevent re-calculation
+                if (confirmPricingButton) {
+                    confirmPricingButton.disabled = true;
+                    confirmPricingButton.textContent = 'Pricing Confirmed';
+                }
+                
+                pricingCalculated = true;
+                
+                showSuccessFeedback('Pricing calculated successfully!');
+            }
+            
+            function handleBookNow() {
+                // This will trigger the form submission
+                form.dispatchEvent(new Event('submit'));
+            }
+            
+            function updateConfirmPricingButtonState() {
+                const hasArea = squareFootageInput && squareFootageInput.value;
+                const hasCoordinates = areaCoordinatesInput && areaCoordinatesInput.value;
+                const hasRequiredFields = checkRequiredFields();
+                
+                if (confirmPricingButton) {
+                    confirmPricingButton.disabled = !hasArea || !hasCoordinates || !hasRequiredFields;
+                    
+                    // Update button text based on state
+                    if (hasArea && hasCoordinates && hasRequiredFields) {
+                        confirmPricingButton.textContent = pricingCalculated ? 'Pricing Confirmed' : 'Confirm Pricing';
+                    } else {
+                        confirmPricingButton.textContent = 'Complete Form and Boundary First';
+                    }
+                }
+            }
+
+            function checkRequiredFields() {
+                const name = document.querySelector('#name');
+                const email = document.querySelector('#email');
+                return name && name.value.trim() && email && email.value.trim();
+            }
+
+            function handleFormSubmission(event) {
+                event.preventDefault();
+                
+                // Collect all form data including measurement data
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                console.log('Form submitted with data:', data);
+                
+                // Show success message (replace with actual submission logic)
+                const area = data['square-footage'];
+                const coordinates = data['area-coordinates'];
+                
+                showSuccessFeedback(`Estimate request submitted successfully!`);
+                
+                // Optional: Show detailed success modal
+                setTimeout(() => {
+                    alert(`Estimate request submitted!\n\nArea: ${parseFloat(area).toLocaleString()} sq ft\nName: ${data.name}\nEmail: ${data.email}\nBoundary Points: ${JSON.parse(coordinates || '[]').length}`);
+                }, 500);
+            }
+
+            // Listen for messages from the iframe
+            window.addEventListener('message', function(event) {
+                if (event.data.type === 'boundaryUpdated') {
+                    updateBoundaryData(event.data.boundary);
+                }
+            });
+
+            // Initial setup
+            updateConfirmPricingButtonState();
+        });
+    </script>
+</body>
+</html>

@@ -323,6 +323,11 @@
                 grid-template-columns: 1fr !important;
             }
         }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     
     <!-- Production fix script -->
@@ -484,16 +489,17 @@
                         <li><a href="#services">Services</a></li>
                         <li><a href="#gallery">Gallery</a></li>
                         <li><a href="blog.html">Blog</a></li>
+                        <li><a href="estimate-form.html">Get Estimate</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </nav>
                 <div class="social-links">
-                    <a href="https://www.facebook.com/neffpaving" target="_blank" aria-label="Facebook">
+                    <a href="https://www.facebook.com/neffpaving" target="_blank" rel="noopener" aria-label="Facebook">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                         </svg>
                     </a>
-                    <a href="https://www.yellowpages.com/zanesville-oh/mip/neff-paving-and-concrete-475086775" target="_blank" aria-label="Yellow Pages">
+                    <a href="https://www.yellowpages.com/zanesville-oh/mip/neff-paving-and-concrete-475086775" target="_blank" rel="noopener" aria-label="Yellow Pages">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2l3.09 6.26L22 9l-5 4.87 1.18 6.88L12 17.77l-6.18 2.98L7 14.87 2 10l6.91-1.74L12 2z"/>
                         </svg>
@@ -503,7 +509,7 @@
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                         </svg>
                     </a>
-                    <a href="https://twitter.com/neffpaving" target="_blank" aria-label="X (Twitter)">
+                    <a href="https://twitter.com/neffpaving" target="_blank" rel="noopener" aria-label="X (Twitter)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
@@ -534,7 +540,7 @@
                         <h1 class="hero-title">Professional Paving Solutions</h1>
                         <p class="hero-subtitle">Quality craftsmanship for residential and commercial projects across the region</p>
                         <div class="hero-cta">
-                            <a href="#contact" class="btn btn-primary">Get Free Quote</a>
+                            <a href="estimate-form.html" class="btn btn-primary">Get Free Quote</a>
                             <a href="#gallery" class="btn btn-secondary">View Our Work</a>
                         </div>
                         <div class="hero-features">
@@ -553,10 +559,10 @@
                         <div class="intro-text">
                             <div class="intro-badge">
                                 <span class="badge-icon">🏆</span>
-                                <span>Central Ohio's Premier Paving Contractor Since 1985</span>
+                                <span>Central Ohio's Premier Paving Contractor Since 1999</span>
                             </div>
                             <h2>Transforming Properties with Expert Paving Solutions</h2>
-                            <p class="intro-lead">For over 38 years, Neff Paving has been the trusted choice for property owners throughout Central Ohio who demand excellence in every project. From residential driveways that enhance curb appeal to large-scale commercial installations, we bring unmatched expertise, premium materials, and personalized service to every job.</p>
+                            <p class="intro-lead">For over 28 years, Neff Paving has been the trusted choice for property owners throughout Central Ohio who demand excellence in every project. Winning Top Paving Contractor in the country 2 years now, we can outpace and deliver quality asphalt services at lower costs than our competition. From residential driveways that enhance curb appeal to large-scale commercial installations, we bring unmatched expertise, premium materials, and personalized service to every job.</p>
                             
                             <div class="intro-highlights">
                                 <div class="highlight-item">
@@ -579,7 +585,7 @@
                                     </div>
                                     <div class="highlight-content">
                                         <h4>Licensed & Insured</h4>
-                                        <p>$2M liability coverage, workers compensation, and state contractor licensing for your peace of mind</p>
+                                        <p>Fully licensed and insured, workers compensation to protect our valued employees, and state contractor licensing for your peace of mind!</p>
                                     </div>
                                 </div>
                                 
@@ -592,7 +598,7 @@
                                     </div>
                                     <div class="highlight-content">
                                         <h4>Fast Response</h4>
-                                        <p>Same-day estimates, 24/7 emergency service, and flexible scheduling around your needs</p>
+                                        <p>Instant estimates, complete online contract enrollment, Stripe online payment systems for any down payments, and flexible scheduling around your needs</p>
                                     </div>
                                 </div>
                             </div>
@@ -601,7 +607,7 @@
                                 <a href="#contact" class="btn btn-primary btn-large">Get Your Free Estimate</a>
                                 <div class="cta-note">
                                     <span class="note-icon">⚡</span>
-                                    <span>Quick response guaranteed - Most estimates provided within 2 hours</span>
+                                    <span>Quick response guaranteed - Most estimate approval and project scheduling confirmation provided within 2 hours</span>
                                 </div>
                             </div>
                         </div>
@@ -609,7 +615,7 @@
                         <div class="intro-stats">
                             <div class="stats-container">
                                 <div class="stat-card">
-                                    <div class="stat-number">38+</div>
+                                    <div class="stat-number">28+</div>
                                     <div class="stat-label">Years of Excellence</div>
                                     <div class="stat-desc">Serving Central Ohio since 1985</div>
                                 </div>
@@ -670,6 +676,8 @@
                                             <li>Asphalt resurfacing</li>
                                             <li>Driveway extensions</li>
                                             <li>Pothole repair</li>
+                                            <li>Driveway repair</li>
+                                            <li>Drainage solutions and sealing</li>
                                         </ul>
                                     </div>
                                     
@@ -689,7 +697,7 @@
                                     <div class="highlight-item">
                                         <span class="highlight-icon">🏠</span>
                                         <div>
-                                            <strong>25+ Year Warranty</strong>
+                                            <strong>5 Year Warranty</strong>
                                             <p>Comprehensive warranty on all residential work</p>
                                         </div>
                                     </div>
@@ -697,7 +705,7 @@
                                         <span class="highlight-icon">💰</span>
                                         <div>
                                             <strong>Financing Available</strong>
-                                            <p>Flexible payment plans for homeowners</p>
+                                            <p>We are proud to introduce our Flexible payment plans for homeowners! Now with 25% down payment at sign up, you can qualify for ACH monthtly payments at only 4.9% interest to all qualified homeowners!! Regardless of credit! </p>
                                         </div>
                                     </div>
                                 </div>
@@ -705,7 +713,7 @@
                                 <div class="service-cta asphalt-cta">
                                     <div class="pricing-info">
                                         <span class="service-price">Starting at $3.50/sq ft</span>
-                                        <span class="price-note">Free estimates • No hidden fees</span>
+                                        <span class="price-note">Free Instant Estimates • No hidden fees</span>
                                     </div>
                                     <div class="cta-buttons">
                                         <a href="#contact" class="btn btn-primary btn-large">Get Free Estimate</a>
@@ -736,6 +744,8 @@
                                             <li>Lot expansion & renovation</li>
                                             <li>Heavy-duty base preparation</li>
                                             <li>Line striping & marking</li>
+                                            <li>Pothole repair</li>
+                                            <li>Drainage solutions and sealing</li>
                                             <li>ADA compliance upgrades</li>
                                         </ul>
                                     </div>
@@ -809,6 +819,7 @@
                                             <li>Patios & pool decks</li>
                                             <li>Sidewalks & walkways</li>
                                             <li>Foundation work</li>
+                                            <li>Custom retaining walls</li>
                                         </ul>
                                     </div>
                                     
@@ -839,7 +850,7 @@
                                     <div class="highlight-item">
                                         <span class="highlight-icon">🏆</span>
                                         <div>
-                                            <strong>25+ Year Warranty</strong>
+                                            <strong>5 Year Warranty</strong>
                                             <p>Long-lasting concrete with comprehensive warranty coverage</p>
                                         </div>
                                     </div>
@@ -878,7 +889,7 @@
                         <div class="cta-content">
                             <h3>Not Sure Which Service You Need?</h3>
                             <p>Our experts will assess your project and recommend the best paving solution for your needs and budget.</p>
-                            <a href="#contact" class="btn btn-primary btn-large">Get Free Consultation</a>
+                            <a href="estimate-form.html" class="btn btn-primary btn-large">Get Free Consultation</a>
                         </div>
                         <div class="cta-features">
                             <div class="cta-feature">
@@ -920,7 +931,7 @@
                             <div class="gallery-image">
                                 <img src="/assets/images/projects/residential-driveway-1.jpg" alt="Residential driveway project" loading="lazy">
                                 <div class="gallery-overlay">
-                                    <div class="gallery-info">
+                                        <div class="gallery-info">
                                         <h4>Modern Driveway</h4>
                                         <p>Residential • 2023</p>
                                         <span class="gallery-tag">Before/After</span>
@@ -1401,6 +1412,41 @@
                 </div>
             </section>
 
+            <!-- Get Your Estimate Section -->
+            <section id="get-estimate" class="get-estimate-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Ready to Get Started?</h2>
+                        <p class="section-subtitle">Get your instant estimate with our advanced paving calculator</p>
+                    </div>
+                    
+                    <div class="estimate-cta-content">
+                        <div class="estimate-features">
+                            <div class="estimate-feature">
+                                <div class="feature-icon">📊</div>
+                                <h4>Instant Results</h4>
+                                <p>Get preliminary pricing in minutes with our smart estimation tool</p>
+                            </div>
+                            <div class="estimate-feature">
+                                <div class="feature-icon">📐</div>
+                                <h4>Accurate Measurements</h4>
+                                <p>Advanced 3D measurement technology for precise calculations</p>
+                            </div>
+                            <div class="estimate-feature">
+                                <div class="feature-icon">💰</div>
+                                <h4>Transparent Pricing</h4>
+                                <p>No hidden fees - see exactly what you're paying for</p>
+                            </div>
+                        </div>
+                        
+                        <div class="estimate-cta">
+                            <a href="estimate-form.html" class="btn btn-primary btn-large">Get Your Free Estimate</a>
+                            <p class="estimate-note">Takes less than 5 minutes • No personal information required to start</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Contact Section -->
             <section id="contact">
                 <div class="container">
@@ -1460,157 +1506,10 @@
                     </div>
                     
                     <div class="contact-form-section">
-                        <div class="form-container">
-                            <h3>Request Free Estimate</h3>
-                            <form id="contact-form" class="contact-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="first-name">First Name *</label>
-                                        <input type="text" id="first-name" name="firstName" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="last-name">Last Name *</label>
-                                        <input type="text" id="last-name" name="lastName" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="email">Email *</label>
-                                        <input type="email" id="email" name="email" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="phone">Phone *</label>
-                                        <input type="tel" id="phone" name="phone" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="service-type">Service Type *</label>
-                                    <select id="service-type" name="serviceType" required>
-                                        <option value="">Select a service...</option>
-                                        <option value="residential">Residential Paving</option>
-                                        <option value="commercial">Commercial Paving</option>
-                                        <option value="maintenance">Maintenance Services</option>
-                                        <option value="custom">Custom Solutions</option>
-                                        <option value="emergency">Emergency Repair</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="project-address">Project Address</label>
-                                    <input type="text" id="project-address" name="projectAddress" placeholder="Street address, City, State">
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="project-size">Approximate Size</label>
-                                        <input type="text" id="project-size" name="projectSize" placeholder="e.g., 500 sq ft">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="timeline">Timeline</label>
-                                        <select id="timeline" name="timeline">
-                                            <option value="">Select timeline...</option>
-                                            <option value="asap">ASAP</option>
-                                            <option value="2weeks">Within 2 weeks</option>
-                                            <option value="1month">Within a month</option>
-                                            <option value="season">This season</option>
-                                            <option value="planning">Planning for future</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="project-description">Project Description</label>
-                                    <textarea id="project-description" name="projectDescription" rows="4" placeholder="Tell us about your project requirements, concerns, or special needs..."></textarea>
-                                </div>
-                                
-                                <div class="form-group checkbox-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="siteVisit" value="yes">
-                                        <span class="checkmark"></span>
-                                        Request free on-site consultation
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="emergency" value="yes">
-                                        <span class="checkmark"></span>
-                                        Add to emergency service list
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="maintenance" value="yes">
-                                        <span class="checkmark"></span>
-                                        Send maintenance reminders
-                                    </label>
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary btn-large">Get Free Estimate</button>
-                                <p class="form-note">Response guaranteed within 2 business hours</p>
-                            </form>
-                        </div>
-                        
-                        <div class="service-area-map">
-                            <h3>Service Areas</h3>
-                            <div class="map-container">
-                                <div class="map-placeholder">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                    </svg>
-                                    <p>Interactive map will be loaded here</p>
-                                </div>
-                            </div>
-                            
-                            <div class="service-areas">
-                                <div class="area-group">
-                                    <h4>Primary Service Area (15-mile radius)</h4>
-                                    <p class="area-description">Our core service zone with same-day response for estimates and emergency services. We maintain equipment and crew bases throughout this region for rapid deployment.</p>
-                                    <ul>
-                                        <li>Downtown Metro Area & Financial District</li>
-                                        <li>Westerville, Dublin, Powell, & Delaware</li>
-                                        <li>Upper Arlington, Grandview, & Bexley</li>
-                                        <li>Gahanna, New Albany, & Johnstown</li>
-                                        <li>Grove City, Hilliard, & Worthington</li>
-                                        <li>Industrial Complexes & Distribution Centers</li>
-                                        <li>Residential Developments & HOA Communities</li>
-                                        <li>Medical Facilities & Educational Institutions</li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="area-group">
-                                    <h4>Extended Service Area (30-mile radius)</h4>
-                                    <p class="area-description">Comprehensive paving services with 48-hour response time. Ideal for larger commercial projects and specialized installations requiring our expertise.</p>
-                                    <ul>
-                                        <li>Delaware, Knox, & Licking Counties</li>
-                                        <li>Marysville, London, & Circleville</li>
-                                        <li>Newark, Lancaster, & Chillicothe</li>
-                                        <li>Rural Communities & Agricultural Facilities</li>
-                                        <li>State & Municipal Infrastructure Projects</li>
-                                        <li>Industrial Parks & Manufacturing Plants</li>
-                                        <li>Recreational Facilities & Campgrounds</li>
-                                        <li>Educational Campuses & Healthcare Systems</li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="area-group">
-                                    <h4>Specialty Project Zone (50+ mile radius)</h4>
-                                    <p class="area-description">Large-scale commercial and industrial projects that require our specialized equipment and expertise. Custom scheduling available for multi-phase developments.</p>
-                                    <ul>
-                                        <li>Major Highway & Infrastructure Contracts</li>
-                                        <li>Airport Runway & Taxiway Projects</li>
-                                        <li>Industrial Complex Developments</li>
-                                        <li>Municipal & Government Facilities</li>
-                                        <li>University & Hospital Campus Projects</li>
-                                        <li>Shopping Center & Mall Renovations</li>
-                                        <li>Distribution Center Access Roads</li>
-                                        <li>Recreational Vehicle Parks & Facilities</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-outline" id="check-service-area">Check If We Serve Your Area</button>
-                        </div>
                     </div>
                 </div>
             </section>
+
         </main>
 
         <footer>
@@ -1819,6 +1718,33 @@
     </script>
     
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- Initialize EstimateForm component -->
+    <script type="module">
+        import EstimateForm from './src/components/estimate-form.js';
+        
+        // Initialize the form after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const estimateFormContainer = document.getElementById('estimate-form-container');
+            if (estimateFormContainer) {
+                try {
+                    const estimateForm = new EstimateForm('estimate-form-container');
+                    console.log('EstimateForm initialized successfully');
+                } catch (error) {
+                    console.error('Failed to initialize EstimateForm:', error);
+                    
+                    // Show error message in the container
+                    estimateFormContainer.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: #e74c3c; background: #fdf2f2; border: 2px solid #e74c3c; border-radius: 8px;">
+                            <h3>Unable to Load Form</h3>
+                            <p>Please refresh the page to try again.</p>
+                            <p style="font-size: 0.9rem; margin-top: 1rem; color: #666;">Error: ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
     
     <script>
         document.querySelector('.admin-link').addEventListener('click', function(e) {

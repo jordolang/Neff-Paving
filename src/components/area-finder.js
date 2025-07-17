@@ -1,4 +1,5 @@
 import { GOOGLE_MAPS_CONFIG, DEFAULT_MAP_OPTIONS, DRAWING_MANAGER_OPTIONS, AREA_UNITS } from '../config/maps.js';
+import { storeMeasurementData, getMeasurementData } from '../utils/measurement-storage.js';
 
 export class AreaFinder {
     constructor(containerId, options = {}) {
@@ -366,6 +367,9 @@ export class AreaFinder {
         this.geocoder = new google.maps.Geocoder();
         this.initDrawingManager();
         this.initSearchBox();
+        
+        // Restore previous measurement data if available
+        this.restorePreviousData();
     }
 
     initDrawingManager() {
@@ -471,6 +475,15 @@ export class AreaFinder {
             if (result.success) {
                 this.displayAreaResults(result.data);
                 this.currentArea = result.data;
+                
+                // Store measurement data in session storage
+                const measurementData = {
+                    ...result.data,
+                    coordinates: coordinates,
+                    timestamp: new Date().toISOString()
+                };
+                storeMeasurementData('google-maps', measurementData);
+                
                 this.options.onAreaCalculated(result.data);
             } else {
                 throw new Error(result.message || 'Calculation failed');
@@ -632,5 +645,57 @@ export class AreaFinder {
         }
         
         this.container.innerHTML = '';
+    }
+
+    restoreAreaData(data) {
+        if (!data) return;
+        // Logic to restore shape from data
+        // For illustration, assuming we have coordinates
+        this.clearShapes();
+        const path = data.coordinates.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
+        this.currentShape = new google.maps.Polygon({
+            path,
+            map: this.map
+        });
+
+        this.calculateArea();
+    }
+
+    restorePreviousData() {
+        try {
+            const savedData = getMeasurementData('google-maps');
+            if (savedData && savedData.coordinates && savedData.coordinates.length > 0) {
+                // Restore the shape
+                const path = savedData.coordinates.map(coord => new google.maps.LatLng(coord.lat, coord.lng));
+                this.currentShape = new google.maps.Polygon({
+                    path,
+                    map: this.map,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    fillColor: '#FF0000',
+                    fillOpacity: 0.35
+                });
+
+                // Restore the area calculation results
+                this.currentArea = savedData;
+                this.displayAreaResults(savedData);
+                
+                // Enable buttons
+                this.enableButton('clear-shapes');
+                this.enableButton('calculate-area');
+                
+                // Center map on the restored shape
+                const bounds = new google.maps.LatLngBounds();
+                savedData.coordinates.forEach(coord => {
+                    bounds.extend(new google.maps.LatLng(coord.lat, coord.lng));
+                });
+                this.map.fitBounds(bounds);
+                
+                console.log('Restored Google Maps measurement data:', savedData);
+            }
+        } catch (error) {
+            console.error('Error restoring previous Google Maps data:', error);
+        }
     }
 }
