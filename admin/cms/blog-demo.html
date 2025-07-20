@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Management Demo - Neff Paving CMS</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    
+    <!-- Quill.js CSS -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    
+    <!-- Tagify CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet">
+    
+    <!-- Flatpickr CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    
+    <style>
+        .demo-header {
+            background: linear-gradient(135deg, #7367f0 0%, #5a54d9 100%);
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-nav {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-nav .nav-link {
+            margin: 0 0.5rem;
+            border-radius: 6px;
+        }
+        
+        .demo-nav .nav-link.active {
+            background: #7367f0;
+            color: white;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #f0f2f5;
+            border-radius: 12px 12px 0 0 !important;
+        }
+        
+        .stats-card {
+            transition: transform 0.2s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .avatar-initial {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .bg-label-primary { background-color: #7367f0; }
+        .bg-label-success { background-color: #28c76f; }
+        .bg-label-warning { background-color: #ff9f43; }
+        .bg-label-info { background-color: #00cfe8; }
+        
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header text-center">
+        <h1>🚀 Blog Management Interface Demo</h1>
+        <p class="mb-0">Comprehensive CMS with DataTable integration, Quill.js editor, and advanced features</p>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Navigation -->
+        <div class="demo-nav">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-section="dashboard">📊 Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="all-posts">📄 All Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="add-new">✏️ Add New Post</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="categories">🏷️ Categories</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="content-section active">
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="avatar-initial bg-label-primary mb-2">📝</div>
+                            <h5 class="card-title">Total Posts</h5>
+                            <h3 id="total-posts">24</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="avatar-initial bg-label-success mb-2">✅</div>
+                            <h5 class="card-title">Published</h5>
+                            <h3 id="published-posts">18</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="avatar-initial bg-label-warning mb-2">📋</div>
+                            <h5 class="card-title">Drafts</h5>
+                            <h3 id="draft-posts">4</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card stats-card">
+                        <div class="card-body text-center">
+                            <div class="avatar-initial bg-label-info mb-2">📅</div>
+                            <h5 class="card-title">Scheduled</h5>
+                            <h3 id="scheduled-posts">2</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Posts Section -->
+        <div id="all-posts-section" class="content-section">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">All Blog Posts</h5>
+                    <button class="btn btn-primary" onclick="showSection('add-new')">
+                        ➕ Add New Post
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="posts-table" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blog-posts-table">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add New Post Section -->
+        <div id="add-new-section" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Add New Blog Post</h5>
+                </div>
+                <div class="card-body">
+                    <form id="blog-post-form">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="post-title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="post-title" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="post-content" class="form-label">Content</label>
+                                    <textarea class="form-control" id="post-content" rows="10" style="display: none;"></textarea>
+                                    <!-- Quill editor will be inserted here -->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="post-category" class="form-label">Category</label>
+                                    <select class="form-select" id="post-category">
+                                        <option value="">Select Category</option>
+                                        <option value="paving">Paving</option>
+                                        <option value="maintenance">Maintenance</option>
+                                        <option value="tips">Tips</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Tags field will be added here by JavaScript -->
+                                
+                                <div class="mb-3">
+                                    <label for="post-status" class="form-label">Status</label>
+                                    <select class="form-select" id="post-status">
+                                        <option value="draft">Draft</option>
+                                        <option value="published">Published</option>
+                                        <option value="scheduled">Scheduled</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Schedule container will be added here by JavaScript -->
+                                
+                                <div class="mb-3">
+                                    <label for="post-image" class="form-label">Featured Image</label>
+                                    <input type="file" class="form-control" id="post-image" accept="image/*">
+                                    <!-- Image preview will be added here by JavaScript -->
+                                </div>
+                                
+                                <!-- Action buttons will be modified by JavaScript -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">💾 Save Post</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- SEO form will be added here by JavaScript -->
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div id="categories-section" class="content-section">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Blog Categories</h5>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-category-modal">
+                        ➕ Add Category
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="categories-table-elem" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Slug</th>
+                                    <th>Description</th>
+                                    <th>Posts Count</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table">
+                                <!-- Categories data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        // Demo Blog Manager with Mock Data
+        class DemoBlogManager {
+            constructor() {
+                this.mockAdminDashboard = {
+                    apiBase: '/api', // Mock API base
+                    token: 'demo-token'
+                };
+                
+                this.quillEditor = null;
+                this.postsDataTable = null;
+                this.categoriesDataTable = null;
+                this.tagify = null;
+                
+                this.init();
+            }
+
+            async init() {
+                console.log('Initializing Demo Blog Manager...');
+                
+                // Initialize components with delay to ensure DOM is ready
+                setTimeout(() => {
+                    this.initializeQuillEditor();
+                    this.initializeDataTables();
+                    this.setupEventListeners();
+                    this.initializeFeaturedImageUpload();
+                    this.initializeTagManager();
+                    this.initializeScheduler();
+                    this.setupSEOForm();
+                    this.addActionButtons();
+                    this.loadMockData();
+                }, 100);
+                
+                console.log('Demo Blog Manager initialized');
+            }
+
+            initializeQuillEditor() {
+                const contentTextarea = document.getElementById('post-content');
+                if (contentTextarea && !this.quillEditor) {
+                    const quillContainer = document.createElement('div');
+                    quillContainer.id = 'quill-editor';
+                    quillContainer.style.height = '300px';
+                    quillContainer.style.marginBottom = '20px';
+                    
+                    contentTextarea.parentNode.insertBefore(quillContainer, contentTextarea);
+
+                    this.quillEditor = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        modules: {
+                            toolbar: [
+                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'color': [] }, { 'background': [] }],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                                ['blockquote', 'code-block'],
+                                ['link', 'image'],
+                                ['clean']
+                            ]
+                        },
+                        placeholder: 'Write your blog post content here...'
+                    });
+
+                    this.quillEditor.on('text-change', () => {
+                        contentTextarea.value = this.quillEditor.root.innerHTML;
+                    });
+                }
+            }
+
+            initializeDataTables() {
+                // Initialize Posts DataTable
+                if ($.fn.DataTable) {
+                    this.postsDataTable = $('#posts-table').DataTable({
+                        responsive: true,
+                        pageLength: 10,
+                        order: [[4, 'desc']],
+                        columnDefs: [
+                            { orderable: false, targets: 5 }
+                        ]
+                    });
+
+                    this.categoriesDataTable = $('#categories-table-elem').DataTable({
+                        responsive: true,
+                        pageLength: 10,
+                        columnDefs: [
+                            { orderable: false, targets: 4 }
+                        ]
+                    });
+                }
+            }
+
+            setupEventListeners() {
+                // Navigation
+                document.querySelectorAll('[data-section]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = e.target.getAttribute('data-section');
+                        this.showSection(section);
+                    });
+                });
+
+                // Form submission
+                const form = document.getElementById('blog-post-form');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleFormSubmission();
+                    });
+                }
+            }
+
+            showSection(sectionName) {
+                // Hide all sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show selected section
+                const targetSection = document.getElementById(`${sectionName}-section`);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+            }
+
+            initializeFeaturedImageUpload() {
+                const imageInput = document.getElementById('post-image');
+                if (imageInput) {
+                    const previewContainer = document.createElement('div');
+                    previewContainer.id = 'image-preview-container';
+                    previewContainer.innerHTML = `
+                        <div id="image-preview" style="display: none; margin-top: 10px;">
+                            <img id="preview-img" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-sm btn-danger" onclick="demoBlogManager.removeFeaturedImage()">
+                                    🗑️ Remove Image
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    imageInput.parentNode.appendChild(previewContainer);
+
+                    imageInput.addEventListener('change', (e) => {
+                        this.handleImageUpload(e);
+                    });
+                }
+            }
+
+            handleImageUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const preview = document.getElementById('image-preview');
+                        const img = document.getElementById('preview-img');
+                        
+                        img.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            removeFeaturedImage() {
+                document.getElementById('post-image').value = '';
+                document.getElementById('image-preview').style.display = 'none';
+            }
+
+            initializeTagManager() {
+                const categorySelect = document.getElementById('post-category');
+                if (categorySelect && !document.getElementById('post-tags')) {
+                    const tagsContainer = document.createElement('div');
+                    tagsContainer.className = 'mb-3';
+                    tagsContainer.innerHTML = `
+                        <label for="post-tags" class="form-label">Tags</label>
+                        <input type="text" id="post-tags" name="tags" class="form-control" placeholder="Add tags...">
+                    `;
+                    categorySelect.parentNode.parentNode.insertBefore(tagsContainer, categorySelect.parentNode.nextSibling);
+
+                    setTimeout(() => {
+                        const tagsInput = document.getElementById('post-tags');
+                        this.tagify = new Tagify(tagsInput, {
+                            whitelist: ['paving', 'asphalt', 'concrete', 'driveway', 'maintenance', 'repair'],
+                            maxTags: 10,
+                            dropdown: {
+                                maxItems: 20,
+                                enabled: 0
+                            }
+                        });
+                    }, 100);
+                }
+            }
+
+            initializeScheduler() {
+                const statusSelect = document.getElementById('post-status');
+                if (statusSelect && !document.getElementById('schedule-container')) {
+                    const scheduleContainer = document.createElement('div');
+                    scheduleContainer.className = 'mb-3';
+                    scheduleContainer.id = 'schedule-container';
+                    scheduleContainer.style.display = 'none';
+                    scheduleContainer.innerHTML = `
+                        <label for="schedule-datetime" class="form-label">Schedule Publication</label>
+                        <input type="text" id="schedule-datetime" class="form-control" placeholder="Select date and time">
+                    `;
+                    statusSelect.parentNode.parentNode.insertBefore(scheduleContainer, statusSelect.parentNode.nextSibling);
+
+                    flatpickr("#schedule-datetime", {
+                        enableTime: true,
+                        dateFormat: "Y-m-d H:i",
+                        minDate: "today",
+                        time_24hr: true
+                    });
+
+                    statusSelect.addEventListener('change', (e) => {
+                        const scheduleContainer = document.getElementById('schedule-container');
+                        if (e.target.value === 'scheduled') {
+                            scheduleContainer.style.display = 'block';
+                        } else {
+                            scheduleContainer.style.display = 'none';
+                        }
+                    });
+                }
+            }
+
+            setupSEOForm() {
+                const form = document.getElementById('blog-post-form');
+                if (form && !document.getElementById('seo-title')) {
+                    const seoContainer = document.createElement('div');
+                    seoContainer.className = 'col-12 mt-4';
+                    seoContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">SEO Settings</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="seo-title" class="form-label">SEO Title</label>
+                                            <input type="text" id="seo-title" class="form-control" maxlength="60" placeholder="Optimized title for search engines">
+                                            <small class="form-text text-muted">Recommended: 50-60 characters</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="post-slug" class="form-label">URL Slug</label>
+                                            <input type="text" id="post-slug" class="form-control" placeholder="url-friendly-post-title">
+                                            <small class="form-text text-muted">Leave blank to auto-generate from title</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="seo-description" class="form-label">Meta Description</label>
+                                            <textarea id="seo-description" class="form-control" rows="3" maxlength="160" placeholder="Brief description for search results"></textarea>
+                                            <small class="form-text text-muted">Recommended: 150-160 characters</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="seo-keywords" class="form-label">Focus Keywords</label>
+                                            <input type="text" id="seo-keywords" class="form-control" placeholder="main keyword, secondary keyword">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    form.querySelector('.row').appendChild(seoContainer);
+
+                    // Auto-generate slug from title
+                    const titleInput = document.getElementById('post-title');
+                    const slugInput = document.getElementById('post-slug');
+                    
+                    if (titleInput && slugInput) {
+                        titleInput.addEventListener('input', (e) => {
+                            if (!slugInput.value) {
+                                slugInput.value = this.generateSlug(e.target.value);
+                            }
+                        });
+                    }
+                }
+            }
+
+            addActionButtons() {
+                const submitBtn = document.querySelector('#blog-post-form button[type="submit"]');
+                if (submitBtn && !submitBtn.previousElementSibling?.classList.contains('btn-outline-secondary')) {
+                    // Create additional buttons
+                    const buttonContainer = document.createElement('div');
+                    buttonContainer.className = 'd-grid gap-2';
+                    buttonContainer.innerHTML = `
+                        <button type="button" class="btn btn-outline-secondary" onclick="demoBlogManager.saveAsDraft()">
+                            💾 Save as Draft
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="demoBlogManager.showScheduleModal()">
+                            📅 Schedule Post
+                        </button>
+                        <button type="button" class="btn btn-outline-info" onclick="demoBlogManager.showPreviewModal()">
+                            👁️ Preview
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            ✅ Publish Post
+                        </button>
+                    `;
+                    
+                    submitBtn.parentNode.replaceChild(buttonContainer, submitBtn.parentNode.lastElementChild);
+                }
+            }
+
+            generateSlug(title) {
+                return title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim('-');
+            }
+
+            loadMockData() {
+                // Mock blog posts data
+                const mockPosts = [
+                    {
+                        id: '1',
+                        title: 'Complete Guide to Asphalt Driveway Installation',
+                        author: 'Admin',
+                        category: 'Paving',
+                        status: 'published',
+                        createdAt: '2024-01-15',
+                        slug: 'complete-guide-asphalt-driveway-installation'
+                    },
+                    {
+                        id: '2',
+                        title: 'Winter Maintenance Tips for Your Driveway',
+                        author: 'Admin',
+                        category: 'Maintenance',
+                        status: 'published',
+                        createdAt: '2024-01-10',
+                        slug: 'winter-maintenance-tips-driveway'
+                    },
+                    {
+                        id: '3',
+                        title: 'Choosing Between Concrete and Asphalt',
+                        author: 'Admin',
+                        category: 'Tips',
+                        status: 'draft',
+                        createdAt: '2024-01-08',
+                        slug: 'choosing-concrete-vs-asphalt'
+                    },
+                    {
+                        id: '4',
+                        title: 'Commercial Parking Lot Resurfacing Process',
+                        author: 'Admin',
+                        category: 'Paving',
+                        status: 'scheduled',
+                        createdAt: '2024-01-12',
+                        slug: 'commercial-parking-lot-resurfacing'
+                    }
+                ];
+
+                this.renderBlogPosts(mockPosts);
+
+                // Mock categories data
+                const mockCategories = [
+                    { id: '1', name: 'Paving', slug: 'paving', description: 'All about paving services and techniques', postsCount: 12 },
+                    { id: '2', name: 'Maintenance', slug: 'maintenance', description: 'Maintenance tips and best practices', postsCount: 8 },
+                    { id: '3', name: 'Tips', slug: 'tips', description: 'General tips and advice', postsCount: 4 }
+                ];
+
+                this.renderCategories(mockCategories);
+            }
+
+            renderBlogPosts(posts) {
+                const tbody = document.getElementById('blog-posts-table');
+                if (!tbody) return;
+
+                tbody.innerHTML = posts.map(post => `
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">${post.title}</div>
+                            <small class="text-muted">${post.slug}</small>
+                        </td>
+                        <td>${post.author}</td>
+                        <td><span class="badge bg-primary">${post.category}</span></td>
+                        <td><span class="badge bg-${this.getStatusColor(post.status)}">${post.status}</span></td>
+                        <td><small>${new Date(post.createdAt).toLocaleDateString()}</small></td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="demoBlogManager.editPost('${post.id}')">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn btn-outline-info" onclick="demoBlogManager.previewPost('${post.id}')">
+                                    👁️ View
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="demoBlogManager.deletePost('${post.id}')">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            renderCategories(categories) {
+                const tbody = document.getElementById('categories-table');
+                if (!tbody) return;
+
+                tbody.innerHTML = categories.map(category => `
+                    <tr>
+                        <td>${category.name}</td>
+                        <td><code>${category.slug}</code></td>
+                        <td>${category.description}</td>
+                        <td><span class="badge bg-info">${category.postsCount}</span></td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="demoBlogManager.editCategory('${category.id}')">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="demoBlogManager.deleteCategory('${category.id}')">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            getStatusColor(status) {
+                const colors = {
+                    'published': 'success',
+                    'draft': 'warning',
+                    'scheduled': 'info',
+                    'archived': 'secondary'
+                };
+                return colors[status] || 'secondary';
+            }
+
+            // Demo action methods
+            handleFormSubmission() {
+                this.showNotification('Demo: Post would be saved to database', 'success');
+            }
+
+            saveAsDraft() {
+                this.showNotification('Demo: Post saved as draft', 'info');
+            }
+
+            showScheduleModal() {
+                document.getElementById('post-status').value = 'scheduled';
+                document.getElementById('post-status').dispatchEvent(new Event('change'));
+                this.showNotification('Set your schedule date and time above', 'info');
+            }
+
+            showPreviewModal() {
+                const title = document.getElementById('post-title').value || 'Untitled Post';
+                const content = this.quillEditor ? this.quillEditor.root.innerHTML : 'No content';
+                
+                // Create and show preview modal
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.id = 'preview-modal';
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Post Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <article>
+                                    <h1>${title}</h1>
+                                    <div class="content mt-3">${content}</div>
+                                </article>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                const modalInstance = new bootstrap.Modal(modal);
+                modalInstance.show();
+                
+                // Clean up modal after it's hidden
+                modal.addEventListener('hidden.bs.modal', () => {
+                    document.body.removeChild(modal);
+                });
+            }
+
+            editPost(id) {
+                this.showNotification(`Demo: Editing post ${id}`, 'info');
+                this.showSection('add-new');
+            }
+
+            previewPost(id) {
+                this.showNotification(`Demo: Previewing post ${id}`, 'info');
+            }
+
+            deletePost(id) {
+                if (confirm('Delete this post?')) {
+                    this.showNotification(`Demo: Post ${id} deleted`, 'success');
+                }
+            }
+
+            editCategory(id) {
+                this.showNotification(`Demo: Editing category ${id}`, 'info');
+            }
+
+            deleteCategory(id) {
+                if (confirm('Delete this category?')) {
+                    this.showNotification(`Demo: Category ${id} deleted`, 'success');
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible notification`;
+                notification.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 3000);
+            }
+        }
+
+        // Global functions for onclick handlers
+        function showSection(section) {
+            demoBlogManager.showSection(section);
+        }
+
+        // Initialize demo when page loads
+        let demoBlogManager;
+        document.addEventListener('DOMContentLoaded', () => {
+            demoBlogManager = new DemoBlogManager();
+            window.demoBlogManager = demoBlogManager; // Make globally accessible
+        });
+    </script>
+</body>
+</html>

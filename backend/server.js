@@ -53,6 +53,9 @@ app.use('/api/estimates', require('./routes/estimates'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/maps', require('./routes/maps'));
 
+// CMS API Routes
+app.use('/api/cms', require('../server/api/cms/index'));
+
 // Enhanced SPA fallback routing for admin panel
 app.get('/admin*', (req, res, next) => {
   const adminIndexPath = path.join(__dirname, '../dist/admin/index.html');

@@ -46,17 +46,19 @@
     <link rel="canonical" href="https://neff-paving.com/">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/Neff-Paving/assets/favicon-BDJErNN5.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/Neff-Paving/assets/images/apple-touch-icon-BCAKZr0s.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/Neff-Paving/assets/images/favicon-32x32-BSXYYsZ9.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/Neff-Paving/assets/images/favicon-16x16-DyhtZSNo.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon-BDJErNN5.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon-BCAKZr0s.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32-BSXYYsZ9.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16-DyhtZSNo.png">
     
     <!-- Preconnect for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     <!-- Font preload for critical fonts -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/oswald/v49/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fw.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Google Fonts with font-display: swap for performance -->
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -70,9 +72,264 @@
     /* Fallback fonts and basic styling */
     </style>
     
-    <!-- Stylesheet -->
+    <!-- Main Stylesheet - Load first for proper rendering -->
     
-    <!-- Structured Data (JSON-LD) -->
+    <!-- Critical CSS for immediate rendering -->
+    <style>
+        /* CRITICAL: Ensure service cards are visible */
+        .services-section {
+            padding: 4rem 0 !important;
+            background: #f8f9fa !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .service-card {
+            background: white !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+            overflow: hidden !important;
+            transition: transform 0.3s ease !important;
+            position: relative !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            display: block !important;
+            z-index: 1 !important;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px) !important;
+            z-index: 10 !important;
+        }
+        
+        .service-card.featured {
+            border: 3px solid #ffd700 !important;
+        }
+        
+        .asphalt-service-grid,
+        .concrete-service-container {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)) !important;
+            gap: 2rem !important;
+            margin-bottom: 4rem !important;
+            margin-top: 0.5rem !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .service-hero {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1.5rem !important;
+            padding: 2rem 1.5rem 1rem !important;
+            background: linear-gradient(135deg, #2c2c2c, #6b6b6b) !important;
+            color: white !important;
+            border-radius: 8px 8px 0 0 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .service-icon.large {
+            width: 80px !important;
+            height: 80px !important;
+            background: #ffd700 !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #2c2c2c !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .service-hero-content h4 {
+            color: white !important;
+            font-size: 24px !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .service-lead {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 16px !important;
+            line-height: 1.6 !important;
+            margin: 0 !important;
+        }
+        
+        .asphalt-features-grid,
+        .concrete-features-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+            gap: 1.5rem !important;
+            padding: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .feature-category h5 {
+            color: #2c2c2c !important;
+            margin-bottom: 1rem !important;
+            border-bottom: 2px solid #ffd700 !important;
+            padding-bottom: 0.5rem !important;
+            font-size: 18px !important;
+        }
+        
+        .service-features {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .service-features li {
+            padding: 0.5rem 0 !important;
+            padding-left: 1.5rem !important;
+            position: relative !important;
+            color: #7f8c8d !important;
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+        }
+        
+        .service-features li::before {
+            content: '✓' !important;
+            position: absolute !important;
+            left: 0 !important;
+            color: #27ae60 !important;
+            font-weight: bold !important;
+        }
+        
+        .asphalt-highlights,
+        .concrete-highlights {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+            gap: 1rem !important;
+            padding: 0 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .highlight-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+            padding: 1rem !important;
+            background: #f8f9fa !important;
+            border-radius: 8px !important;
+        }
+        
+        .highlight-icon {
+            font-size: 24px !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .service-cta {
+            padding: 1.5rem !important;
+            background: #ecf0f1 !important;
+            text-align: center !important;
+            border-radius: 0 0 8px 8px !important;
+        }
+        
+        .pricing-info {
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .service-price {
+            display: block !important;
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            color: #e67e22 !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .price-note {
+            display: block !important;
+            font-size: 14px !important;
+            color: #7f8c8d !important;
+        }
+        
+        .cta-buttons {
+            display: flex !important;
+            gap: 1rem !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+        }
+        
+        .btn {
+            display: inline-block !important;
+            padding: 12px 24px !important;
+            border-radius: 6px !important;
+            text-decoration: none !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            text-align: center !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .btn-primary {
+            background: #ffd700 !important;
+            color: #2c2c2c !important;
+            border: none !important;
+        }
+        
+        .btn-primary:hover {
+            background: #e6c200 !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        .btn-outline {
+            background: transparent !important;
+            color: #2c2c2c !important;
+            border: 2px solid #ddd !important;
+        }
+        
+        .btn-outline:hover {
+            border-color: #ffd700 !important;
+            background: #ffd700 !important;
+        }
+        
+        .btn-large {
+            padding: 16px 32px !important;
+            font-size: 18px !important;
+        }
+        
+        .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 1.5rem !important;
+        }
+        
+        .section-header {
+            text-align: center !important;
+            margin-bottom: 3rem !important;
+        }
+        
+        .service-category-title {
+            text-align: center !important;
+            margin-bottom: 0.5rem !important;
+            color: #2c2c2c !important;
+            font-size: 2rem !important;
+        }
+        
+        /* Responsive fixes */
+        @media (max-width: 768px) {
+            .asphalt-service-grid,
+            .concrete-service-container {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .asphalt-features-grid,
+            .concrete-features-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- Production fix script -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -168,10 +425,11 @@
       ]
     }
     </script>
-  <script type="module" crossorigin src="/Neff-Paving/entries/main-Bosuhnqe.js"></script>
-  <link rel="modulepreload" crossorigin href="/Neff-Paving/chunks/chunk-COaX8i6R.js">
-  <link rel="modulepreload" crossorigin href="/Neff-Paving/chunks/chunk-BODwLEOT.js">
-  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/styles/main-xlDf1fQ1.css">
+  <script type="module" crossorigin src="/entries/main-BqwDzTJB.js"></script>
+  <link rel="modulepreload" crossorigin href="/chunks/chunk-YP0FEG5d.js">
+  <link rel="modulepreload" crossorigin href="/chunks/chunk-B7XOmajX.js">
+  <link rel="modulepreload" crossorigin href="/chunks/chunk-E0eRZBtV.js">
+  <link rel="stylesheet" crossorigin href="/assets/styles/main-BGcZBgaf.css">
 </head>
 <body>
     <div id="app">
@@ -184,16 +442,17 @@
                         <li><a href="#services">Services</a></li>
                         <li><a href="#gallery">Gallery</a></li>
                         <li><a href="blog.html">Blog</a></li>
+                        <li><a href="estimate-form.html">Get Estimate</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </nav>
                 <div class="social-links">
-                    <a href="https://www.facebook.com/neffpaving" target="_blank" aria-label="Facebook">
+                    <a href="https://www.facebook.com/neffpaving" target="_blank" rel="noopener" aria-label="Facebook">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                         </svg>
                     </a>
-                    <a href="https://www.yellowpages.com/zanesville-oh/mip/neff-paving-and-concrete-475086775" target="_blank" aria-label="Yellow Pages">
+                    <a href="https://www.yellowpages.com/zanesville-oh/mip/neff-paving-and-concrete-475086775" target="_blank" rel="noopener" aria-label="Yellow Pages">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2l3.09 6.26L22 9l-5 4.87 1.18 6.88L12 17.77l-6.18 2.98L7 14.87 2 10l6.91-1.74L12 2z"/>
                         </svg>
@@ -203,7 +462,7 @@
                             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                         </svg>
                     </a>
-                    <a href="https://twitter.com/neffpaving" target="_blank" aria-label="X (Twitter)">
+                    <a href="https://twitter.com/neffpaving" target="_blank" rel="noopener" aria-label="X (Twitter)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
@@ -225,16 +484,16 @@
         <main>
             <section id="hero">
                 <video autoplay muted loop playsinline>
-                    <source src="/Neff-Paving/assets/videos/neff-paving-1080p-D9s1l4SF.mp4" type="video/mp4">
-                    <source src="/Neff-Paving/assets/videos/neff-paving-720p-B6E4uBAX.mp4" type="video/mp4">
-                    <source src="/Neff-Paving/assets/videos/neff-paving-480p-BW_A8TjP.mp4" type="video/mp4">
+                    <source src="/assets/videos/neff-paving-1080p-D9s1l4SF.mp4" type="video/mp4">
+                    <source src="/assets/videos/neff-paving-720p-B6E4uBAX.mp4" type="video/mp4">
+                    <source src="/assets/videos/neff-paving-480p-BW_A8TjP.mp4" type="video/mp4">
                 </video>
                 <div class="hero-overlay">
                     <div class="hero-content">
                         <h1 class="hero-title">Professional Paving Solutions</h1>
                         <p class="hero-subtitle">Quality craftsmanship for residential and commercial projects across the region</p>
                         <div class="hero-cta">
-                            <a href="#contact" class="btn btn-primary">Get Free Quote</a>
+                            <a href="estimate-form.html" class="btn btn-primary">Get Free Quote</a>
                             <a href="#gallery" class="btn btn-secondary">View Our Work</a>
                         </div>
                         <div class="hero-features">
@@ -253,10 +512,10 @@
                         <div class="intro-text">
                             <div class="intro-badge">
                                 <span class="badge-icon">🏆</span>
-                                <span>Central Ohio's Premier Paving Contractor Since 1985</span>
+                                <span>Central Ohio's Premier Paving Contractor Since 1999</span>
                             </div>
                             <h2>Transforming Properties with Expert Paving Solutions</h2>
-                            <p class="intro-lead">For over 38 years, Neff Paving has been the trusted choice for property owners throughout Central Ohio who demand excellence in every project. From residential driveways that enhance curb appeal to large-scale commercial installations, we bring unmatched expertise, premium materials, and personalized service to every job.</p>
+                            <p class="intro-lead">For over 28 years, Neff Paving has been the trusted choice for property owners throughout Central Ohio who demand excellence in every project. Winning Top Paving Contractor in the country 2 years now, we can outpace and deliver quality asphalt services at lower costs than our competition. From residential driveways that enhance curb appeal to large-scale commercial installations, we bring unmatched expertise, premium materials, and personalized service to every job.</p>
                             
                             <div class="intro-highlights">
                                 <div class="highlight-item">
@@ -279,7 +538,7 @@
                                     </div>
                                     <div class="highlight-content">
                                         <h4>Licensed & Insured</h4>
-                                        <p>$2M liability coverage, workers compensation, and state contractor licensing for your peace of mind</p>
+                                        <p>Fully licensed and insured, workers compensation to protect our valued employees, and state contractor licensing for your peace of mind!</p>
                                     </div>
                                 </div>
                                 
@@ -292,7 +551,7 @@
                                     </div>
                                     <div class="highlight-content">
                                         <h4>Fast Response</h4>
-                                        <p>Same-day estimates, 24/7 emergency service, and flexible scheduling around your needs</p>
+                                        <p>Instant estimates, complete online contract enrollment, Stripe online payment systems for any down payments, and flexible scheduling around your needs</p>
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +560,7 @@
                                 <a href="#contact" class="btn btn-primary btn-large">Get Your Free Estimate</a>
                                 <div class="cta-note">
                                     <span class="note-icon">⚡</span>
-                                    <span>Quick response guaranteed - Most estimates provided within 2 hours</span>
+                                    <span>Quick response guaranteed - Most estimate approval and project scheduling confirmation provided within 2 hours</span>
                                 </div>
                             </div>
                         </div>
@@ -309,7 +568,7 @@
                         <div class="intro-stats">
                             <div class="stats-container">
                                 <div class="stat-card">
-                                    <div class="stat-number">38+</div>
+                                    <div class="stat-number">28+</div>
                                     <div class="stat-label">Years of Excellence</div>
                                     <div class="stat-desc">Serving Central Ohio since 1985</div>
                                 </div>
@@ -370,6 +629,8 @@
                                             <li>Asphalt resurfacing</li>
                                             <li>Driveway extensions</li>
                                             <li>Pothole repair</li>
+                                            <li>Driveway repair</li>
+                                            <li>Drainage solutions and sealing</li>
                                         </ul>
                                     </div>
                                     
@@ -389,7 +650,7 @@
                                     <div class="highlight-item">
                                         <span class="highlight-icon">🏠</span>
                                         <div>
-                                            <strong>25+ Year Warranty</strong>
+                                            <strong>5 Year Warranty</strong>
                                             <p>Comprehensive warranty on all residential work</p>
                                         </div>
                                     </div>
@@ -397,7 +658,7 @@
                                         <span class="highlight-icon">💰</span>
                                         <div>
                                             <strong>Financing Available</strong>
-                                            <p>Flexible payment plans for homeowners</p>
+                                            <p>We are proud to introduce our Flexible payment plans for homeowners! Now with 25% down payment at sign up, you can qualify for ACH monthtly payments at only 4.9% interest to all qualified homeowners!! Regardless of credit! </p>
                                         </div>
                                     </div>
                                 </div>
@@ -405,7 +666,7 @@
                                 <div class="service-cta asphalt-cta">
                                     <div class="pricing-info">
                                         <span class="service-price">Starting at $3.50/sq ft</span>
-                                        <span class="price-note">Free estimates • No hidden fees</span>
+                                        <span class="price-note">Free Instant Estimates • No hidden fees</span>
                                     </div>
                                     <div class="cta-buttons">
                                         <a href="#contact" class="btn btn-primary btn-large">Get Free Estimate</a>
@@ -436,6 +697,8 @@
                                             <li>Lot expansion & renovation</li>
                                             <li>Heavy-duty base preparation</li>
                                             <li>Line striping & marking</li>
+                                            <li>Pothole repair</li>
+                                            <li>Drainage solutions and sealing</li>
                                             <li>ADA compliance upgrades</li>
                                         </ul>
                                     </div>
@@ -509,6 +772,7 @@
                                             <li>Patios & pool decks</li>
                                             <li>Sidewalks & walkways</li>
                                             <li>Foundation work</li>
+                                            <li>Custom retaining walls</li>
                                         </ul>
                                     </div>
                                     
@@ -539,7 +803,7 @@
                                     <div class="highlight-item">
                                         <span class="highlight-icon">🏆</span>
                                         <div>
-                                            <strong>25+ Year Warranty</strong>
+                                            <strong>5 Year Warranty</strong>
                                             <p>Long-lasting concrete with comprehensive warranty coverage</p>
                                         </div>
                                     </div>
@@ -578,7 +842,7 @@
                         <div class="cta-content">
                             <h3>Not Sure Which Service You Need?</h3>
                             <p>Our experts will assess your project and recommend the best paving solution for your needs and budget.</p>
-                            <a href="#contact" class="btn btn-primary btn-large">Get Free Consultation</a>
+                            <a href="estimate-form.html" class="btn btn-primary btn-large">Get Free Consultation</a>
                         </div>
                         <div class="cta-features">
                             <div class="cta-feature">
@@ -618,9 +882,9 @@
                         <!-- Project items will be dynamically loaded -->
                         <div class="gallery-item" data-category="residential">
                             <div class="gallery-image">
-                                <img src="/Neff-Paving/assets/images/custom-decorative-1-Bqr1ejqk.jpg" alt="Residential driveway project" loading="lazy">
+                                <img src="/assets/images/custom-decorative-1-Bqr1ejqk.jpg" alt="Residential driveway project" loading="lazy">
                                 <div class="gallery-overlay">
-                                    <div class="gallery-info">
+                                        <div class="gallery-info">
                                         <h4>Modern Driveway</h4>
                                         <p>Residential • 2023</p>
                                         <span class="gallery-tag">Before/After</span>
@@ -636,7 +900,7 @@
                         
                         <div class="gallery-item" data-category="commercial">
                             <div class="gallery-image">
-                                <img src="/Neff-Paving/assets/images/commercial-parking-1-TkpLSjcJ.jpg" alt="Commercial parking lot project" loading="lazy">
+                                <img src="/assets/images/commercial-parking-1-TkpLSjcJ.jpg" alt="Commercial parking lot project" loading="lazy">
                                 <div class="gallery-overlay">
                                     <div class="gallery-info">
                                         <h4>Retail Parking Lot</h4>
@@ -654,7 +918,7 @@
                         
                         <div class="gallery-item" data-category="maintenance">
                             <div class="gallery-image">
-                                <img src="/Neff-Paving/assets/images/maintenance-repair-1-wGeFcuFD.jpg" alt="Maintenance and repair project" loading="lazy">
+                                <img src="/assets/images/maintenance-repair-1-wGeFcuFD.jpg" alt="Maintenance and repair project" loading="lazy">
                                 <div class="gallery-overlay">
                                     <div class="gallery-info">
                                         <h4>Crack Sealing</h4>
@@ -672,7 +936,7 @@
                         
                         <div class="gallery-item" data-category="custom">
                             <div class="gallery-image">
-                                <img src="/Neff-Paving/assets/images/custom-decorative-1-Bqr1ejqk.jpg" alt="Custom decorative paving project" loading="lazy">
+                                <img src="/assets/images/custom-decorative-1-Bqr1ejqk.jpg" alt="Custom decorative paving project" loading="lazy">
                                 <div class="gallery-overlay">
                                     <div class="gallery-info">
                                         <h4>Decorative Asphalt</h4>
@@ -690,7 +954,7 @@
                         
                         <div class="gallery-item" data-category="residential">
                             <div class="gallery-image">
-                                <img src="/Neff-Paving/assets/images/commercial-parking-1-TkpLSjcJ.jpg" alt="Residential walkway project" loading="lazy">
+                                <img src="/assets/images/commercial-parking-1-TkpLSjcJ.jpg" alt="Residential walkway project" loading="lazy">
                                 <div class="gallery-overlay">
                                     <div class="gallery-info">
                                         <h4>Garden Walkway</h4>
@@ -708,7 +972,7 @@
                         
                         <div class="gallery-item" data-category="commercial">
                             <div class="gallery-image">
-                                <img src="/Neff-Paving/assets/images/maintenance-repair-1-wGeFcuFD.jpg" alt="Commercial warehouse access road" loading="lazy">
+                                <img src="/assets/images/maintenance-repair-1-wGeFcuFD.jpg" alt="Commercial warehouse access road" loading="lazy">
                                 <div class="gallery-overlay">
                                     <div class="gallery-info">
                                         <h4>Warehouse Access</h4>
@@ -751,7 +1015,7 @@
                                     "Neff Paving transformed our cracked, deteriorating driveway into a beautiful, smooth surface that looks like new. Michael and his crew were professional, punctual, and cleaned up everything perfectly. The quality of work exceeded our expectations, and the price was very reasonable. We've already recommended them to three neighbors!"
                                 </blockquote>
                                 <div class="testimonial-author">
-                                    <img src="/Neff-Paving/assets/images/customer-1-BpQsGvvF.jpg" alt="Sarah Mitchell" loading="lazy">
+                                    <img src="/assets/images/customer-1-BpQsGvvF.jpg" alt="Sarah Mitchell" loading="lazy">
                                     <div class="author-info">
                                         <h4>Sarah Mitchell</h4>
                                         <p>Homeowner, Westerville</p>
@@ -770,7 +1034,7 @@
                                     "Our restaurant's parking lot was in desperate need of repair. Neff Paving completed the entire project in just two days with minimal disruption to our business operations. The new surface is durable, looks great, and has received compliments from our customers. Excellent communication throughout the process."
                                 </blockquote>
                                 <div class="testimonial-author">
-                                    <img src="/Neff-Paving/assets/images/customer-1-BpQsGvvF.jpg" alt="David Rodriguez" loading="lazy">
+                                    <img src="/assets/images/customer-1-BpQsGvvF.jpg" alt="David Rodriguez" loading="lazy">
                                     <div class="author-info">
                                         <h4>David Rodriguez</h4>
                                         <p>Restaurant Owner, Dublin</p>
@@ -789,7 +1053,7 @@
                                     "I called Neff Paving for an emergency repair when a water main break damaged our warehouse access road. They responded within hours and had a temporary solution in place by end of day. The permanent repair was completed the following week and has held up perfectly under heavy truck traffic."
                                 </blockquote>
                                 <div class="testimonial-author">
-                                    <img src="/Neff-Paving/assets/images/customer-1-BpQsGvvF.jpg" alt="Jennifer Thompson" loading="lazy">
+                                    <img src="/assets/images/customer-1-BpQsGvvF.jpg" alt="Jennifer Thompson" loading="lazy">
                                     <div class="author-info">
                                         <h4>Jennifer Thompson</h4>
                                         <p>Facility Manager, Columbus</p>
@@ -808,7 +1072,7 @@
                                     "Neff Paving installed a beautiful decorative asphalt walkway connecting our home to the garden. The attention to detail and custom color matching was exceptional. They worked around our landscaping and left everything cleaner than they found it. True professionals!"
                                 </blockquote>
                                 <div class="testimonial-author">
-                                    <img src="/Neff-Paving/assets/images/customer-1-BpQsGvvF.jpg" alt="Robert Chen" loading="lazy">
+                                    <img src="/assets/images/customer-1-BpQsGvvF.jpg" alt="Robert Chen" loading="lazy">
                                     <div class="author-info">
                                         <h4>Robert & Linda Chen</h4>
                                         <p>Homeowners, Powell</p>
@@ -827,7 +1091,7 @@
                                     "We manage a 50-unit apartment complex and needed extensive parking lot maintenance. Neff Paving provided a comprehensive solution including crack sealing, seal coating, and line striping. The residents are thrilled with the improved appearance and functionality."
                                 </blockquote>
                                 <div class="testimonial-author">
-                                    <img src="/Neff-Paving/assets/images/customer-1-BpQsGvvF.jpg" alt="Mark Stevens" loading="lazy">
+                                    <img src="/assets/images/customer-1-BpQsGvvF.jpg" alt="Mark Stevens" loading="lazy">
                                     <div class="author-info">
                                         <h4>Mark Stevens</h4>
                                         <p>Property Manager, Worthington</p>
@@ -846,7 +1110,7 @@
                                     "From quote to completion, Neff Paving demonstrated why they're the best in the business. Their use of high-quality materials, modern equipment, and skilled craftsmen resulted in a driveway that's been perfect for three years and counting. Worth every penny!"
                                 </blockquote>
                                 <div class="testimonial-author">
-                                    <img src="/Neff-Paving/assets/images/customer-1-BpQsGvvF.jpg" alt="Patricia Williams" loading="lazy">
+                                    <img src="/assets/images/customer-1-BpQsGvvF.jpg" alt="Patricia Williams" loading="lazy">
                                     <div class="author-info">
                                         <h4>Patricia Williams</h4>
                                         <p>Homeowner, New Albany</p>
@@ -1101,6 +1365,41 @@
                 </div>
             </section>
 
+            <!-- Get Your Estimate Section -->
+            <section id="get-estimate" class="get-estimate-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Ready to Get Started?</h2>
+                        <p class="section-subtitle">Get your instant estimate with our advanced paving calculator</p>
+                    </div>
+                    
+                    <div class="estimate-cta-content">
+                        <div class="estimate-features">
+                            <div class="estimate-feature">
+                                <div class="feature-icon">📊</div>
+                                <h4>Instant Results</h4>
+                                <p>Get preliminary pricing in minutes with our smart estimation tool</p>
+                            </div>
+                            <div class="estimate-feature">
+                                <div class="feature-icon">📐</div>
+                                <h4>Accurate Measurements</h4>
+                                <p>Advanced 3D measurement technology for precise calculations</p>
+                            </div>
+                            <div class="estimate-feature">
+                                <div class="feature-icon">💰</div>
+                                <h4>Transparent Pricing</h4>
+                                <p>No hidden fees - see exactly what you're paying for</p>
+                            </div>
+                        </div>
+                        
+                        <div class="estimate-cta">
+                            <a href="estimate-form.html" class="btn btn-primary btn-large">Get Your Free Estimate</a>
+                            <p class="estimate-note">Takes less than 5 minutes • No personal information required to start</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Contact Section -->
             <section id="contact">
                 <div class="container">
@@ -1160,157 +1459,10 @@
                     </div>
                     
                     <div class="contact-form-section">
-                        <div class="form-container">
-                            <h3>Request Free Estimate</h3>
-                            <form id="contact-form" class="contact-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="first-name">First Name *</label>
-                                        <input type="text" id="first-name" name="firstName" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="last-name">Last Name *</label>
-                                        <input type="text" id="last-name" name="lastName" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="email">Email *</label>
-                                        <input type="email" id="email" name="email" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="phone">Phone *</label>
-                                        <input type="tel" id="phone" name="phone" required>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="service-type">Service Type *</label>
-                                    <select id="service-type" name="serviceType" required>
-                                        <option value="">Select a service...</option>
-                                        <option value="residential">Residential Paving</option>
-                                        <option value="commercial">Commercial Paving</option>
-                                        <option value="maintenance">Maintenance Services</option>
-                                        <option value="custom">Custom Solutions</option>
-                                        <option value="emergency">Emergency Repair</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="project-address">Project Address</label>
-                                    <input type="text" id="project-address" name="projectAddress" placeholder="Street address, City, State">
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="project-size">Approximate Size</label>
-                                        <input type="text" id="project-size" name="projectSize" placeholder="e.g., 500 sq ft">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="timeline">Timeline</label>
-                                        <select id="timeline" name="timeline">
-                                            <option value="">Select timeline...</option>
-                                            <option value="asap">ASAP</option>
-                                            <option value="2weeks">Within 2 weeks</option>
-                                            <option value="1month">Within a month</option>
-                                            <option value="season">This season</option>
-                                            <option value="planning">Planning for future</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="project-description">Project Description</label>
-                                    <textarea id="project-description" name="projectDescription" rows="4" placeholder="Tell us about your project requirements, concerns, or special needs..."></textarea>
-                                </div>
-                                
-                                <div class="form-group checkbox-group">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="siteVisit" value="yes">
-                                        <span class="checkmark"></span>
-                                        Request free on-site consultation
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="emergency" value="yes">
-                                        <span class="checkmark"></span>
-                                        Add to emergency service list
-                                    </label>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" name="maintenance" value="yes">
-                                        <span class="checkmark"></span>
-                                        Send maintenance reminders
-                                    </label>
-                                </div>
-                                
-                                <button type="submit" class="btn btn-primary btn-large">Get Free Estimate</button>
-                                <p class="form-note">Response guaranteed within 2 business hours</p>
-                            </form>
-                        </div>
-                        
-                        <div class="service-area-map">
-                            <h3>Service Areas</h3>
-                            <div class="map-container">
-                                <div class="map-placeholder">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                    </svg>
-                                    <p>Interactive map will be loaded here</p>
-                                </div>
-                            </div>
-                            
-                            <div class="service-areas">
-                                <div class="area-group">
-                                    <h4>Primary Service Area (15-mile radius)</h4>
-                                    <p class="area-description">Our core service zone with same-day response for estimates and emergency services. We maintain equipment and crew bases throughout this region for rapid deployment.</p>
-                                    <ul>
-                                        <li>Downtown Metro Area & Financial District</li>
-                                        <li>Westerville, Dublin, Powell, & Delaware</li>
-                                        <li>Upper Arlington, Grandview, & Bexley</li>
-                                        <li>Gahanna, New Albany, & Johnstown</li>
-                                        <li>Grove City, Hilliard, & Worthington</li>
-                                        <li>Industrial Complexes & Distribution Centers</li>
-                                        <li>Residential Developments & HOA Communities</li>
-                                        <li>Medical Facilities & Educational Institutions</li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="area-group">
-                                    <h4>Extended Service Area (30-mile radius)</h4>
-                                    <p class="area-description">Comprehensive paving services with 48-hour response time. Ideal for larger commercial projects and specialized installations requiring our expertise.</p>
-                                    <ul>
-                                        <li>Delaware, Knox, & Licking Counties</li>
-                                        <li>Marysville, London, & Circleville</li>
-                                        <li>Newark, Lancaster, & Chillicothe</li>
-                                        <li>Rural Communities & Agricultural Facilities</li>
-                                        <li>State & Municipal Infrastructure Projects</li>
-                                        <li>Industrial Parks & Manufacturing Plants</li>
-                                        <li>Recreational Facilities & Campgrounds</li>
-                                        <li>Educational Campuses & Healthcare Systems</li>
-                                    </ul>
-                                </div>
-                                
-                                <div class="area-group">
-                                    <h4>Specialty Project Zone (50+ mile radius)</h4>
-                                    <p class="area-description">Large-scale commercial and industrial projects that require our specialized equipment and expertise. Custom scheduling available for multi-phase developments.</p>
-                                    <ul>
-                                        <li>Major Highway & Infrastructure Contracts</li>
-                                        <li>Airport Runway & Taxiway Projects</li>
-                                        <li>Industrial Complex Developments</li>
-                                        <li>Municipal & Government Facilities</li>
-                                        <li>University & Hospital Campus Projects</li>
-                                        <li>Shopping Center & Mall Renovations</li>
-                                        <li>Distribution Center Access Roads</li>
-                                        <li>Recreational Vehicle Parks & Facilities</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-outline" id="check-service-area">Check If We Serve Your Area</button>
-                        </div>
                     </div>
                 </div>
             </section>
+
         </main>
 
         <footer>
@@ -1518,6 +1670,8 @@
         });
     </script>
     
+    
+    <!-- Initialize EstimateForm component -->
     
     <script>
         document.querySelector('.admin-link').addEventListener('click', function(e) {

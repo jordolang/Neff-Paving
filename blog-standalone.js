@@ -117,7 +117,7 @@ class BlogSystem {
     // Get list of available blog posts
     async getPostList() {
         try {
-            const response = await fetch('/Neff-Paving/blog-posts.json');
+            const response = await fetch('/blog-posts.json');
             if (!response.ok) {
                 throw new Error('Failed to fetch blog posts list');
             }
@@ -127,9 +127,10 @@ class BlogSystem {
             console.error('Error fetching post list:', error);
             // Fallback to hardcoded list
             return [
-                '2024-12-15-asphalt-maintenance-guide.md',
-                '2024-12-08-paving-material-selection.md',
-                '2024-12-01-winter-paving-preparation.md'
+                'blog-posts/2024-12-15-asphalt-maintenance-guide.md',
+                'blog-posts/2024-12-08-paving-material-selection.md',
+                'blog-posts/2024-12-01-winter-paving-preparation.md',
+                'blog-posts/2025-07-03-how-to-create-a-blog-post.md'
             ];
         }
     }
@@ -137,7 +138,7 @@ class BlogSystem {
     // Load a specific blog post
     async loadPost(filename) {
         try {
-            const response = await fetch(`/Neff-Paving/${filename}`);
+            const response = await fetch(`/${filename}`);
             if (!response.ok) {
                 throw new Error(`Failed to load post: ${filename}`);
             }
@@ -145,8 +146,11 @@ class BlogSystem {
             const markdown = await response.text();
             const parsed = SimpleMarkdownParser.parse(markdown);
             
+            // Create slug from filename
+            const slug = filename.replace('.md', '').replace(/^blog-posts\//, '').replace(/^\d{4}-\d{2}-\d{2}-/, '');
+            
             return {
-                slug: filename.replace('.md', ''),
+                slug: slug,
                 filename,
                 ...parsed.frontmatter,
                 content: parsed.content

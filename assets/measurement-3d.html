@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Measurement components in 3D | Sample | ArcGIS Maps SDK for JavaScript 4.33</title>
+
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      
+      arcgis-scene {
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+        display: block;
+        position: relative;
+      }
+      
+      /* Ensure measurement tools are visible */
+      arcgis-direct-line-measurement-3d,
+      arcgis-area-measurement-3d {
+        display: block;
+        visibility: visible;
+      }
+      
+      /* Responsive design for mobile */
+      @media (max-width: 768px) {
+        arcgis-scene {
+          min-height: 350px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        arcgis-scene {
+          min-height: 300px;
+        }
+      }
+    </style>
+
+    <!-- Load Calcite components from CDN -->
+    <script type="module" src="https://js.arcgis.com/calcite-components/3.2.1/calcite.esm.js"></script>
+
+    <!-- Load the ArcGIS Maps SDK for JavaScript -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.33/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.33/"></script>
+
+    <!-- Load Map components from CDN-->
+    <script type="module" src="https://js.arcgis.com/4.33/map-components/"></script>
+  </head>
+  <body>
+    <arcgis-scene item-id="5ce0de673d3b41a3bf3a217942211c4b">
+      <arcgis-zoom position="top-left"></arcgis-zoom>
+      <arcgis-navigation-toggle position="top-left"></arcgis-navigation-toggle>
+      <arcgis-compass position="top-left"> </arcgis-compass>
+      <arcgis-direct-line-measurement-3d position="top-right"> </arcgis-direct-line-measurement-3d>
+      <arcgis-area-measurement-3d position="top-right"> </arcgis-area-measurement-3d>
+    </arcgis-scene>
+
+    <script type="module">
+      const viewElement = document.querySelector("arcgis-scene");
+      const directLineMeasurement3d = document.querySelector("arcgis-direct-line-measurement-3d");
+      const areaMeasurement3d = document.querySelector("arcgis-area-measurement-3d");
+
+      // Function to send messages to parent window
+      function sendMessageToParent(type, data = null) {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type, data }, '*');
+        }
+      }
+
+      // Listen for messages from parent window
+      window.addEventListener('message', (event) => {
+        const { type } = event.data;
+        
+        switch (type) {
+          case 'CLEAR_MEASUREMENT':
+            directLineMeasurement3d.clear();
+            areaMeasurement3d.clear();
+            sendMessageToParent('MEASUREMENT_CLEARED');
+            break;
+        }
+      });
+
+      await viewElement.viewOnReady();
+      
+      // Listen for measurement events on area measurement tool
+      areaMeasurement3d.addEventListener('measurementComplete', (event) => {
+        console.log('Area measurement complete:', event.detail);
+        
+        const measurementData = {
+          area: event.detail.area?.value || 0,
+          unit: event.detail.area?.unit || 'square-meters',
+          perimeter: event.detail.perimeter?.value || 0,
+          perimeterUnit: event.detail.perimeter?.unit || 'meters',
+          geometry: event.detail.geometry
+        };
+        
+        sendMessageToParent('MEASUREMENT_COMPLETE', measurementData);
+      });
+
+      // Listen for measurement cleared events
+      areaMeasurement3d.addEventListener('measurementClear', () => {
+        sendMessageToParent('MEASUREMENT_CLEARED');
+      });
+    </script>
+  </body>
+</html>

@@ -12,6 +12,14 @@
     {
       "source": "/(admin|services)/(.*)",
       "destination": "/$1/$2"
+    },
+    {
+      "source": "/estimate-form",
+      "destination": "/estimate-form.html"
+    },
+    {
+      "source": "/estimate-form-demo",
+      "destination": "/estimate-form-demo.html"
     }
   ],
   "headers": [

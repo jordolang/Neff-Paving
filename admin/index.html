@@ -264,6 +264,43 @@
                             <i>🗺️</i> Service Areas
                         </a>
                     </li>
+                    
+                    <!-- CMS Section -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="blog-posts">
+                            <i>📝</i> Blog Posts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="blog-all-posts" style="padding-left: 2.5rem; font-size: 0.9rem;">
+                            <i>📄</i> All Posts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="blog-add-new" style="padding-left: 2.5rem; font-size: 0.9rem;">
+                            <i>✏️</i> Add New
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="blog-categories" style="padding-left: 2.5rem; font-size: 0.9rem;">
+                            <i>🏷️</i> Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="media-library">
+                            <i>🖼️</i> Media Library
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="page-content">
+                            <i>📄</i> Page Content
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="seo-settings">
+                            <i>🔍</i> SEO Settings
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
@@ -424,6 +461,292 @@
                                 <div id="admin-map" style="height: 400px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                                     <span class="text-muted">Map will load here</span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CMS Sections -->
+                    <!-- Blog Posts Section -->
+                    <div id="blog-posts-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Blog Posts Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Manage your blog posts and content</p>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card stats-card">
+                                            <div class="card-body text-center">
+                                                <div class="avatar-initial bg-label-primary mb-2">📝</div>
+                                                <h5 class="card-title">Total Posts</h5>
+                                                <h3 id="total-posts">0</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card stats-card">
+                                            <div class="card-body text-center">
+                                                <div class="avatar-initial bg-label-success mb-2">✅</div>
+                                                <h5 class="card-title">Published</h5>
+                                                <h3 id="published-posts">0</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card stats-card">
+                                            <div class="card-body text-center">
+                                                <div class="avatar-initial bg-label-warning mb-2">📋</div>
+                                                <h5 class="card-title">Drafts</h5>
+                                                <h3 id="draft-posts">0</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog All Posts Section -->
+                    <div id="blog-all-posts-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">All Blog Posts</h5>
+                                <button class="btn btn-primary" onclick="showSection('blog-add-new')">
+                                    <i>➕</i> Add New Post
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Author</th>
+                                                <th>Category</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="blog-posts-table">
+                                            <tr>
+                                                <td colspan="6" class="text-center">
+                                                    <div class="loading-spinner"></div>
+                                                    <span class="ms-2">Loading posts...</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog Add New Section -->
+                    <div id="blog-add-new-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Add New Blog Post</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="blog-post-form">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <label for="post-title" class="form-label">Title</label>
+                                                <input type="text" class="form-control" id="post-title" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="post-content" class="form-label">Content</label>
+                                                <textarea class="form-control" id="post-content" rows="10" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="post-category" class="form-label">Category</label>
+                                                <select class="form-select" id="post-category">
+                                                    <option value="">Select Category</option>
+                                                    <option value="paving">Paving</option>
+                                                    <option value="maintenance">Maintenance</option>
+                                                    <option value="tips">Tips</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="post-status" class="form-label">Status</label>
+                                                <select class="form-select" id="post-status">
+                                                    <option value="draft">Draft</option>
+                                                    <option value="published">Published</option>
+                                                    <option value="scheduled">Scheduled</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="post-image" class="form-label">Featured Image</label>
+                                                <input type="file" class="form-control" id="post-image" accept="image/*">
+                                            </div>
+                                            <div class="d-grid">
+                                                <button type="submit" class="btn btn-primary">Save Post</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blog Categories Section -->
+                    <div id="blog-categories-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Blog Categories</h5>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-category-modal">
+                                    <i>➕</i> Add Category
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Slug</th>
+                                                <th>Description</th>
+                                                <th>Posts Count</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="categories-table">
+                                            <tr>
+                                                <td colspan="5" class="text-center">
+                                                    <div class="loading-spinner"></div>
+                                                    <span class="ms-2">Loading categories...</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Media Library Section -->
+                    <div id="media-library-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Media Library</h5>
+                                <button class="btn btn-primary" onclick="document.getElementById('media-upload').click()">
+                                    <i>📤</i> Upload Media
+                                </button>
+                                <input type="file" id="media-upload" multiple accept="image/*,video/*,audio/*" style="display: none;">
+                            </div>
+                            <div class="card-body">
+                                <div class="row" id="media-grid">
+                                    <div class="col-12 text-center">
+                                        <div class="loading-spinner"></div>
+                                        <p class="mt-2">Loading media files...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Page Content Section -->
+                    <div id="page-content-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Page Content Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="list-group" id="pages-list">
+                                            <a href="#" class="list-group-item list-group-item-action active" data-page="home">
+                                                🏠 Home Page
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-page="about">
+                                                ℹ️ About Us
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-page="services">
+                                                🛠️ Services
+                                            </a>
+                                            <a href="#" class="list-group-item list-group-item-action" data-page="contact">
+                                                📞 Contact
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div id="page-editor">
+                                            <div class="mb-3">
+                                                <label for="page-title-edit" class="form-label">Page Title</label>
+                                                <input type="text" class="form-control" id="page-title-edit" value="Welcome to Neff Paving">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="page-content-edit" class="form-label">Page Content</label>
+                                                <textarea class="form-control" id="page-content-edit" rows="15">Edit your page content here...</textarea>
+                                            </div>
+                                            <button type="button" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEO Settings Section -->
+                    <div id="seo-settings-section" class="content-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">SEO Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="seo-form">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">General SEO</h6>
+                                            <div class="mb-3">
+                                                <label for="site-title" class="form-label">Site Title</label>
+                                                <input type="text" class="form-control" id="site-title" value="Neff Paving - Professional Paving Services">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="meta-description" class="form-label">Meta Description</label>
+                                                <textarea class="form-control" id="meta-description" rows="3">Professional paving services for residential and commercial properties.</textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="meta-keywords" class="form-label">Meta Keywords</label>
+                                                <input type="text" class="form-control" id="meta-keywords" value="paving, asphalt, concrete, driveways, parking lots">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="mb-3">Social Media</h6>
+                                            <div class="mb-3">
+                                                <label for="og-title" class="form-label">Open Graph Title</label>
+                                                <input type="text" class="form-control" id="og-title" value="Neff Paving - Professional Paving Services">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="og-description" class="form-label">Open Graph Description</label>
+                                                <textarea class="form-control" id="og-description" rows="3">Professional paving services for residential and commercial properties.</textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="og-image" class="form-label">Open Graph Image</label>
+                                                <input type="file" class="form-control" id="og-image" accept="image/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <h6 class="mb-3">Analytics</h6>
+                                            <div class="mb-3">
+                                                <label for="google-analytics" class="form-label">Google Analytics ID</label>
+                                                <input type="text" class="form-control" id="google-analytics" placeholder="G-XXXXXXXXXX">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="google-search-console" class="form-label">Google Search Console Verification</label>
+                                                <input type="text" class="form-control" id="google-search-console" placeholder="Verification meta tag content">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save SEO Settings</button>
+                                </form>
                             </div>
                         </div>
                     </div>
