@@ -1085,9 +1085,15 @@ class MediaManager {
     }
 
     getFileType(mimetype) {
-        if (mimetype.startsWith('image/')) return 'images';
-        if (mimetype.startsWith('video/')) return 'videos';
-        if (mimetype.startsWith('audio/')) return 'audio';
+        if (mimetype.startsWith('image/')) {
+          return 'images';
+        }
+        if (mimetype.startsWith('video/')) {
+          return 'videos';
+        }
+        if (mimetype.startsWith('audio/')) {
+          return 'audio';
+        }
         return 'documents';
     }
 
@@ -1319,7 +1325,9 @@ class MediaManager {
 
     showMediaDetails(fileId) {
         const file = this.mediaFiles.find(f => f.id === fileId);
-        if (!file) return;
+        if (!file) {
+          return;
+        }
         
         const modal = document.getElementById('media-modal');
         const previewContainer = modal.querySelector('.preview-container');
@@ -1361,7 +1369,7 @@ class MediaManager {
 
     async saveMediaDetails() {
         const modal = document.getElementById('media-modal');
-        const fileId = modal.dataset.fileId;
+        const {fileId} = modal.dataset;
         
         const formData = {
             title: document.getElementById('media-title').value,
@@ -1395,7 +1403,7 @@ class MediaManager {
 
     async deleteMedia() {
         const modal = document.getElementById('media-modal');
-        const fileId = modal.dataset.fileId;
+        const {fileId} = modal.dataset;
         
         if (confirm('Are you sure you want to delete this media file?')) {
             try {
@@ -1462,7 +1470,9 @@ class MediaManager {
     }
 
     async bulkDelete() {
-        if (this.selectedFiles.size === 0) return;
+        if (this.selectedFiles.size === 0) {
+          return;
+        }
         
         const message = `Are you sure you want to delete ${this.selectedFiles.size} selected files?`;
         if (confirm(message)) {
@@ -1484,7 +1494,9 @@ class MediaManager {
     }
 
     bulkMove() {
-        if (this.selectedFiles.size === 0) return;
+        if (this.selectedFiles.size === 0) {
+          return;
+        }
         
         const targetFolder = prompt('Enter target folder ID (or leave empty for root):');
         if (targetFolder !== null) {
@@ -1531,7 +1543,9 @@ class MediaManager {
     }
 
     formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
+        if (bytes === 0) {
+          return '0 Bytes';
+        }
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));

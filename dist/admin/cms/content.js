@@ -1101,7 +1101,9 @@ class ContentManager {
         const input = document.getElementById(`${fieldId}-input`);
         const value = input.value.trim();
         
-        if (!value) return;
+        if (!value) {
+          return;
+        }
         
         const hiddenInput = document.getElementById(fieldId);
         const currentItems = JSON.parse(hiddenInput.value || '[]');
@@ -1197,17 +1199,23 @@ class ContentManager {
 
     findFieldConfig(fields, fieldKey) {
         for (const [key, config] of Object.entries(fields)) {
-            if (key === fieldKey) return config;
+            if (key === fieldKey) {
+              return config;
+            }
             if (config.type === 'repeater' && config.fields) {
                 const found = this.findFieldConfig(config.fields, fieldKey);
-                if (found) return config;
+                if (found) {
+                  return config;
+                }
             }
         }
         return null;
     }
 
     async saveCurrentSection() {
-        if (!this.currentSection) return;
+        if (!this.currentSection) {
+          return;
+        }
 
         const form = document.getElementById(`section-form-${this.currentSection}`);
         const formData = new FormData(form);
@@ -1249,7 +1257,9 @@ class ContentManager {
     }
 
     async resetCurrentSection() {
-        if (!this.currentSection) return;
+        if (!this.currentSection) {
+          return;
+        }
 
         const confirmed = await this.confirm('Reset section?', 'This will discard all unsaved changes.');
         if (confirmed) {

@@ -638,7 +638,9 @@ class BlogManager {
 
     renderBlogPosts(posts) {
         const tbody = document.getElementById('blog-posts-table');
-        if (!tbody) return;
+        if (!tbody) {
+          return;
+        }
 
         if (posts.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No blog posts found</td></tr>';
@@ -713,7 +715,9 @@ class BlogManager {
 
     renderCategories(categories) {
         const tbody = document.getElementById('categories-table');
-        if (!tbody) return;
+        if (!tbody) {
+          return;
+        }
 
         if (categories.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No categories found</td></tr>';
