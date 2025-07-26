@@ -7,8 +7,6 @@ import { injectSpeedInsights } from '@vercel/speed-insights'
 // Import Vercel Analytics
 import { inject } from '@vercel/analytics'
 
-// Import blog system
-import { BlogSystem } from './blog-system.js';
 import { AreaFinder } from './components/area-finder.js';
 
 // Import asset loading utilities
@@ -81,7 +79,6 @@ class NeffPavingApp {
         this.initClickToCall()
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
-        this.initBlogSystem()
 this.initLazyLoading();
 this.initMeasurementToolToggle();
     }
@@ -1471,90 +1468,6 @@ this.initMeasurementToolToggle();
         }, 5000)
     }
     
-    async initBlogSystem() {
-        try {
-            // Initialize blog system
-            this.blogSystem = new BlogSystem()
-            await this.blogSystem.init()
-            
-            // Load recent posts for homepage
-            this.loadRecentBlogPosts()
-            
-            // Handle blog page if we're on it
-            this.handleBlogPage()
-            
-        } catch (error) {
-            console.error('Error initializing blog system:', error)
-        }
-    }
-    
-    loadRecentBlogPosts() {
-        const blogGrid = document.querySelector('#recent-blog .blog-grid')
-        if (!blogGrid) return
-        
-        // Get recent posts
-        const recentPosts = this.blogSystem.getRecentPosts(3)
-        
-        // Clear existing content
-        blogGrid.innerHTML = ''
-        
-        // Render recent posts
-        recentPosts.forEach(post => {
-            blogGrid.innerHTML += this.blogSystem.renderPostCard(post)
-        })
-    }
-    
-    async handleBlogPage() {
-        // Check if we're on the blog page
-        if (!window.location.pathname.includes('blog.html')) return
-        
-        console.log('Blog page detected, loading posts...')
-        
-        const urlParams = new URLSearchParams(window.location.search)
-        const postSlug = urlParams.get('post')
-        
-        const blogList = document.querySelector('.blog-list')
-        if (!blogList) {
-            console.error('Blog list container not found')
-            return
-        }
-        
-        // Ensure blog system is initialized
-        if (!this.blogSystem || this.blogSystem.posts.length === 0) {
-            console.log('Blog system not ready, waiting...')
-            // Wait a bit for blog system to initialize
-            setTimeout(() => this.handleBlogPage(), 100)
-            return
-        }
-        
-        if (postSlug) {
-            // Show single post
-            const post = this.blogSystem.getPostBySlug(postSlug)
-            if (post) {
-                blogList.innerHTML = this.blogSystem.renderFullPost(post)
-                document.title = `${post.title} - Neff Paving Blog`
-            } else {
-                blogList.innerHTML = '<p>Post not found.</p>'
-            }
-        } else {
-            // Show all posts
-            const allPosts = this.blogSystem.posts
-            console.log(`Rendering ${allPosts.length} posts`)
-            
-            if (allPosts.length === 0) {
-                blogList.innerHTML = '<p>No blog posts available.</p>'
-                return
-            }
-            
-            blogList.innerHTML = ''
-            
-            allPosts.forEach(post => {
-                const postElement = document.createElement('div')
-                postElement.innerHTML = this.blogSystem.renderPostCard(post)
-                blogList.appendChild(postElement.firstElementChild)
-            })
-        }
-    }
 }
 
 // Initialize the app when DOM is loaded

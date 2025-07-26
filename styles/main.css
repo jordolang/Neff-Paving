@@ -2787,7 +2787,7 @@ img[src]:not([src=""]) ~ *::before {
     box-shadow: var(--shadow);
 }
 
-/* Reynoldsburg Office Section */
+/* Locations Section - Enhanced Responsive Design */
 .office-section {
     padding: var(--spacing-4xl) 0;
     background: var(--light-gray);
@@ -2795,21 +2795,48 @@ img[src]:not([src=""]) ~ *::before {
 
 .office-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     gap: var(--spacing-4xl);
-    align-items: center;
+    align-items: start;
+    margin-bottom: var(--spacing-3xl);
+}
+
+/* Location Card Container */
+.location-card {
+    background: var(--pure-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.location-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
 }
 
 .office-info {
-    background: var(--pure-white);
+    background: transparent;
     padding: var(--spacing-3xl);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow);
+    border-radius: 0;
+    box-shadow: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .office-info h3 {
     color: var(--asphalt-dark);
     margin-bottom: var(--spacing-lg);
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--safety-yellow);
 }
 
 .office-details {
@@ -2817,12 +2844,20 @@ img[src]:not([src=""]) ~ *::before {
     flex-direction: column;
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
+    flex: 1;
 }
 
 .detail-item {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.detail-item:hover {
+    background: var(--light-gray);
 }
 
 .detail-icon {
@@ -2837,12 +2872,14 @@ img[src]:not([src=""]) ~ *::before {
     margin-bottom: var(--spacing-xs);
     color: var(--asphalt-dark);
     font-size: 16px;
+    font-weight: 600;
 }
 
 .detail-content p {
     color: var(--road-gray);
     margin: 0;
     line-height: 1.5;
+    font-size: 14px;
 }
 
 .office-cta {
@@ -2850,14 +2887,60 @@ img[src]:not([src=""]) ~ *::before {
     gap: var(--spacing-md);
     justify-content: center;
     flex-wrap: wrap;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--light-gray);
+    margin-top: auto;
 }
 
 .office-map {
     position: relative;
-    height: 400px;
+    height: 300px;
     border-radius: var(--border-radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+    margin: var(--spacing-lg) var(--spacing-lg) 0;
+    background: var(--light-gray);
+}
+
+/* Map placeholder improvements */
+.office-map .map-placeholder {
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--concrete);
+    border-radius: var(--border-radius);
+    margin: 0;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.office-map .map-placeholder:hover {
+    background: var(--light-gray);
+    transform: none;
+}
+
+.office-map .map-placeholder svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--spacing-md);
+    color: var(--traffic-orange);
+}
+
+.office-map .map-placeholder h4 {
+    color: var(--asphalt-dark);
+    font-size: 16px;
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+.office-map .map-placeholder p {
+    color: var(--road-gray);
+    font-size: 14px;
+    margin: 0;
+    text-align: center;
 }
 
 /* ArcGIS Integration Styles */
