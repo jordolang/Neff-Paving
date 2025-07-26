@@ -86,7 +86,7 @@ export default defineConfig(({ mode }) => {
       input: {
         main: resolve(__dirname, 'index.html'),
         '404': resolve(__dirname, '404.html'),
-        'estimate-form': resolve(__dirname, 'assets/paving-estimate-form.html')
+        'estimate-form': resolve(__dirname, 'estimate-form.html')
       },
       output: {
         // Optimized asset file naming with cache-friendly hashes
