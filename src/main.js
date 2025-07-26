@@ -67,6 +67,9 @@ class NeffPavingApp {
         // Preload critical assets
         this.preloadCriticalAssets()
         
+        // Initialize hero video
+        this.initHeroVideo()
+        
         this.initLoadingAnimation()
         this.initAnimations()
         this.initScrollEffects()
@@ -350,6 +353,46 @@ this.initMeasurementToolToggle();
                 <p style="margin-top: 1rem; font-size: 0.9rem; color: #6c757d;">Please try refreshing the page or contact us directly for assistance.</p>
             </div>
         `;
+    }
+
+    /**
+     * Initialize hero video with proper path handling
+     */
+    initHeroVideo() {
+        const video = document.getElementById('hero-video');
+        if (!video) return;
+
+        // Get the base URL for assets
+        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? '' 
+            : (window.location.pathname.includes('/Neff-Paving/') ? '/Neff-Paving' : '');
+        
+        // Update video source with proper base URL
+        const videoSource = video.querySelector('source');
+        if (videoSource) {
+            const videoPath = 'assets/videos/optimized/neff-paving-1080p.mp4';
+            videoSource.src = baseUrl ? `${baseUrl}/${videoPath}` : videoPath;
+        }
+
+        // Add error handling
+        video.addEventListener('error', (e) => {
+            console.error('Video failed to load:', e);
+            // Add a fallback background color or image
+            const heroSection = document.getElementById('hero');
+            if (heroSection) {
+                heroSection.style.backgroundColor = '#2c2c2c';
+            }
+        });
+
+        // Force video to play on load
+        video.addEventListener('loadeddata', () => {
+            video.play().catch(err => {
+                console.error('Video autoplay failed:', err);
+            });
+        });
+
+        // Ensure video is visible
+        video.style.opacity = '1';
     }
 
     /**
