@@ -358,7 +358,7 @@ this.initMeasurementToolToggle();
     preloadCriticalAssets() {
         const criticalAssets = [
             { path: '/assets/images/hero-bg.jpg', type: 'image', priority: 'high' },
-            { path: '/assets/videos/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
+            { path: '/assets/videos/optimized/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
             { path: '/assets/images/logo.png', type: 'image', priority: 'high' }
         ];
         
