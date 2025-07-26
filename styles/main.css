@@ -2943,6 +2943,84 @@ img[src]:not([src=""]) ~ *::before {
     text-align: center;
 }
 
+/* Map loaded state styling */
+.map-loaded {
+    cursor: default;
+}
+
+.map-loaded iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+/* Static map view styling */
+.static-map-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-xl);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--concrete);
+    border: 2px dashed var(--light-gray);
+    border-radius: var(--border-radius);
+}
+
+.static-map-view:hover {
+    background: var(--light-gray);
+    border-color: var(--traffic-orange);
+    transform: translateY(-2px);
+}
+
+.map-static-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-static-content svg {
+    width: 48px;
+    height: 48px;
+    color: var(--traffic-orange);
+    margin-bottom: var(--spacing-md);
+}
+
+.map-static-content h4 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--asphalt-dark);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.map-static-content p {
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--road-gray);
+    font-size: 14px;
+}
+
+.map-static-content > div {
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--traffic-orange);
+    color: white;
+    border-radius: var(--border-radius);
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.static-map-view:hover .map-static-content > div {
+    background: var(--safety-yellow);
+    color: var(--asphalt-dark);
+}
+
 /* ArcGIS Integration Styles */
 .arcgis-container {
     background: var(--concrete);

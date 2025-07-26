@@ -8,6 +8,7 @@ import { injectSpeedInsights } from '@vercel/speed-insights'
 import { inject } from '@vercel/analytics'
 
 import { AreaFinder } from './components/area-finder.js';
+import { LocationMaps } from './components/location-maps.js';
 
 // Import asset loading utilities
 import { assetLoader } from './utils/asset-loader.js';
@@ -79,6 +80,7 @@ class NeffPavingApp {
         this.initClickToCall()
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
+        this.initLocationMaps()
 this.initLazyLoading();
 this.initMeasurementToolToggle();
     }
@@ -1466,6 +1468,18 @@ this.initMeasurementToolToggle();
         setTimeout(() => {
             notification.remove()
         }, 5000)
+    }
+    
+    /**
+     * Initialize location maps for business offices
+     */
+    initLocationMaps() {
+        try {
+            // Initialize location maps component
+            this.locationMaps = new LocationMaps()
+        } catch (error) {
+            console.error('Error initializing location maps:', error)
+        }
     }
     
 }
