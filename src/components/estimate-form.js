@@ -1141,6 +1141,16 @@ export class EstimateForm {
                 </div>
             </div>
             
+            <div class="estimate-disclaimer" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 1rem; margin: 1.5rem 0; color: #856404;">
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                    <span style="font-size: 1.25rem; flex-shrink: 0;">⚠️</span>
+                    <div>
+                        <strong style="display: block; margin-bottom: 0.5rem; color: #856404;">Important Pricing Disclaimer</strong>
+                        <p style="margin: 0; line-height: 1.5; color: #856404;">These estimates are preliminary calculations based on basic measurements and standard pricing. The final project price may vary anywhere from <strong>25% to 50% higher or lower</strong> than the predicted cost depending on site conditions, material choices, accessibility, permits, and specific project requirements.</p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="material-pricing">
                 <h4>Pricing by Material</h4>
                 
