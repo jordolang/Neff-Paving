@@ -6,9 +6,9 @@
   "main": "src/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/copy-admin.js",
-    "build:github": "vite build --mode github && node scripts/copy-admin.js",
-    "build:vercel": "vite build --mode vercel && node scripts/copy-admin.js",
+    "build": "vite build",
+    "build:github": "vite build --mode github",
+    "build:vercel": "vite build --mode vercel",
     "build:optimized": "node scripts/deploy-optimized.js",
     "build:optimized:github": "DEPLOY_PLATFORM=github node scripts/deploy-optimized.js",
     "build:optimized:vercel": "DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
