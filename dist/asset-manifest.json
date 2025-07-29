@@ -1,20 +1,20 @@
 {
-  "buildTime": "2025-07-29T18:47:54.581Z",
-  "deployTime": 1753814874581,
+  "buildTime": "2025-07-29T22:16:27.395Z",
+  "deployTime": 1753827387395,
   "platform": "vercel",
   "assets": [
     {
       "path": ".htaccess",
       "size": 1187,
       "type": "unknown",
-      "lastModified": "2025-07-29T18:47:56.790Z",
+      "lastModified": "2025-07-29T22:16:29.922Z",
       "cacheStrategy": "versioned"
     },
     {
       "path": "404.html",
       "size": 3616,
       "type": "document",
-      "lastModified": "2025-07-29T18:47:56.626Z",
+      "lastModified": "2025-07-29T22:16:29.722Z",
       "cacheStrategy": "dynamic"
     },
     {
@@ -25,129 +25,129 @@
       "cacheStrategy": "versioned"
     },
     {
-      "path": "assets\\favicon-BDJErNN5.ico",
-      "size": 1078,
+      "path": "assets\\favicon-F7cuF2t6.ico",
+      "size": 152126,
       "type": "unknown",
-      "lastModified": "2025-07-29T18:47:56.622Z",
+      "lastModified": "2025-07-29T22:16:29.712Z",
       "cacheStrategy": "versioned"
     },
     {
-      "path": "assets\\images\\apple-touch-icon-BCAKZr0s.png",
-      "size": 982,
+      "path": "assets\\images\\apple-touch-icon-CPE-rLNI.png",
+      "size": 2745,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.630Z",
+      "lastModified": "2025-07-29T22:16:29.728Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\images\\commercial-parking-1-TkpLSjcJ.jpg",
       "size": 939487,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.649Z",
+      "lastModified": "2025-07-29T22:16:29.736Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\images\\custom-decorative-1-Bqr1ejqk.jpg",
       "size": 368528,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.643Z",
+      "lastModified": "2025-07-29T22:16:29.729Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\images\\customer-1-BpQsGvvF.jpg",
       "size": 26950,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.641Z",
+      "lastModified": "2025-07-29T22:16:29.733Z",
       "cacheStrategy": "immutable"
     },
     {
-      "path": "assets\\images\\favicon-16x16-DyhtZSNo.png",
-      "size": 376,
+      "path": "assets\\images\\favicon-16x16-6rkYH3Jn.png",
+      "size": 677,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.643Z",
+      "lastModified": "2025-07-29T22:16:29.730Z",
       "cacheStrategy": "immutable"
     },
     {
-      "path": "assets\\images\\favicon-32x32-BSXYYsZ9.png",
-      "size": 429,
+      "path": "assets\\images\\favicon-32x32-BMziwMnC.png",
+      "size": 1103,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.639Z",
+      "lastModified": "2025-07-29T22:16:29.726Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\images\\maintenance-repair-1-wGeFcuFD.jpg",
       "size": 160176,
       "type": "image",
-      "lastModified": "2025-07-29T18:47:56.640Z",
+      "lastModified": "2025-07-29T22:16:29.729Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\styles\\main-CjJ4WZBY.css",
       "size": 62775,
       "type": "stylesheet",
-      "lastModified": "2025-07-29T18:47:56.785Z",
+      "lastModified": "2025-07-29T22:16:29.914Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\styles\\main-DvB2Xm2x.css",
       "size": 26053,
       "type": "stylesheet",
-      "lastModified": "2025-07-29T18:47:56.787Z",
+      "lastModified": "2025-07-29T22:16:29.916Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "assets\\videos\\neff-paving-1080p-BpjyIQDW.mp4",
       "size": 34602243,
       "type": "video",
-      "lastModified": "2025-07-29T18:47:56.670Z",
+      "lastModified": "2025-07-29T22:16:29.758Z",
       "cacheStrategy": "versioned"
     },
     {
       "path": "chunks\\chunk-E0eRZBtV.js",
       "size": 84062,
       "type": "javascript",
-      "lastModified": "2025-07-29T18:47:56.626Z",
+      "lastModified": "2025-07-29T22:16:29.719Z",
       "cacheStrategy": "immutable"
     },
     {
       "path": "chunks\\chunk-E0eRZBtV.js.map",
       "size": 399484,
       "type": "unknown",
-      "lastModified": "2025-07-29T18:47:56.627Z",
+      "lastModified": "2025-07-29T22:16:29.722Z",
       "cacheStrategy": "versioned"
     },
     {
       "path": "entries\\404-l0sNRNKZ.js.map",
       "size": 96,
       "type": "unknown",
-      "lastModified": "2025-07-29T18:47:56.626Z",
+      "lastModified": "2025-07-29T22:16:29.721Z",
       "cacheStrategy": "versioned"
     },
     {
       "path": "entries\\estimate-form-DiNSrYJe.js.map",
       "size": 106,
       "type": "unknown",
-      "lastModified": "2025-07-29T18:47:56.626Z",
+      "lastModified": "2025-07-29T22:16:29.721Z",
       "cacheStrategy": "versioned"
     },
     {
-      "path": "entries\\main-BfTHcU2q.js",
+      "path": "entries\\main-CPxZSTSq.js",
       "size": 165676,
       "type": "javascript",
-      "lastModified": "2025-07-29T18:47:56.622Z",
+      "lastModified": "2025-07-29T22:16:29.712Z",
       "cacheStrategy": "immutable"
     },
     {
-      "path": "entries\\main-BfTHcU2q.js.map",
+      "path": "entries\\main-CPxZSTSq.js.map",
       "size": 523525,
       "type": "unknown",
-      "lastModified": "2025-07-29T18:47:56.627Z",
+      "lastModified": "2025-07-29T22:16:29.722Z",
       "cacheStrategy": "versioned"
     },
     {
       "path": "estimate-form.html",
-      "size": 29402,
+      "size": 30754,
       "type": "document",
-      "lastModified": "2025-07-29T18:47:56.627Z",
+      "lastModified": "2025-07-29T22:16:29.722Z",
       "cacheStrategy": "dynamic"
     },
     {
@@ -161,7 +161,7 @@
       "path": "index.html",
       "size": 92891,
       "type": "document",
-      "lastModified": "2025-07-29T18:47:56.627Z",
+      "lastModified": "2025-07-29T22:16:29.723Z",
       "cacheStrategy": "dynamic"
     },
     {
