@@ -10,6 +10,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/_vercel/speed-insights/script.js",
+      "destination": "https://va.vercel-scripts.com/v1/speed-insights/script.js"
+    },
+    {
       "source": "/(services)/(.*)",
       "destination": "/$1/$2"
     },

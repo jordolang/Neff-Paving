@@ -62,7 +62,12 @@ class NeffPavingApp {
         inject()
         
         // Initialize Vercel Speed Insights
-        injectSpeedInsights()
+        injectSpeedInsights({
+            beforeSend: (event) => {
+                // Optional: Add any custom logic here
+                return event;
+            },
+        });
         
         // Preload critical assets
         this.preloadCriticalAssets()
