@@ -30,10 +30,25 @@ export default defineConfig(({ mode }) => {
       },
       // Configure CORS for development
       cors: true,
-      // Standard SPA fallback
+      // SPA fallback for admin panel during development
       middlewareMode: false,
+      proxy: {
+        // Proxy admin API calls to backend during development
+        '/api': {
+          target: 'http://localhost:8001',
+          changeOrigin: true,
+          secure: false
+        }
       },
       // Custom middleware for SPA routing
+      configureServer(server) {
+        server.middlewares.use('/admin', (req, res, next) => {
+          // Handle admin SPA routing in development
+          if (req.url.startsWith('/admin') && !req.url.includes('.')) {
+            req.url = '/admin/index.html';
+          }
+          next();
+        });
       }
     },
     resolve: {

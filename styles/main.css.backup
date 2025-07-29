@@ -405,6 +405,56 @@ nav a:hover::after {
     height: 20px;
 }
 
+/* Admin icon with proper spacing and hollow rounded square border */
+.social-links .admin-link {
+    background: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    margin-left: calc(var(--spacing-lg) * 1.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    padding-left: calc(var(--spacing-lg) * 1.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    border-left-width: 1px;
+    border-left-color: rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+/* Ensure the separator line is positioned correctly */
+.social-links .admin-link::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--spacing-lg) * 1.5 - 1px);
+    top: 50%;
+    transform: translateY(-50%);
+    height: 24px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Admin icon sizing to match other social icons */
+.social-links .admin-link svg {
+    width: 20px !important;
+    height: 20px !important;
+    color: var(--pure-white);
+    transition: all 0.3s ease;
+}
+
+/* Hover effect for admin icon */
+.social-links .admin-link:hover {
+    background: none !important;
+    transform: translateY(-2px);
+    border-color: var(--safety-yellow);
+}
+
+.social-links .admin-link:hover svg {
+    color: var(--safety-yellow);
+}
 
 /* Main content */
 main {
@@ -3504,6 +3554,22 @@ img[src]:not([src=""]) ~ *::before {
         height: 16px;
     }
     
+    .social-links .admin-link {
+        margin-left: 1rem !important;
+        padding-left: 1rem !important;
+        background: none !important;
+        width: 35px !important;
+        height: 35px !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 8px !important;
+        border-left-width: 1px !important;
+        border-left-color: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .social-links .admin-link svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
     
     .team-grid,
     .cert-grid,

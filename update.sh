@@ -28,7 +28,6 @@ echo ""
 read -p "💬 Enter commit message: " commit_message
 
 if [ -z "$commit_message" ]; then
-    commit_message="Update deployment configurations and admin panel"
 fi
 
 echo ""
@@ -91,8 +90,6 @@ echo -e "${GREEN}🎉 Deployment completed successfully!${NC}"
 echo -e "${GREEN}✅ GitHub: Changes pushed to main branch${NC}"
 echo -e "${GREEN}✅ Vercel: Production deployment completed${NC}"
 echo ""
-echo -e "${CYAN}🔗 Your admin panel should be available at:${NC}"
-echo -e "${CYAN}   https://your-domain.vercel.app/admin${NC}"
 echo ""
 echo -e "${YELLOW}🔧 Next steps:${NC}"
 echo -e "${WHITE}   1. Configure environment variables in Vercel dashboard${NC}"

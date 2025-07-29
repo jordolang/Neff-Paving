@@ -49,13 +49,11 @@ export function debugAssetPaths() {
         const resolvedPath = getAssetPath(path);
         const isDoubleSlash = resolvedPath.includes('//') && !resolvedPath.startsWith('http');
         const hasIncorrectBase = resolvedPath.includes('/Neff-Paving//');
-        
         console.log(`  "${path}" → "${resolvedPath}"`, {
             hasDoubleSlash: isDoubleSlash,
             hasIncorrectBase: hasIncorrectBase,
             length: resolvedPath.length
         });
-        
         if (isDoubleSlash) {
             console.warn(`    ⚠️  Double slash detected!`);
         }
@@ -70,8 +68,7 @@ export function debugAssetPaths() {
         'index.html',
         '/index.html',
         'services/',
-        '/services/',
-        'admin/dashboard'
+        '/services/'
     ];
     
     testUrls.forEach(url => {
@@ -179,7 +176,6 @@ export function fixDoubleSlashes() {
     selectors.forEach(selector => {
         const elements = document.querySelectorAll(selector);
         console.log(`Found ${elements.length} elements with "${selector}"`);
-        
         elements.forEach(element => {
             const attr = element.tagName.toLowerCase() === 'a' || element.tagName.toLowerCase() === 'link' ? 'href' : 'src';
             const currentPath = element.getAttribute(attr);

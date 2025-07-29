@@ -10,7 +10,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/(services)/(.*)",
+      "source": "/(admin|services)/(.*)",
       "destination": "/$1/$2"
     },
     {

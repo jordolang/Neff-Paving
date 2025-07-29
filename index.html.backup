@@ -433,7 +433,7 @@
                         <li><a href="#services">Services</a></li>
                         <li><a href="#gallery">Gallery</a></li>
                         <li><a href="#locations">Locations</a></li>
-                        <li><a href="estimate-form.html">Get Estimate</a></li>
+                        <li><a href="assets/paving-estimate-form.html">Get Estimate</a></li>
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </nav>
@@ -458,6 +458,10 @@
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                         </svg>
                     </a>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </header>
@@ -473,7 +477,7 @@
                         <h1 class="hero-title">Professional Paving Solutions</h1>
                         <p class="hero-subtitle">Quality craftsmanship for residential and commercial projects across the region</p>
                         <div class="hero-cta">
-                            <a href="estimate-form.html" class="btn btn-primary">Get Free Quote</a>
+                            <a href="assets/paving-estimate-form.html" class="btn btn-primary">Get Free Quote</a>
                             <a href="#gallery" class="btn btn-secondary">View Our Work</a>
                         </div>
                         <div class="hero-features">
@@ -825,7 +829,7 @@
                         <div class="cta-content">
                             <h3>Not Sure Which Service You Need?</h3>
                             <p>Our experts will assess your project and recommend the best paving solution for your needs and budget.</p>
-                            <a href="estimate-form.html" class="btn btn-primary btn-large">Get Free Consultation</a>
+                            <a href="assets/paving-estimate-form.html" class="btn btn-primary btn-large">Get Free Consultation</a>
                         </div>
                         <div class="cta-features">
                             <div class="cta-feature">
@@ -1688,6 +1692,17 @@
         });
     </script>
 
+    <script>
+            e.preventDefault();
+            // Check if already authenticated
+            const isAuthenticated = localStorage.getItem('neffPavingAdminAuth');
+            if (isAuthenticated) {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/admin/login';
+            }
+        });
+    </script>
 </body>
 
 </html>

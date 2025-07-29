@@ -78,7 +78,7 @@ class BuildVerifier {
     
     const criticalFiles = [
       'index.html',
-      'estimate-form.html'
+      'admin/index.html'
     ];
     
     const optionalFiles = [

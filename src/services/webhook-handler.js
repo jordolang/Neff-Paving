@@ -258,8 +258,8 @@ export class WebhookHandler {
     console.log(`⚖️ Charge dispute created: ${dispute.id}`);
     
     try {
-      // Alert administrators about dispute
-      await this.alertAdministrators('charge_dispute', dispute);
+      // Log dispute for internal review
+      console.log('Charge dispute requires attention:', dispute);
     } catch (error) {
       console.error('Error handling charge dispute:', error);
     }
@@ -434,22 +434,6 @@ export class WebhookHandler {
     }
   }
 
-  /**
-   * Alert administrators about critical events
-   * @param {string} alertType - Type of alert
-   * @param {Object} data - Alert data
-   */
-  async alertAdministrators(alertType, data) {
-    try {
-      console.log(`Administrator Alert: ${alertType}`, data);
-      
-      // Send alerts via email, Slack, SMS, etc.
-      // Implementation depends on your alerting system
-      
-    } catch (error) {
-      console.error('Error sending administrator alert:', error);
-    }
-  }
 
   /**
    * Store payment method information

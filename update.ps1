@@ -19,7 +19,6 @@ Write-Host ""
 $commitMessage = Read-Host "💬 Enter commit message"
 
 if ([string]::IsNullOrWhiteSpace($commitMessage)) {
-    $commitMessage = "Update deployment configurations and admin panel"
 }
 
 Write-Host ""
@@ -84,8 +83,6 @@ Write-Host "🎉 Deployment completed successfully!" -ForegroundColor Green
 Write-Host "✅ GitHub: Changes pushed to main branch" -ForegroundColor Green
 Write-Host "✅ Vercel: Production deployment completed" -ForegroundColor Green
 Write-Host ""
-Write-Host "🔗 Your admin panel should be available at:" -ForegroundColor Cyan
-Write-Host "   https://your-domain.vercel.app/admin" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "🔧 Next steps:" -ForegroundColor Yellow
 Write-Host "   1. Configure environment variables in Vercel dashboard" -ForegroundColor White
