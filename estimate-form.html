@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- Primary Meta Tags -->
     <title>Neff Paving - Professional Estimate Calculator</title>
     <meta name="title" content="Neff Paving - Professional Estimate Calculator">
@@ -11,35 +12,35 @@
     <meta name="keywords" content="paving estimate, asphalt estimate, concrete estimate, paving calculator, driveway estimate, parking lot estimate">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Neff Paving">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://neffpaving.com/estimate-form.html">
     <meta property="og:title" content="Get Your Free Paving Estimate - Neff Paving Calculator">
     <meta property="og:description" content="Get an instant, accurate paving estimate with our advanced calculator. Draw your project area on the map and get transparent pricing for asphalt, concrete, and paver installations.">
-    <meta property="og:image" content="https://neffpaving.com/estimator.png">
+    <meta property="og:image" content="/assets/estimator.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="Neff Paving">
     <meta property="og:locale" content="en_US">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://neffpaving.com/estimate-form.html">
     <meta property="twitter:title" content="Get Your Free Paving Estimate - Neff Paving Calculator">
     <meta property="twitter:description" content="Get an instant, accurate paving estimate with our advanced calculator. Draw your project area and get transparent pricing.">
-    <meta property="twitter:image" content="https://neffpaving.com/estimator.png">
-    
+    <meta property="twitter:image" content="/assets/estimator.png">
+
     <!-- Canonical URL -->
     <link rel="canonical" href="https://neffpaving.com/estimate-form.html">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
+
     <link rel="stylesheet" href="/styles/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
+         :root {
             --asphalt-dark: #2C2C2C;
             --safety-yellow: #FFD700;
             --pure-white: #FFFFFF;
@@ -53,13 +54,13 @@
             --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: var(--font-primary);
             background: var(--asphalt-dark);
@@ -74,7 +75,7 @@
         nav a.active::after {
             width: 100%;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -83,14 +84,14 @@
             box-shadow: var(--shadow-lg);
             overflow: hidden;
         }
-
+        
         .header {
             background: var(--asphalt-dark);
             color: var(--pure-white);
             padding: 30px;
             text-align: center;
         }
-
+        
         .header h1 {
             font-family: var(--font-primary);
             font-size: 2.5rem;
@@ -98,7 +99,7 @@
             margin-bottom: 10px;
             color: var(--safety-yellow);
         }
-
+        
         .header h2 {
             font-family: var(--font-primary);
             font-size: 1.8rem;
@@ -106,21 +107,21 @@
             font-weight: 400;
             color: var(--pure-white);
         }
-
+        
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
             margin-bottom: 20px;
             color: var(--pure-white);
         }
-
+        
         .header-badges {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
         }
-
+        
         .badge {
             background: rgba(255, 215, 0, 0.2);
             padding: 8px 16px;
@@ -130,21 +131,21 @@
             border: 1px solid var(--safety-yellow);
             color: var(--safety-yellow);
         }
-
+        
         .form-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             padding: 30px;
         }
-
+        
         .form-section {
             background: var(--pure-white);
             padding: 25px;
             border-radius: 15px;
             box-shadow: var(--shadow);
         }
-
+        
         .section-title {
             font-family: var(--font-primary);
             font-size: 1.5rem;
@@ -154,11 +155,11 @@
             padding-bottom: 10px;
             border-bottom: 2px solid var(--safety-yellow);
         }
-
+        
         .form-group {
             margin-bottom: 20px;
         }
-
+        
         label {
             display: block;
             margin-bottom: 8px;
@@ -166,8 +167,10 @@
             font-weight: 500;
             color: var(--asphalt-dark);
         }
-
-        input, select, textarea {
+        
+        input,
+        select,
+        textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid var(--concrete);
@@ -177,26 +180,28 @@
             transition: var(--transition);
             background: var(--pure-white);
         }
-
-        input:focus, select:focus, textarea:focus {
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--safety-yellow);
             box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
         }
-
+        
         #map {
             height: 400px;
             width: 100%;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-
+        
         .map-controls {
             margin-top: 15px;
             display: flex;
             gap: 10px;
         }
-
+        
         .btn {
             padding: 12px 24px;
             border: none;
@@ -209,40 +214,40 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
+        
         .btn-primary {
             background: var(--safety-yellow);
             color: var(--asphalt-dark);
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
         }
-
+        
         .btn-secondary {
             background: var(--road-gray);
             color: var(--pure-white);
         }
-
+        
         .btn-danger {
             background: var(--error-red);
             color: var(--pure-white);
         }
-
+        
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-
+        
         .btn-primary:hover {
             background: #e6c200;
             box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
         }
-
+        
         .area-info {
             background: var(--light-gray);
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
         }
-
+        
         .area-display {
             font-family: var(--font-primary);
             font-size: 1.2rem;
@@ -250,7 +255,7 @@
             color: var(--asphalt-dark);
             margin-bottom: 10px;
         }
-
+        
         .price-breakdown {
             background: rgba(255, 215, 0, 0.1);
             padding: 15px;
@@ -258,7 +263,7 @@
             margin-top: 10px;
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
-
+        
         .price-item {
             display: flex;
             justify-content: space-between;
@@ -267,7 +272,7 @@
             font-weight: 500;
             color: var(--asphalt-dark);
         }
-
+        
         .total-price {
             font-family: var(--font-primary);
             font-size: 1.5rem;
@@ -277,13 +282,13 @@
             padding-top: 10px;
             margin-top: 10px;
         }
-
+        
         .submit-section {
             grid-column: 1 / -1;
             text-align: center;
             margin-top: 20px;
         }
-
+        
         .submit-btn {
             padding: 15px 40px;
             font-size: 1.2rem;
@@ -299,13 +304,13 @@
             letter-spacing: 0.5px;
             box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
         }
-
+        
         .submit-btn:hover {
             transform: translateY(-3px);
             background: #e6c200;
             box-shadow: 0 10px 25px rgba(255, 215, 0, 0.6);
         }
-
+        
         .submit-btn:disabled {
             background: var(--road-gray);
             color: var(--pure-white);
@@ -313,14 +318,14 @@
             transform: none;
             box-shadow: none;
         }
-
+        
         .info-section {
             background: var(--light-gray);
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
         }
-
+        
         .info-title {
             font-family: var(--font-primary);
             font-size: 1.2rem;
@@ -328,26 +333,26 @@
             color: var(--asphalt-dark);
             margin-bottom: 10px;
         }
-
+        
         .info-list {
             list-style: none;
             padding: 0;
         }
-
+        
         .info-list li {
             padding: 5px 0;
             color: var(--asphalt-dark);
             font-family: var(--font-primary);
             font-weight: 400;
         }
-
+        
         .info-list li:before {
             content: '✓';
             color: var(--safety-yellow);
             margin-right: 10px;
             font-weight: bold;
         }
-
+        
         .contact-info {
             background: var(--asphalt-dark);
             color: var(--pure-white);
@@ -356,50 +361,46 @@
             text-align: center;
             margin-top: 20px;
         }
-
+        
         .contact-info h3 {
             font-family: var(--font-primary);
             font-weight: 600;
             margin-bottom: 10px;
             color: var(--safety-yellow);
         }
-
+        
         .contact-info p {
             margin: 5px 0;
             font-size: 1.1rem;
             font-family: var(--font-primary);
             font-weight: 400;
         }
-
+        
         .contact-info a {
             color: var(--safety-yellow);
             text-decoration: none;
             transition: var(--transition);
         }
-
+        
         .contact-info a:hover {
             color: var(--pure-white);
             text-decoration: underline;
         }
-
+        
         @media (max-width: 768px) {
             .form-container {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
-            
             .header h1 {
                 font-size: 2rem;
             }
-            
             .header h2 {
                 font-size: 1.5rem;
             }
-            
             .map-controls {
                 flex-direction: column;
             }
-
             .header-badges {
                 flex-direction: column;
                 align-items: center;
@@ -407,6 +408,7 @@
         }
     </style>
 </head>
+
 <body>
     <header>
         <div class="header-container">
@@ -445,7 +447,7 @@
             </div>
         </div>
     </header>
-    
+
     <main style="padding-top: 120px;">
         <div class="container">
             <div class="header">
@@ -454,137 +456,143 @@
                 <p>Select your area on the map and get an instant, accurate quote for your paving project</p>
                 <div class="header-badges">
                     <span class="badge">✓ Licensed & Insured</span>
-                    <span class="badge">✓ 25+ Years Experience</span>
+                    <span class="badge">✓ 28+ Years Experience</span>
                     <span class="badge">✓ Free Estimates</span>
                 </div>
             </div>
 
-        <form id="estimateForm" class="form-container">
-            <div class="form-section">
-                <h2 class="section-title">Customer Information</h2>
-                
-                <div class="form-group">
-                    <label for="customerName">Full Name *</label>
-                    <input type="text" id="customerName" name="customerName" required>
-                </div>
+            <form id="estimateForm" class="form-container">
+                <div class="form-section">
+                    <h2 class="section-title">Customer Information</h2>
 
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="phone">Phone Number *</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="address">Property Address *</label>
-                    <input type="text" id="address" name="address" required>
-                </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="projectType">Project Type</label>
-                    <select id="projectType" name="projectType">
+                    <div class="form-group">
+                        <label for="address">Property Address *</label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectType">Project Type</label>
+                        <select id="projectType" name="projectType">
                         <option value="driveway">Driveway</option>
                         <option value="walkway">Walkway</option>
                         <option value="patio">Patio</option>
                         <option value="parking">Parking Area</option>
                         <option value="other">Other</option>
                     </select>
-                </div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="material">Paving Material</label>
-                    <select id="material" name="material">
+                    <div class="form-group">
+                        <label for="material">Paving Material</label>
+                        <select id="material" name="material">
                         <option value="asphalt">Asphalt ($8/sq ft)</option>
                         <option value="concrete">Concrete ($12/sq ft)</option>
                         <option value="brick">Brick Pavers ($15/sq ft)</option>
                         <option value="stone">Natural Stone ($20/sq ft)</option>
                     </select>
-                </div>
-
-                <div class="info-section">
-                    <div class="info-title">What's Included:</div>
-                    <ul class="info-list">
-                        <li>Site preparation and excavation</li>
-                        <li>Base installation and compaction</li>
-                        <li>Material supply and installation</li>
-                        <li>Cleanup and final grading</li>
-                        <li>2-year workmanship warranty</li>
-                    </ul>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Additional Notes</label>
-                    <textarea id="notes" name="notes" rows="4" placeholder="Any special requirements or notes..."></textarea>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h2 class="section-title">Area Selection</h2>
-                
-                <div id="map"></div>
-                
-                <div class="map-controls">
-                    <button type="button" class="btn btn-primary" onclick="startDrawing()">Draw Area</button>
-                    <button type="button" class="btn btn-secondary" onclick="clearPolygon()">Clear</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
-                </div>
-
-                <div class="area-info">
-                    <div class="area-display">
-                        Selected Area: <span id="areaDisplay">0 sq ft</span>
                     </div>
-                    
-                    <div class="price-breakdown">
-                        <div class="price-item">
-                            <span>Material Cost:</span>
-                            <span id="materialCost">$0.00</span>
-                        </div>
-                        <div class="price-item">
-                            <span>Labor Cost:</span>
-                            <span id="laborCost">$0.00</span>
-                        </div>
-                        <div class="price-item">
-                            <span>Equipment Cost:</span>
-                            <span id="equipmentCost">$0.00</span>
-                        </div>
-                        <div class="price-item total-price">
-                            <span>Total Estimate:</span>
-                            <span id="totalPrice">$0.00</span>
-                        </div>
+
+                    <div class="info-section">
+                        <div class="info-title">What's Included:</div>
+                        <ul class="info-list">
+                            <li>Site preparation and excavation</li>
+                            <li>Base installation and compaction</li>
+                            <li>Material supply and installation</li>
+                            <li>Cleanup and final grading</li>
+                            <li>2-year workmanship warranty</li>
+                        </ul>
                     </div>
-                    
-                    <div class="estimate-disclaimer" style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-top: 15px; color: #856404; font-family: var(--font-primary);">
-                        <div style="display: flex; align-items: flex-start; gap: 10px;">
-                            <span style="font-size: 1.2rem; flex-shrink: 0;">⚠️</span>
-                            <div>
-                                <strong style="display: block; margin-bottom: 8px; color: #856404; font-size: 1rem;">Important Pricing Disclaimer</strong>
-                                <p style="margin: 0; line-height: 1.4; font-size: 0.9rem; color: #856404;">These estimates are preliminary calculations based on basic measurements and standard pricing. The final project price may vary anywhere from <strong>25% to 50% higher or lower</strong> than the predicted cost depending on site conditions, material choices, accessibility, permits, and specific project requirements.</p>
+
+                    <div class="form-group">
+                        <label for="notes">Additional Notes</label>
+                        <textarea id="notes" name="notes" rows="4" placeholder="Any special requirements or notes..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">Area Selection</h2>
+
+                    <div id="map"></div>
+
+                    <div class="map-controls">
+                        <button type="button" class="btn btn-primary" onclick="startDrawing()">Draw Area</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearPolygon()">Clear</button>
+                        <button type="button" class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
+                    </div>
+
+                    <div class="area-info">
+                        <div class="area-display">
+                            Selected Area: <span id="areaDisplay">0 sq ft</span>
+                        </div>
+
+                        <div class="price-breakdown">
+                            <div class="price-item">
+                                <span>Material Cost:</span>
+                                <span id="materialCost">$0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Labor Cost:</span>
+                                <span id="laborCost">$0.00</span>
+                            </div>
+                            <div class="price-item">
+                                <span>Equipment Cost:</span>
+                                <span id="equipmentCost">$0.00</span>
+                            </div>
+                            <div class="price-item total-price">
+                                <span>Total Estimate:</span>
+                                <span id="totalPrice">$0.00</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="submit-section">
-                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                        <div class="disclaimer">
+                            <div class="disclaimer-title">
+                                📋 Important Disclaimer
+                            </div>
+                            <ul>
+                                <li>This estimate is preliminary and provided for informational purposes only. Actual costs may vary based on site conditions, material availability, and project specifications.</li>
+                                <li>Final pricing will be determined following a comprehensive on-site inspection and detailed project assessment by our licensed professionals.</li>
+                                <li>This estimate is valid for 30 days from the date of generation. Pricing is subject to change due to material cost fluctuations and seasonal variations.</li>
+                                <li>All work is subject to our standard terms and conditions, which will be provided with the formal written quote.</li>
+                                <li>Additional costs may apply for permits, utility markings, unexpected site conditions, or modifications to the original scope of work.</li>
+                                <li>Weather conditions, accessibility issues, and municipal requirements may affect the final project timeline and cost.</li>
+                            </ul>
+                            <div class="important-note">
+                                <strong>Note:</strong> By submitting this form, you agree to receive a formal written estimate and acknowledge that this preliminary estimate does not constitute a binding contract. All work requires a signed agreement
+                                and proper permits where applicable.
+                            </div>
+                        </div>
+
+                        <div class="submit-section">
+                            <button type="submit" class="submit-btn" id="submitBtn" disabled>
                     🚀 Get Your Free Estimate
                 </button>
-                <p style="margin-top: 15px; color: #7f8c8d; font-size: 0.9rem;">
-                    * No obligation • Response within 24 hours • Licensed professionals
-                </p>
-            </div>
+                            <p style="margin-top: 15px; color: #7f8c8d; font-size: 0.9rem;">
+                                * No obligation • Response within 24 hours • Licensed professionals
+                            </p>
+                        </div>
 
-            <div class="contact-info">
-                <h3>🏗️ Neff Paving - Your Trusted Partner</h3>
-                <p>📞 Call us directly: <a href="tel:+17404533063">(740) 453-3063</a></p>
-                <p>📧 Email: <a href="mailto:info@neffpaving.com">info@neffpaving.com</a></p>
-                <p>📍 Serving the Greater Metro Area</p>
+                        <div class="contact-info">
+                            <h3>🏗️ Neff Paving - Your Trusted Partner</h3>
+                            <p>📞 Call us directly: <a href="tel:+17404533063">(740) 453-3063</a></p>
+                            <p>📧 Email: <a href="mailto:info@neffpaving.com">info@neffpaving.com</a></p>
+                            <p>📍 Proudly Serving Southeastern Ohio for nearly30 years!</p>
+                        </div>
+            </form>
             </div>
-        </form>
-    </div>
     </main>
 
     <script>
@@ -605,7 +613,10 @@
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 18,
-                center: { lat: 39.94041, lng: -82.00734 }, // Default to Muskingum County Courthouse
+                center: {
+                    lat: 39.94041,
+                    lng: -82.00734
+                }, // Default to Muskingum County Courthouse
                 mapTypeId: 'satellite'
             });
 
@@ -724,7 +735,7 @@
         // Handle form submission
         document.getElementById('estimateForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             if (selectedArea === 0) {
                 alert('Please select an area on the map before submitting.');
                 return;
@@ -758,18 +769,20 @@
 • Estimated Price: ${formData.estimatedPrice}
 
 ✅ We will contact you within 24 hours with a detailed quote!
-📞 Questions? Call us at (123) 456-7890`;
-            
+📞 Questions? Call us at (740) 453-3063`;
+
             alert(successMessage);
 
             console.log('Form data:', formData);
-            
+
             // In a real application, you would send this data to your server
-            // fetch('/submit-estimate', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(formData)
-            // });
+            fetch('/submit-estimate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
         });
 
         // Initialize map when page loads
@@ -781,4 +794,5 @@
     <!-- Google Maps API with Drawing and Geometry libraries -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6igIPyhIPudzvwD6LbmgrCkxuEXvbjJE&libraries=drawing,geometry&callback=initMap"></script>
 </body>
+
 </html>

@@ -31,10 +31,7 @@ export default defineConfig(({ mode }) => {
       // Configure CORS for development
       cors: true,
       // Standard SPA fallback
-      middlewareMode: false,
-      },
-      // Custom middleware for SPA routing
-      }
+      middlewareMode: false
     },
     resolve: {
       alias: {

@@ -490,8 +490,7 @@ class AssetOptimizer {
     
     const criticalFiles = [
       'index.html',
-      'estimate-form.html',
-      'estimate-form-demo.html'
+      'estimate-form.html'
     ];
     
     for (const file of criticalFiles) {

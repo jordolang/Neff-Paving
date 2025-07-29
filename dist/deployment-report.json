@@ -1,0 +1,23 @@
+{
+  "deployment": {
+    "timestamp": "2025-07-29T18:47:54.581Z",
+    "deployTime": 1753814874581,
+    "platform": "vercel",
+    "mode": "production"
+  },
+  "optimization": {
+    "totalFiles": 0,
+    "optimizedFiles": 9,
+    "compressionSavings": 2,
+    "errors": []
+  },
+  "assets": {
+    "total": 0,
+    "optimized": 9,
+    "compressionSavings": 2
+  },
+  "performance": {
+    "buildDuration": 2215,
+    "cacheStrategy": "versioned"
+  }
+}

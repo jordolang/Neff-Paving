@@ -10,9 +10,9 @@
     "build:github": "vite build --mode github",
     "build:vercel": "vite build --mode vercel",
     "build:optimized": "node scripts/deploy-optimized.js",
-    "build:optimized:github": "DEPLOY_PLATFORM=github node scripts/deploy-optimized.js",
-    "build:optimized:vercel": "DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
-    "vercel-build": "DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
+    "build:optimized:github": "cross-env DEPLOY_PLATFORM=github node scripts/deploy-optimized.js",
+    "build:optimized:vercel": "cross-env DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
+    "vercel-build": "cross-env DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
     "verify:build": "node scripts/verify-build.js",
     "preview": "vite preview",
     "deploy": "npm run build:github && gh-pages -d dist",
@@ -41,6 +41,7 @@
     "gsap": "^3.12.8"
   },
   "devDependencies": {
+    "cross-env": "^10.0.0",
     "fs-extra": "^11.2.0",
     "gh-pages": "^6.3.0",
     "sharp": "^0.33.5",
