@@ -2285,6 +2285,9 @@ img[src]:not([src=""]) ~ *::before {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    height: 400px; /* Fixed height for uniform card heights */
+    display: flex;
+    flex-direction: column;
 }
 
 .testimonial-card:hover {
@@ -2322,10 +2325,49 @@ img[src]:not([src=""]) ~ *::before {
     font-size: 16px;
     line-height: 1.6;
     color: var(--road-gray);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: auto;
     position: relative;
     padding: 0;
     border: none;
+    flex-grow: 1;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.testimonial-truncated blockquote {
+    max-height: 100px;
+    overflow: hidden;
+}
+
+.testimonial-expanded blockquote {
+    max-height: 500px; /* Or a sufficiently large value */
+}
+
+.read-more-btn {
+    background: none;
+    border: none;
+    color: var(--traffic-orange);
+    font-weight: 600;
+    cursor: pointer;
+    padding: var(--spacing-xs) 0;
+    margin-top: var(--spacing-sm);
+    align-self: flex-start;
+    display: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.read-more-btn:hover {
+    text-decoration: underline;
+    color: var(--safety-yellow);
+}
+
+.testimonial-card.testimonial-truncated .read-more-btn {
+    display: block;
+}
+
+.testimonial-card.testimonial-expanded blockquote {
+    max-height: none;
+    overflow: visible;
 }
 
 .testimonial-card blockquote::before {

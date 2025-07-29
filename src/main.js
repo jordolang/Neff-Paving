@@ -26,6 +26,9 @@ import {
 // Import debug utilities (for development)
 import { debugAssetPaths, testAssetLoading, fixDoubleSlashes } from './debug-assets.js';
 
+// Import cache-busting utilities
+import { getBuildInfo, addCacheBusting } from './utils/cache-busting.js';
+
 // Import animation libraries
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -52,6 +55,11 @@ class NeffPavingApp {
     }
 
     init() {
+        // Log build information for cache busting verification
+        if (import.meta.env.DEV) {
+            console.log('🔧 Build Info:', getBuildInfo());
+        }
+        
         // Initialize asset optimization first
         initializeAssetOptimization()
         
@@ -91,6 +99,8 @@ class NeffPavingApp {
         this.initLocationMaps()
 this.initLazyLoading();
 this.initMeasurementToolToggle();
+        this.initServiceWorker();
+        this.initTestimonialReadMore();
     }
 
     /**
@@ -1528,6 +1538,152 @@ this.initMeasurementToolToggle();
         } catch (error) {
             console.error('Error initializing location maps:', error)
         }
+    }
+    
+    /**
+     * Initialize Service Worker for cache management
+     */
+    initServiceWorker() {
+        // Check if service workers are supported
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                        
+                        // Listen for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // New version available, show update notification
+                                        this.showUpdateNotification();
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            });
+        } else {
+            console.log('Service Worker not supported');
+        }
+    }
+    
+    /**
+     * Show notification when a new version of the app is available
+     */
+    showUpdateNotification() {
+        const notification = document.createElement('div');
+        notification.className = 'update-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2196F3;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10001;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        `;
+        
+        notification.innerHTML = `
+            <span>🚀 A new version is available!</span>
+            <button onclick="window.location.reload()" 
+                    style="background: white; color: #2196F3; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: 600;">Update</button>
+            <button onclick="this.parentElement.remove()" 
+                    style="background: transparent; color: white; border: 1px solid white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">Later</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 10 seconds if user doesn't interact
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 10000);
+    }
+    
+    /**
+     * Initialize testimonial read more functionality
+     * Detects text truncation and adds read more buttons
+     */
+    initTestimonialReadMore() {
+        const testimonialCards = document.querySelectorAll('.testimonial-card');
+
+        const checkTruncation = (card) => {
+            const blockquote = card.querySelector('blockquote');
+            const readMoreBtn = card.querySelector('.read-more-btn');
+
+            if (blockquote.scrollHeight > blockquote.clientHeight) {
+                card.classList.add('testimonial-truncated');
+                readMoreBtn.style.display = 'block';
+            } else {
+                card.classList.remove('testimonial-truncated');
+                readMoreBtn.style.display = 'none';
+            }
+        };
+
+        testimonialCards.forEach(card => {
+            checkTruncation(card);
+            const readMoreBtn = card.querySelector('.read-more-btn');
+
+            readMoreBtn.addEventListener('click', () => {
+                const isExpanded = card.classList.contains('testimonial-expanded');
+
+                if (isExpanded) {
+                    card.classList.remove('testimonial-expanded');
+                    card.classList.add('testimonial-truncated');
+                    readMoreBtn.textContent = 'Read More';
+                    card.removeAttribute('data-expanded');
+                } else {
+                    card.classList.add('testimonial-expanded');
+                    card.classList.remove('testimonial-truncated');
+                    readMoreBtn.textContent = 'Read Less';
+                    card.setAttribute('data-expanded', 'true');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+
+        // Add Intersection Observer to collapse cards when they scroll out of view
+        this.setupIntersectionObserver(testimonialCards);
+
+        // Re-check truncation on window resize
+        window.addEventListener('resize', () => {
+            testimonialCards.forEach(checkTruncation);
+        });
+    }
+
+    setupIntersectionObserver(elements) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    const card = entry.target;
+                    if (card.classList.contains('testimonial-expanded')) {
+                        card.classList.remove('testimonial-expanded');
+                        card.classList.add('testimonial-truncated');
+                        const readMoreBtn = card.querySelector('.read-more-btn');
+                        readMoreBtn.textContent = 'Read More';
+                        card.removeAttribute('data-expanded');
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        elements.forEach(element => {
+            observer.observe(element);
+        });
     }
     
 }
