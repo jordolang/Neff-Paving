@@ -1,7 +1,7 @@
 {
   "deployment": {
-    "timestamp": "2025-07-29T22:41:31.524Z",
-    "deployTime": 1753828891524,
+    "timestamp": "2025-07-29T23:19:20.456Z",
+    "deployTime": 1753831160456,
     "platform": "vercel",
     "mode": "production"
   },
@@ -17,7 +17,7 @@
     "compressionSavings": 2
   },
   "performance": {
-    "buildDuration": 2537,
+    "buildDuration": 2035,
     "cacheStrategy": "versioned"
   }
 }
