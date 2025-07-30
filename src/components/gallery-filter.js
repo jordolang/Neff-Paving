@@ -39,9 +39,9 @@ class GalleryFilter {
             });
         });
         
-        // Randomly shuffle and select 9 images
+        // Randomly shuffle and select 8 images
         const shuffledImages = this.shuffleArray([...allImages]);
-        const selectedImages = shuffledImages.slice(0, 9);
+        const selectedImages = shuffledImages.slice(0, 8);
         
         console.log(`Displaying ${selectedImages.length} random images out of ${allImages.length} total images`);
         
@@ -86,7 +86,7 @@ class GalleryFilter {
                 <picture class="image">
                     <source media="(max-width: 600px)" srcset="${imagePath}">
                     <source media="(min-width: 601px)" srcset="${imagePath}">
-                    <img loading="eager" decoding="async" src="${imagePath}" alt="${image.alt}" width="630" height="400">
+                    <img loading="lazy" decoding="async" src="${imagePath}" alt="${image.alt}" width="630" height="400">
                 </picture>
             </div>
             <div class="card-overlay">
@@ -104,10 +104,17 @@ class GalleryFilter {
         cardImage.style.backgroundColor = '#f0f0f0';
         
         img.onload = () => {
-            // Hide loading placeholder and show image
-            placeholder.style.display = 'none';
+            // Hide loading placeholder and show image with fade-in effect
+            placeholder.style.opacity = '0';
+            placeholder.style.transition = 'opacity 0.3s ease';
             img.style.opacity = '1';
+            img.style.transition = 'opacity 0.3s ease';
             cardImage.style.backgroundColor = 'transparent';
+            
+            // Remove placeholder after transition
+            setTimeout(() => {
+                placeholder.style.display = 'none';
+            }, 300);
         };
         
         img.onerror = () => {
