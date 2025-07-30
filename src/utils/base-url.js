@@ -395,3 +395,15 @@ if (typeof document !== 'undefined' && document.readyState === 'loading') {
   // DOM is already loaded
   initializeAssetOptimization();
 }
+
+// Export getAssetPath function for gallery and other components
+export function getAssetPath(path) {
+  // Get the base URL from Vite environment
+  const baseUrl = import.meta.env.BASE_URL || '/Neff-Paving/';
+  
+  // Remove leading slash if present since baseUrl includes trailing slash
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  
+  // Combine base URL with the asset path
+  return baseUrl + cleanPath;
+}
