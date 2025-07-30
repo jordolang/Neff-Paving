@@ -1574,5 +1574,27 @@ class NeffPavingApp {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new NeffPavingApp()
-})
+    try {
+        console.log('Starting NeffPavingApp initialization...');
+        new NeffPavingApp();
+        console.log('NeffPavingApp initialized successfully');
+    } catch (error) {
+        console.error('Failed to initialize NeffPavingApp:', error);
+        
+        // Fallback: Initialize gallery directly if main app fails
+        console.log('Attempting fallback gallery initialization...');
+        try {
+            const galleryElement = document.getElementById('gallery');
+            if (galleryElement) {
+                import('./components/gallery-filter.js').then(module => {
+                    new module.default(galleryElement);
+                    console.log('Fallback gallery initialization successful');
+                }).catch(galleryError => {
+                    console.error('Fallback gallery initialization failed:', galleryError);
+                });
+            }
+        } catch (fallbackError) {
+            console.error('Fallback initialization failed:', fallbackError);
+        }
+    }
+});
