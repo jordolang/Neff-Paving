@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import { copyFileSync, mkdirSync, readdirSync, statSync } from 'fs'
+import { join } from 'path'
 
 export default defineConfig(({ mode }) => {
   // Dynamic base URL configuration
@@ -145,6 +147,35 @@ export default defineConfig(({ mode }) => {
   },
   // Enhanced plugin configuration
   plugins: [
+    // Copy gallery images to dist
+    {
+      name: 'copy-gallery-images',
+      async writeBundle() {
+        const sourceDir = resolve(__dirname, 'assets/gallery');
+        const targetDir = resolve(__dirname, 'dist/assets/gallery');
+        
+        // Function to copy directory recursively
+        const copyDirectory = (src, dest) => {
+          mkdirSync(dest, { recursive: true });
+          const entries = readdirSync(src, { withFileTypes: true });
+          
+          for (const entry of entries) {
+            const srcPath = join(src, entry.name);
+            const destPath = join(dest, entry.name);
+            
+            if (entry.isDirectory()) {
+              copyDirectory(srcPath, destPath);
+            } else {
+              copyFileSync(srcPath, destPath);
+            }
+          }
+        };
+        
+        // Copy gallery directory
+        copyDirectory(sourceDir, targetDir);
+        console.log('✅ Gallery images copied to dist/assets/gallery');
+      }
+    },
     // Temporarily commented out enhanced-asset-processor plugin as it may be breaking paths
     {
       name: 'enhanced-asset-processor',

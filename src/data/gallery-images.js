@@ -1,0 +1,131 @@
+// Gallery images data
+export const galleryImages = {
+  commercial: [
+    { filename: 'advance-auto-parking-lot-2.webp', title: 'Advance Auto Parking Lot', alt: 'Commercial parking lot paving for Advance Auto' },
+    { filename: 'advance-auto-parking-lot-3.webp', title: 'Advance Auto Parking Lot', alt: 'Commercial parking lot paving for Advance Auto' },
+    { filename: 'advance-auto-parking-lot.webp', title: 'Advance Auto Parking Lot', alt: 'Commercial parking lot paving for Advance Auto' },
+    { filename: 'amg.webp', title: 'AMG Commercial Paving', alt: 'Commercial paving project for AMG' },
+    { filename: 'apartment-parking-lot.webp', title: 'Apartment Parking Lot', alt: 'Parking lot paving for apartment complex' },
+    { filename: 'barn-parking-lot-1-of-2.webp', title: 'The Barn Parking Lot', alt: 'Commercial parking lot for The Barn' },
+    { filename: 'barn-parking-lot-2-of-2.webp', title: 'The Barn Parking Lot', alt: 'Commercial parking lot for The Barn' },
+    { filename: 'before-barn-parking-lot.webp', title: 'The Barn - Before', alt: 'Parking lot before paving' },
+    { filename: 'business-lot-1.webp', title: 'Business Parking Lot', alt: 'Commercial business parking lot' },
+    { filename: 'business-lot-2.webp', title: 'Business Parking Lot', alt: 'Commercial business parking lot' },
+    { filename: 'business-lot-3.webp', title: 'Business Parking Lot', alt: 'Commercial business parking lot' },
+    { filename: 'business-parking-lot-asphalt.webp', title: 'Business Parking Lot', alt: 'Asphalt parking lot for business' },
+    { filename: 'church-parking-lot-1.webp', title: 'Church Parking Lot', alt: 'Parking lot paving for church' },
+    { filename: 'church-parking-lot-2.webp', title: 'Church Parking Lot', alt: 'Parking lot paving for church' },
+    { filename: 'church-parking-lot-paving.webp', title: 'Church Parking Lot', alt: 'Church parking lot paving project' },
+    { filename: 'colony-square-mall-parking-lot.webp', title: 'Colony Square Mall', alt: 'Parking lot for Colony Square Mall' },
+    { filename: 'commercial-business-lot.webp', title: 'Commercial Business Lot', alt: 'Commercial business parking lot' },
+    { filename: 'commercial-lots-2.webp', title: 'Commercial Parking Lots', alt: 'Multiple commercial parking lots' },
+    { filename: 'commercial-lots.webp', title: 'Commercial Parking Lots', alt: 'Commercial parking lot projects' },
+    { filename: 'commercial-park-paths.webp', title: 'Commercial Park Paths', alt: 'Paved paths in commercial park' },
+    { filename: 'commercial-parking-lot-10.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-2.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-3.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-4.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-5.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-6.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-7.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-8.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-9.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-parking-lot-close-up.webp', title: 'Parking Lot Close Up', alt: 'Close up view of commercial parking lot' },
+    { filename: 'commercial-parking-lot-fresh-lines.webp', title: 'Fresh Line Striping', alt: 'Parking lot with fresh painted lines' },
+    { filename: 'commercial-parking-lot-sealed.webp', title: 'Sealed Parking Lot', alt: 'Sealed commercial parking lot' },
+    { filename: 'commercial-parking-lot.webp', title: 'Commercial Parking Lot', alt: 'Commercial parking lot paving' },
+    { filename: 'commercial-storage-facility.webp', title: 'Storage Facility', alt: 'Paving for commercial storage facility' },
+    { filename: 'downtown-paving-st-james.webp', title: 'Downtown St. James', alt: 'Downtown street paving in St. James' },
+    { filename: 'downtown-paving.webp', title: 'Downtown Paving', alt: 'Downtown street paving project' },
+    { filename: 'downtown-st-james.webp', title: 'Downtown St. James', alt: 'Street paving in downtown St. James' },
+    { filename: 'five-below-parking-lot-1.webp', title: 'Five Below Parking Lot', alt: 'Parking lot for Five Below store' },
+    { filename: 'five-below-parking-lot-2.webp', title: 'Five Below Parking Lot', alt: 'Parking lot for Five Below store' },
+    { filename: 'five-below-parking-lot-3.webp', title: 'Five Below Parking Lot', alt: 'Parking lot for Five Below store' },
+    { filename: 'friscos.webp', title: "Frisco's Parking Lot", alt: "Parking lot paving for Frisco's" },
+    { filename: 'hamilton-waltman-melsheimer-1.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Commercial paving project' },
+    { filename: 'hamilton-waltman-melsheimer-2.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Commercial paving project' },
+    { filename: 'hamilton-waltman-melsheimer-3.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Commercial paving project' },
+    { filename: 'hamilton-waltman-melsheimer-4.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Commercial paving project' },
+    { filename: 'hamilton-waltman-melsheimer-5.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Commercial paving project' },
+    { filename: 'hamilton-waltman-melsheimer-6.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Commercial paving project' },
+    { filename: 'holiday-inn-express-1.webp', title: 'Holiday Inn Express', alt: 'Parking lot for Holiday Inn Express' },
+    { filename: 'holiday-inn-express-2.webp', title: 'Holiday Inn Express', alt: 'Parking lot for Holiday Inn Express' },
+    { filename: 'holiday-inn-express-3.webp', title: 'Holiday Inn Express', alt: 'Parking lot for Holiday Inn Express' },
+    { filename: 'large-commercial-lot.webp', title: 'Large Commercial Lot', alt: 'Large commercial parking lot' },
+    { filename: 'large-parking-lot-asphalt.webp', title: 'Large Parking Lot', alt: 'Large asphalt parking lot' },
+    { filename: 'manufacturing-business-asphalt.webp', title: 'Manufacturing Facility', alt: 'Asphalt for manufacturing business' },
+    { filename: 'multi-tenant-1.webp', title: 'Multi-Tenant Complex', alt: 'Parking for multi-tenant building' },
+    { filename: 'multi-tenant-2.webp', title: 'Multi-Tenant Complex', alt: 'Parking for multi-tenant building' },
+    { filename: 'multi-tenant-3.webp', title: 'Multi-Tenant Complex', alt: 'Parking for multi-tenant building' },
+    { filename: 'multi-tenant-4.webp', title: 'Multi-Tenant Complex', alt: 'Parking for multi-tenant building' },
+    { filename: 'office-building-parking-lot.webp', title: 'Office Building', alt: 'Office building parking lot' },
+    { filename: 'parking-lot-sealcoat.webp', title: 'Sealcoated Parking Lot', alt: 'Freshly sealcoated parking lot' },
+    { filename: 'parking-lot-stripes.webp', title: 'Parking Lot Striping', alt: 'Parking lot with fresh striping' },
+    { filename: 'riesbecks-gas-station-1.webp', title: "Riesbeck's Gas Station", alt: "Paving for Riesbeck's gas station" },
+    { filename: 'riesbecks-gas-station-2.webp', title: "Riesbeck's Gas Station", alt: "Paving for Riesbeck's gas station" },
+    { filename: 'riesbecks-gas-station-3.webp', title: "Riesbeck's Gas Station", alt: "Paving for Riesbeck's gas station" },
+    { filename: 'shopping-center-parking-lot.webp', title: 'Shopping Center', alt: 'Shopping center parking lot' },
+    { filename: 'small-business-lot.webp', title: 'Small Business Lot', alt: 'Parking lot for small business' },
+    { filename: 'st-james-street-paving.webp', title: 'St. James Street', alt: 'Street paving in St. James' },
+    { filename: 'st-james-street-work.webp', title: 'St. James Street Work', alt: 'Street work in St. James' },
+    { filename: 'storage-units-parking.webp', title: 'Storage Units', alt: 'Parking area for storage units' },
+    { filename: 'strip-mall-parking-lot.webp', title: 'Strip Mall Parking', alt: 'Strip mall parking lot' },
+    { filename: 'the-barn-finished.webp', title: 'The Barn - Completed', alt: 'Completed parking lot for The Barn' },
+    { filename: 'the-barn-parking-lot.webp', title: 'The Barn Parking Lot', alt: 'Parking lot project for The Barn' },
+    { filename: 'warehouse-parking-lot.webp', title: 'Warehouse Parking', alt: 'Warehouse parking lot' },
+    { filename: 'zebra-striping.webp', title: 'Zebra Striping', alt: 'Parking lot with zebra striping' }
+  ],
+  residential: [
+    { filename: 'asphalt-driveway-barn.webp', title: 'Asphalt Driveway with Barn', alt: 'Residential driveway leading to barn' },
+    { filename: 'asphalt-driveway.webp', title: 'Asphalt Driveway', alt: 'Residential asphalt driveway' },
+    { filename: 'basket-ball-court.webp', title: 'Basketball Court', alt: 'Residential basketball court' },
+    { filename: 'basketball-court-close-up.webp', title: 'Basketball Court Close Up', alt: 'Close up of residential basketball court' },
+    { filename: 'basketball-court-driveway.webp', title: 'Basketball Court & Driveway', alt: 'Driveway with basketball court' },
+    { filename: 'basketball-court.webp', title: 'Basketball Court', alt: 'Residential basketball court' },
+    { filename: 'cart-path.webp', title: 'Cart Path', alt: 'Residential cart path' },
+    { filename: 'country-driveway.webp', title: 'Country Driveway', alt: 'Country residential driveway' },
+    { filename: 'country-flag-pole-driveway.webp', title: 'Country Driveway with Flag', alt: 'Country driveway with flag pole' },
+    { filename: 'custom-driveway.webp', title: 'Custom Driveway', alt: 'Custom residential driveway' },
+    { filename: 'custom-mansion-driveway.webp', title: 'Custom Mansion Driveway', alt: 'Luxury mansion driveway' },
+    { filename: 'driveway-1.webp', title: 'Residential Driveway', alt: 'Residential driveway paving' },
+    { filename: 'driveway-2.webp', title: 'Residential Driveway', alt: 'Residential driveway paving' },
+    { filename: 'driveway-turnaround.webp', title: 'Driveway Turnaround', alt: 'Residential driveway with turnaround' },
+    { filename: 'house-driveway.webp', title: 'House Driveway', alt: 'Residential house driveway' },
+    { filename: 'long-driveway.webp', title: 'Long Driveway', alt: 'Long residential driveway' },
+    { filename: 'luxury-home-driveway.webp', title: 'Luxury Home Driveway', alt: 'Driveway for luxury home' },
+    { filename: 'new-asphalt-driveway.webp', title: 'New Asphalt Driveway', alt: 'Newly paved asphalt driveway' },
+    { filename: 'residential-driveway-paving.webp', title: 'Driveway Paving', alt: 'Residential driveway paving project' },
+    { filename: 'residential-driveway.webp', title: 'Residential Driveway', alt: 'Residential driveway' },
+    { filename: 'residential-turnaround.webp', title: 'Residential Turnaround', alt: 'Driveway turnaround area' },
+    { filename: 'stone-lined-driveway.webp', title: 'Stone Lined Driveway', alt: 'Driveway with stone borders' },
+    { filename: 'winding-driveway.webp', title: 'Winding Driveway', alt: 'Winding residential driveway' }
+  ],
+  equipment: [
+    { filename: 'leeboy-closeup.webp', title: 'Leeboy Equipment Close Up', alt: 'Close up of Leeboy paving equipment' },
+    { filename: 'leeboy-in-action-loading.webp', title: 'Leeboy Loading', alt: 'Leeboy equipment being loaded' },
+    { filename: 'leeboy-in-action-tar-drop.webp', title: 'Leeboy Tar Application', alt: 'Leeboy equipment applying tar' },
+    { filename: 'leeboy-in-action-top-down.webp', title: 'Leeboy Top View', alt: 'Top down view of Leeboy equipment' },
+    { filename: 'leeboy-in-action.webp', title: 'Leeboy in Action', alt: 'Leeboy paving equipment in action' }
+  ],
+  concrete: [
+    { filename: 'concrete-convenience-store.webp', title: 'Convenience Store Concrete', alt: 'Concrete work at convenience store' },
+    { filename: 'concrete-drain-covers.webp', title: 'Concrete Drain Covers', alt: 'Concrete drain cover installation' },
+    { filename: 'concrete-man-hole-covers.webp', title: 'Concrete Manhole Covers', alt: 'Concrete manhole cover work' },
+    { filename: 'concrete-pad.webp', title: 'Concrete Pad', alt: 'Concrete pad installation' }
+  ]
+};
+
+// Helper function to get all images as a flat array
+export function getAllGalleryImages() {
+  const allImages = [];
+  Object.entries(galleryImages).forEach(([category, images]) => {
+    images.forEach(image => {
+      allImages.push({
+        ...image,
+        category,
+        path: `assets/gallery/${category}/${image.filename}`
+      });
+    });
+  });
+  return allImages;
+}

@@ -1,4 +1,6 @@
 
+/* Import lightbox styles */
+@import './lightbox.css';
 
 /* Reset and base styles */
 * {
