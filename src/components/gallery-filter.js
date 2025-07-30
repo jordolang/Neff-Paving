@@ -19,7 +19,7 @@ class GalleryFilter {
         this.loadGalleryImages();
         this.initFilters();
         this.initLightbox();
-        // Set initial state - show "All" items by default
+        // Initially show all loaded items (no filtering needed since we show random selection)
         this.filterItems('all');
         // Set first button as active
         if (this.filterButtons.length > 0) {
