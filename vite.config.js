@@ -173,6 +173,18 @@ export default defineConfig(({ mode }) => {
           return criticalAssets.join('\n');
         };
         
+        const addMainScript = (content, bundle, timestamp) => {
+          // Find main JS entry file
+          const mainScriptFile = Object.keys(bundle).find(name => name.startsWith('entries/main-'));
+          if (mainScriptFile) {
+            const scriptTag = `<script type="module" crossorigin src="/${mainScriptFile}?v=${timestamp}"></script>`;
+            
+            // Add the script tag before </body>
+            return content.replace('</body>', `  ${scriptTag}\n</body>`);
+          }
+          return content;
+        };
+        
         const processVercelPaths = (content) => {
           // Ensure all asset paths are absolute from root
           return content.replace(
@@ -274,6 +286,9 @@ export default defineConfig(({ mode }) => {
             
             // Add performance optimizations
             content = addPerformanceOptimizations(content);
+            
+            // Add the main script tag to all HTML files
+            content = addMainScript(content, bundle, buildTimestamp);
             
             // Write the modified content back to file
             fs.writeFileSync(htmlFilePath, content, 'utf8');
