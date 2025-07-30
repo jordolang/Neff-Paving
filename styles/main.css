@@ -4082,10 +4082,6 @@ img[src]:not([src=""]) ~ *::before {
         padding: var(--spacing-md);
     }
 }
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: var(--spacing-sm);
-}
 
 #gallery .title {
     font-size: 2.5rem;

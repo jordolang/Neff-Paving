@@ -69,8 +69,7 @@ export default defineConfig(({ mode }) => {
       input: {
         main: resolve(__dirname, 'index.html'),
         '404': resolve(__dirname, '404.html'),
-        'estimate-form': resolve(__dirname, 'estimate-form.html'),
-        'gallery': resolve(__dirname, 'gallery.html')
+        'estimate-form': resolve(__dirname, 'estimate-form.html')
       },
       output: {
         // Optimized asset file naming with cache-friendly hashes
@@ -245,7 +244,6 @@ export default defineConfig(({ mode }) => {
         const htmlFiles = [
           path.join(distDir, 'index.html'),
           path.join(distDir, '404.html'),
-          path.join(distDir, 'gallery.html'),
           path.join(distDir, 'estimate-form.html'),
           path.join(distDir, 'services', 'index.html'),
           path.join(distDir, 'admin', 'index.html')

@@ -51,7 +51,8 @@ class NeffPavingApp {
         this.arcGISInstance = null
         this.arcGISLoaded = false
         this.arcGISLoading = false
-        this.activeMeasurementTool = 'google-maps'\n        this.galleryFilter = null
+        this.activeMeasurementTool = 'google-maps'
+        this.galleryFilter = null
         this.init();
     }
 
@@ -98,8 +99,8 @@ class NeffPavingApp {
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
         this.initLocationMaps()
-this.initLazyLoading();
-this.initMeasurementToolToggle();
+        this.initLazyLoading();
+        this.initMeasurementToolToggle();
         this.initServiceWorker();
     }
 
