@@ -1610,7 +1610,7 @@ class NeffPavingApp {
 }
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+function initializeApp() {
     try {
         console.log('Starting NeffPavingApp initialization...');
         new NeffPavingApp();
@@ -1634,4 +1634,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Fallback initialization failed:', fallbackError);
         }
     }
-});
+}
+
+// Try multiple initialization approaches to ensure it runs
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    // DOM is already loaded, initialize immediately
+    initializeApp();
+}
