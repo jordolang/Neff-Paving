@@ -2279,21 +2279,29 @@ img[src]:not([src=""]) ~ *::before {
 
 .testimonial-card {
     background: var(--pure-white);
-    padding: var(--spacing-xl);
+    padding: var(--spacing-lg);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
-    transition: var(--transition);
+    transition: all 0.3s ease;
     position: relative;
-    overflow: visible; /* Changed from hidden to allow proper overflow detection */
-    min-height: 400px; /* Changed from fixed height to min-height for flexibility */
+    overflow: hidden;
+    min-height: 400px; /* Minimum height for consistency */
+    height: auto; /* Allow natural growth */
     display: flex;
     flex-direction: column;
-    align-items: stretch; /* Ensure proper alignment */
+    align-items: stretch;
 }
 
 .testimonial-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
+}
+
+/* Enhanced card expansion animation */
+.testimonial-card.testimonial-expanded {
+    min-height: auto;
+    height: auto;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Haze overlay for truncated testimonials */
@@ -2326,6 +2334,12 @@ img[src]:not([src=""]) ~ *::before {
 .testimonial-content {
     position: relative;
     z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: var(--spacing-sm);
+    padding-top: 48px; /* Space for positioned button */
 }
 
 .testimonial-card .stars {
@@ -2344,39 +2358,40 @@ img[src]:not([src=""]) ~ *::before {
     font-size: 16px;
     line-height: 1.6;
     color: var(--road-gray);
-    margin-bottom: auto;
+    margin-bottom: var(--spacing-lg); /* Add margin for spacing */
     position: relative;
     padding: 0;
     border: none;
-    flex: 1 1 auto; /* Improved flex property for better layout */
-    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
-    overflow-wrap: break-word; /* Handle long text gracefully */
-    word-wrap: break-word;
-    overflow: hidden;
+    flex: 1;
+    overflow-y: auto; /* Enable scrolling for overflow */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
 }
 
 .testimonial-truncated blockquote {
-    max-height: 120px;
+    max-height: 120px; /* Increased for better content visibility */
     position: relative;
+    overflow: hidden;
 }
 
-/* Gradient fade effect for truncated text */
+/* Enhanced gradient fade effect for truncated text */
 .testimonial-truncated blockquote::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 40px;
-    background: linear-gradient(transparent, var(--pure-white));
+    height: 60px; /* Increased fade height */
+    background: linear-gradient(transparent 0%, rgba(255, 255, 255, 0.8) 60%, var(--pure-white) 100%);
     pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 1;
+    z-index: 1;
 }
 
 .testimonial-expanded blockquote {
-    max-height: 2000px; /* Large value instead of 'none' for smooth animation */
+    max-height: none;
     overflow: visible;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .testimonial-expanded blockquote::after {
@@ -2386,56 +2401,46 @@ img[src]:not([src=""]) ~ *::before {
 
 .read-more-btn {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 12px;
+    right: 12px;
     background: var(--traffic-orange);
     color: var(--pure-white);
     border: none;
-    padding: var(--spacing-md) var(--spacing-xl);
+    padding: 8px 16px;
     border-radius: var(--border-radius-lg);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    opacity: 1;
+    visibility: visible;
+    box-shadow: 0 2px 12px rgba(231, 76, 60, 0.3);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     pointer-events: auto;
-    min-width: 120px;
+    min-width: 70px;
+    max-width: 100px;
     white-space: nowrap;
+    border: 2px solid var(--pure-white);
+    font-family: var(--font-primary);
+    line-height: 1;
 }
 
 .read-more-btn:hover {
     background: var(--safety-yellow);
     color: var(--asphalt-dark);
-    transform: translate(-50%, -50%) scale(1.05);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    transform: scale(1.05) translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    border-color: var(--asphalt-dark);
 }
 
-.testimonial-card.testimonial-truncated:hover .read-more-btn {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-/* Fallback for when hover doesn't work - show button on mobile/touch devices */
-.testimonial-card.testimonial-truncated.show-read-more .read-more-btn {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
-
-/* Ensure button stays visible when being clicked */
-.read-more-btn:focus,
 .read-more-btn:active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
+
+/* Removed all hover-based visibility rules - button is now always visible */
 
 .testimonial-card.testimonial-expanded blockquote {
     max-height: none;
@@ -3691,6 +3696,38 @@ img[src]:not([src=""]) ~ *::before {
     
     .reasons-grid {
         grid-template-columns: 1fr;
+    }
+    
+    /* Testimonial responsive improvements */
+    .testimonials-carousel {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .testimonial-card {
+        min-height: 350px; /* Reduced minimum height for mobile */
+        margin: 0 var(--spacing-sm);
+    }
+    
+    .testimonial-content {
+        padding-top: 40px; /* Reduced padding for smaller screens */
+    }
+    
+    .read-more-btn {
+        top: 8px;
+        right: 8px;
+        padding: 6px 12px;
+        font-size: 11px;
+        min-width: 60px;
+        max-width: 90px;
+    }
+    
+    .testimonial-truncated blockquote {
+        max-height: 100px; /* Slightly increased for mobile readability */
+    }
+    
+    .testimonial-truncated blockquote::after {
+        height: 50px; /* Adjusted fade height for mobile */
     }
     
     /* ArcGIS Integration Mobile Responsive */

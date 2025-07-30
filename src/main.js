@@ -1617,6 +1617,7 @@ this.initMeasurementToolToggle();
     /**
      * Initialize testimonial read more functionality
      * Detects text truncation and adds read more buttons
+     * Updated to work with always-visible buttons and 400px max height
      */
     initTestimonialReadMore() {
         const testimonials = document.querySelectorAll('.testimonial-card');
@@ -1627,19 +1628,14 @@ this.initMeasurementToolToggle();
             
             if (!blockquote || !button) return;
             
-            // Check if text is truncated
-            const isOverflowing = blockquote.scrollHeight > 120;
+            // Check if text is truncated based on 400px max height
+            const isOverflowing = blockquote.scrollHeight > 400;
             
             if (isOverflowing) {
                 card.classList.add('testimonial-truncated');
                 
                 // Set initial button text
                 button.textContent = 'Read More';
-                
-                // Show button on touch devices
-                if (this.isTouchDevice()) {
-                    card.classList.add('show-read-more');
-                }
                 
                 // Handle button click/touch
                 button.addEventListener('click', (e) => {
@@ -1713,7 +1709,7 @@ this.initMeasurementToolToggle();
                     }
                 });
             } else {
-                // Remove truncation if text fits
+                // Hide button if text fits within 400px height
                 card.classList.remove('testimonial-truncated');
                 button.style.display = 'none';
             }
