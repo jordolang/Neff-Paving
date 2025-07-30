@@ -9,6 +9,7 @@ import { inject } from '@vercel/analytics'
 
 import { AreaFinder } from './components/area-finder.js';
 import { LocationMaps } from './components/location-maps.js';
+import { Gallery } from './gallery.js';
 
 // Import asset loading utilities
 import { assetLoader } from './utils/asset-loader.js';
@@ -97,6 +98,7 @@ class NeffPavingApp {
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
         this.initLocationMaps()
+        this.initGallery()
 this.initLazyLoading();
 this.initMeasurementToolToggle();
         this.initServiceWorker();
@@ -1338,12 +1340,8 @@ this.initMeasurementToolToggle();
     }
     
     initInteractiveFeatures() {
-        // Add hover effects to gallery items
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            item.addEventListener('click', () => {
-                this.openGalleryModal(item)
-            })
-        })
+
+        // The gallery-item event listener is now handled in gallery.js
         
         // Add tooltips to service features
         document.querySelectorAll('.cert-icon').forEach(icon => {
@@ -1366,34 +1364,6 @@ this.initMeasurementToolToggle();
         })
     }
     
-    openGalleryModal(item) {
-        const img = item.querySelector('img')
-        const info = item.querySelector('.gallery-info')
-        
-        if (!img) return
-        
-        const modal = document.createElement('div')
-        modal.className = 'modal show'
-        modal.innerHTML = `
-            <div class="modal-content">
-                <img src="${img.src}" alt="${img.alt}" style="width: 100%; border-radius: var(--border-radius);">
-                <h3 style="margin: var(--spacing-lg) 0 var(--spacing-md);">${info ? info.querySelector('h4').textContent : 'Project Gallery'}</h3>
-                <p style="margin-bottom: var(--spacing-lg);">${info ? info.querySelector('p').textContent : ''}</p>
-                <div style="text-align: center;">
-                    <button class="btn btn-primary" onclick="this.closest('.modal').remove()">Close</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('contact-form').scrollIntoView({behavior: 'smooth'}); this.closest('.modal').remove();" style="margin-left: var(--spacing-md);">Get Similar Quote</button>
-                </div>
-            </div>
-        `
-        
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove()
-            }
-        })
-        
-        document.body.appendChild(modal)
-    }
     
     prefilleForm(serviceCard) {
         const serviceTitle = serviceCard.querySelector('h3').textContent
@@ -1624,6 +1594,13 @@ this.initMeasurementToolToggle();
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(context, args), delay);
         };
+    }
+
+    initGallery() {
+        // Check if we are on the gallery page by looking for a unique element
+        if (document.querySelector('.gallery-grid')) {
+            new Gallery();
+        }
     }
 
     isTouchDevice() {
