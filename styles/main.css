@@ -3983,7 +3983,9 @@ img[src]:not([src=""]) ~ *::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--light-gray);
+    background-color: #f5f5f5;
+    z-index: 1;
+    transition: opacity 0.3s ease;
 }
 
 .gallery-card:hover .card-image img {
