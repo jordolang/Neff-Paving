@@ -68,17 +68,6 @@ class NeffPavingApp {
         // Initialize storage system
         initializeStorage()
         
-        // Initialize Vercel Analytics
-        inject()
-        
-        // Initialize Vercel Speed Insights
-        injectSpeedInsights({
-            beforeSend: (event) => {
-                // Optional: Add any custom logic here
-                return event;
-            },
-        });
-        
         // Preload critical assets
         this.preloadCriticalAssets()
         
@@ -90,18 +79,66 @@ class NeffPavingApp {
         this.initScrollEffects()
         this.initRevealOnScroll()
         this.initNavigation()
-        this.initGalleryFilters()
-        this.initContactForm()
+        
+        // Initialize gallery (critical for user experience)
+        try {
+            this.initGalleryFilters()
+            console.log('Gallery initialized successfully')
+        } catch (error) {
+            console.error('Gallery initialization failed:', error)
+        }
+        
+        // Initialize other components with error handling
+        try {
+            this.initContactForm()
+        } catch (error) {
+            console.error('Contact form initialization failed:', error)
+        }
+        
         this.initSectionAnimations()
         this.initConversionOptimizations()
         this.initInteractiveFeatures()
         this.initClickToCall()
         this.initEmergencyServiceHighlight()
         this.initNotificationSystem()
-        this.initLocationMaps()
+        
+        // Initialize optional components that may fail
+        try {
+            this.initLocationMaps()
+        } catch (error) {
+            console.error('Location maps initialization failed (non-critical):', error)
+        }
+        
         this.initLazyLoading();
         this.initMeasurementToolToggle();
-        this.initServiceWorker();
+        
+        try {
+            this.initServiceWorker();
+        } catch (error) {
+            console.error('Service worker initialization failed (non-critical):', error)
+        }
+
+        // Initialize analytics (optional)
+        try {
+            // Initialize Vercel Analytics if available
+            if (typeof inject === 'function') {
+                inject()
+            }
+            
+            // Initialize Vercel Speed Insights if available  
+            if (typeof injectSpeedInsights === 'function') {
+                injectSpeedInsights({
+                    beforeSend: (event) => {
+                        // Optional: Add any custom logic here
+                        return event;
+                    },
+                });
+            }
+        } catch (error) {
+            console.error('Analytics initialization failed (non-critical):', error)
+        }
+
+        console.log('Neff Paving app initialized successfully')
     }
 
     /**
