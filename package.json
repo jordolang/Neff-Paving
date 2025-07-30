@@ -17,7 +17,8 @@
     "preview": "vite preview",
     "deploy": "npm run build:github && gh-pages -d dist",
     "deploy:github": "npm run build:github && gh-pages -d dist",
-    "deploy:vercel": "npm run build:vercel"
+    "deploy:vercel": "npm run build:vercel",
+    "test:sw": "node scripts/test-sw.js"
   },
   "keywords": [
     "paving",

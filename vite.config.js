@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => {
 
   const baseUrl = getBaseUrl();
   const deployTime = process.env.VITE_DEPLOY_TIME || Date.now();
-  const buildTimestamp = new Date().toISOString();
+  // Use environment variable if available, otherwise generate new timestamp
+  const buildTimestamp = process.env.VITE_BUILD_TIMESTAMP || new Date().toISOString();
 
   return {
     base: baseUrl,
@@ -145,7 +146,6 @@ export default defineConfig(({ mode }) => {
   // Enhanced plugin configuration
   plugins: [
     // Temporarily commented out enhanced-asset-processor plugin as it may be breaking paths
-    /*
     {
       name: 'enhanced-asset-processor',
       async writeBundle(options, bundle) {
@@ -204,11 +204,11 @@ export default defineConfig(({ mode }) => {
           return content;
         };
         
-        const addCacheBusting = (content, deployTime) => {
+        const addCacheBusting = (content, timestamp) => {
           // Only add cache busting to non-hashed assets
           return content.replace(
             /(href|src)="([^"]+\.(css|js|png|jpg|jpeg|gif|svg|webp|mp4|webm|ico|woff|woff2))(?!.*-[a-f0-9]{8,})[^"]*"/g,
-            `$1="$2?v=${deployTime}"`
+            `$1="$2?v=${timestamp}"`
           );
         };
         
@@ -267,7 +267,7 @@ export default defineConfig(({ mode }) => {
             }
             
             // Add cache-busting to static assets (but not to already hashed files)
-            content = addCacheBusting(content, deployTime);
+            content = addCacheBusting(content, buildTimestamp);
             
             // Add performance optimizations
             content = addPerformanceOptimizations(content);
@@ -278,7 +278,6 @@ export default defineConfig(({ mode }) => {
         }
       }
     }
-    */
   ]
   };
 });

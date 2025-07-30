@@ -98,7 +98,7 @@ class AssetOptimizer {
   async buildWithOptimization() {
     console.log('🔨 Building with optimization...');
     
-    // Set build environment variables
+    // Set build environment variables with proper timestamp
     const buildEnv = {
       ...process.env,
       NODE_ENV: config.mode,
