@@ -1719,54 +1719,44 @@ this.initMeasurementToolToggle();
             }
         });
         
-        // Intersection Observer to collapse testimonials when they leave viewport
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) {
-                    const card = entry.target;
-                    const button = card.querySelector('.read-more-btn');
-                    if (card.classList.contains('testimonial-expanded')) {
-                        card.classList.remove('testimonial-expanded');
-                        card.classList.add('testimonial-truncated');
-                        if (button) {
-                            button.textContent = 'Read More';
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        const card = entry.target;
+                        if (card.classList.contains('testimonial-expanded')) {
+                            card.classList.remove('testimonial-expanded');
+                            card.classList.add('testimonial-truncated');
+                            const readMoreBtn = card.querySelector('.read-more-btn');
+                            if (readMoreBtn) {
+                                readMoreBtn.textContent = 'Read More';
+                            }
                         }
                     }
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '-50px 0px'
-        });
-        
-        testimonials.forEach(card => {
+                });
+            },
+            {
+                threshold: 0.6,
+            }
+        );
+
+        testimonials.forEach((card) => {
             observer.observe(card);
         });
     }
 
-    isTouchDevice() {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    // Debounce function
+    debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
     }
 
-    setupIntersectionObserver(elements) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) {
-                    const card = entry.target;
-                    if (card.classList.contains('testimonial-expanded')) {
-                        card.classList.remove('testimonial-expanded');
-                        card.classList.add('testimonial-truncated');
-                        const readMoreBtn = card.querySelector('.read-more-btn');
-                        readMoreBtn.textContent = 'Read More';
-                        card.removeAttribute('data-expanded');
-                    }
-                }
-            });
-        }, { threshold: 0.1 });
-
-        elements.forEach(element => {
-            observer.observe(element);
-        });
+    isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     }
     
 }
