@@ -28,17 +28,39 @@ class GalleryFilter {
     }
 
     loadGalleryImages() {
-        // Clear existing gallery items (keep only the sample ones for fallback)
+        // Clear existing gallery items
         this.galleryContainer.innerHTML = '';
         
-        // Load all images from our data
+        // Collect all images from all categories into one array
+        const allImages = [];
         Object.entries(galleryImages).forEach(([category, images]) => {
             images.forEach(image => {
-                const galleryCard = this.createGalleryCard(image, category);
-                this.galleryContainer.appendChild(galleryCard);
-                this.galleryItems.push(galleryCard);
+                allImages.push({ ...image, category });
             });
         });
+        
+        // Randomly shuffle and select 9 images
+        const shuffledImages = this.shuffleArray([...allImages]);
+        const selectedImages = shuffledImages.slice(0, 9);
+        
+        console.log(`Displaying ${selectedImages.length} random images out of ${allImages.length} total images`);
+        
+        // Create gallery cards for selected images
+        selectedImages.forEach(image => {
+            const galleryCard = this.createGalleryCard(image, image.category);
+            this.galleryContainer.appendChild(galleryCard);
+            this.galleryItems.push(galleryCard);
+        });
+    }
+    
+    // Fisher-Yates shuffle algorithm for truly random selection
+    shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
     }
 
     createGalleryCard(image, category) {
