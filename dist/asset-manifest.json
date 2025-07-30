@@ -1,0 +1,217 @@
+{
+  "buildTime": "2025-07-30T10:10:20.183Z",
+  "deployTime": 1753870220183,
+  "platform": "vercel",
+  "assets": [
+    {
+      "path": ".htaccess",
+      "size": 1187,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.309Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "404.html",
+      "size": 3868,
+      "type": "document",
+      "lastModified": "2025-07-30T10:10:23.176Z",
+      "cacheStrategy": "dynamic"
+    },
+    {
+      "path": "_headers",
+      "size": 386,
+      "type": "unknown",
+      "lastModified": "2025-07-03T10:15:08.012Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "assets\\favicon-F7cuF2t6.ico",
+      "size": 152126,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.051Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "assets\\images\\apple-touch-icon-CPE-rLNI.png",
+      "size": 2745,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.060Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\images\\commercial-parking-1-TkpLSjcJ.jpg",
+      "size": 939487,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.058Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\images\\custom-decorative-1-Bqr1ejqk.jpg",
+      "size": 368528,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\images\\customer-1-BpQsGvvF.jpg",
+      "size": 26950,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\images\\favicon-16x16-6rkYH3Jn.png",
+      "size": 677,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.060Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\images\\favicon-32x32-BMziwMnC.png",
+      "size": 1103,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.060Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\images\\maintenance-repair-1-wGeFcuFD.jpg",
+      "size": 160176,
+      "type": "image",
+      "lastModified": "2025-07-30T10:10:23.051Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\styles\\main-D1dkatcf.css",
+      "size": 66679,
+      "type": "stylesheet",
+      "lastModified": "2025-07-30T10:10:23.303Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\styles\\measurement-storage-DvB2Xm2x.css",
+      "size": 26053,
+      "type": "stylesheet",
+      "lastModified": "2025-07-30T10:10:23.305Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "assets\\videos\\neff-paving-1080p-BpjyIQDW.mp4",
+      "size": 34602243,
+      "type": "video",
+      "lastModified": "2025-07-30T10:10:23.097Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "chunks\\chunk-E0eRZBtV.js",
+      "size": 84062,
+      "type": "javascript",
+      "lastModified": "2025-07-30T10:10:23.051Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "chunks\\chunk-E0eRZBtV.js.map",
+      "size": 399484,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.057Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "chunks\\measurement-storage-CAKMWHGY.js",
+      "size": 116911,
+      "type": "javascript",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "chunks\\measurement-storage-CAKMWHGY.js.map",
+      "size": 429866,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.057Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "entries\\404-l0sNRNKZ.js.map",
+      "size": 96,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "entries\\estimate-form-BJ4Kz_IO.js.map",
+      "size": 106,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "entries\\gallery-T7Uo1KDV.js.map",
+      "size": 100,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "entries\\main-bGkJHsbM.js",
+      "size": 55341,
+      "type": "javascript",
+      "lastModified": "2025-07-30T10:10:23.056Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "entries\\main-bGkJHsbM.js.map",
+      "size": 107806,
+      "type": "unknown",
+      "lastModified": "2025-07-30T10:10:23.057Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "estimate-form.html",
+      "size": 31018,
+      "type": "document",
+      "lastModified": "2025-07-30T10:10:23.177Z",
+      "cacheStrategy": "dynamic"
+    },
+    {
+      "path": "estimator.png",
+      "size": 450084,
+      "type": "image",
+      "lastModified": "2025-07-25T20:23:20.863Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "gallery.html",
+      "size": 9795,
+      "type": "document",
+      "lastModified": "2025-07-30T10:10:23.176Z",
+      "cacheStrategy": "dynamic"
+    },
+    {
+      "path": "index.html",
+      "size": 96383,
+      "type": "document",
+      "lastModified": "2025-07-30T10:10:23.175Z",
+      "cacheStrategy": "dynamic"
+    },
+    {
+      "path": "neffpaving.png",
+      "size": 1206503,
+      "type": "image",
+      "lastModified": "2025-07-25T20:23:20.865Z",
+      "cacheStrategy": "versioned"
+    },
+    {
+      "path": "opengraph-image.png",
+      "size": 319001,
+      "type": "image",
+      "lastModified": "2025-07-22T21:25:05.071Z",
+      "cacheStrategy": "immutable"
+    },
+    {
+      "path": "sw.js",
+      "size": 5601,
+      "type": "javascript",
+      "lastModified": "2025-07-29T23:35:18.331Z",
+      "cacheStrategy": "versioned"
+    }
+  ]
+}

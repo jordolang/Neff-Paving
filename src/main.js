@@ -1597,10 +1597,14 @@ this.initMeasurementToolToggle();
     }
 
     initGallery() {
-        // Check if we are on the gallery page by looking for a unique element
-        if (document.querySelector('.gallery-grid')) {
+        // Only initialize Gallery class on the dedicated gallery page
+        // Check for gallery page by looking for empty gallery-grid (not the hardcoded index page one)
+        const galleryGrid = document.querySelector('.gallery-grid');
+        if (galleryGrid && galleryGrid.children.length === 0) {
+            // This is the empty gallery grid on gallery.html, initialize dynamic loading
             new Gallery();
         }
+        // Note: The hardcoded gallery items on index.html don't need the Gallery class
     }
 
     isTouchDevice() {
