@@ -9,6 +9,7 @@ import { inject } from '@vercel/analytics'
 
 import { AreaFinder } from './components/area-finder.js';
 import { LocationMaps } from './components/location-maps.js';
+import GalleryFilter from './components/gallery-filter.js';
 
 // Import asset loading utilities
 import { assetLoader } from './utils/asset-loader.js';
@@ -50,8 +51,8 @@ class NeffPavingApp {
         this.arcGISInstance = null
         this.arcGISLoaded = false
         this.arcGISLoading = false
-        this.activeMeasurementTool = 'google-maps'
-        this.init()
+        this.activeMeasurementTool = 'google-maps'\n        this.galleryFilter = null
+        this.init();
     }
 
     init() {
@@ -740,40 +741,10 @@ this.initMeasurementToolToggle();
     }
     
     initGalleryFilters() {
-        const filterButtons = document.querySelectorAll('.filter-btn')
-        const galleryItems = document.querySelectorAll('.gallery-item')
-        
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons
-                filterButtons.forEach(btn => btn.classList.remove('active'))
-                // Add active class to clicked button
-                button.classList.add('active')
-                
-                const filter = button.dataset.filter
-                
-                galleryItems.forEach(item => {
-                    if (filter === 'all' || item.dataset.category === filter) {
-                        item.style.display = 'block'
-                        // Animate in
-                        gsap.fromTo(item, 
-                            { opacity: 0, y: 20 },
-                            { opacity: 1, y: 0, duration: 0.5, delay: Math.random() * 0.3 }
-                        )
-                    } else {
-                        // Animate out
-                        gsap.to(item, {
-                            opacity: 0,
-                            y: -20,
-                            duration: 0.3,
-                            onComplete: () => {
-                                item.style.display = 'none'
-                            }
-                        })
-                    }
-                })
-            })
-        })
+        const galleryElement = document.getElementById('gallery');
+        if (galleryElement) {
+            this.galleryFilter = new GalleryFilter(galleryElement);
+        }
     }
     
     initContactForm() {
