@@ -11,6 +11,9 @@ class GalleryFilter {
         this.filterButtons = document.querySelectorAll('.button-group .button');
         this.galleryItems = [];
         this.lightbox = new Lightbox();
+        this.allImagesData = []; // Store all images for lightbox
+        this.displayedImages = {}; // Track displayed images by category
+        this.currentFilter = 'all';
 
         this.init();
     }
@@ -19,8 +22,6 @@ class GalleryFilter {
         this.loadGalleryImages();
         this.initFilters();
         this.initLightbox();
-        // Initially show all loaded items (no filtering needed since we show random selection)
-        this.filterItems('all');
         // Set first button as active
         if (this.filterButtons.length > 0) {
             this.filterButtons[0].classList.add('cs-active');
@@ -30,27 +31,40 @@ class GalleryFilter {
     loadGalleryImages() {
         // Clear existing gallery items
         this.galleryContainer.innerHTML = '';
+        this.galleryItems = [];
+        this.allImagesData = [];
+        this.displayedImages = {};
         
-        // Collect all images from all categories into one array
-        const allImages = [];
+        // Collect all images and organize by category
         Object.entries(galleryImages).forEach(([category, images]) => {
             images.forEach(image => {
-                allImages.push({ ...image, category });
+                this.allImagesData.push({ ...image, category });
             });
         });
         
-        // Randomly shuffle and select 9 images
-        const shuffledImages = this.shuffleArray([...allImages]);
-        const selectedImages = shuffledImages.slice(0, 9);
-        
-        console.log(`Displaying ${selectedImages.length} random images out of ${allImages.length} total images`);
-        
-        // Create gallery cards for selected images
-        selectedImages.forEach(image => {
-            const galleryCard = this.createGalleryCard(image, image.category);
-            this.galleryContainer.appendChild(galleryCard);
-            this.galleryItems.push(galleryCard);
+        // Get 8 random images per category
+        const categories = Object.keys(galleryImages);
+        categories.forEach(category => {
+            const categoryImages = galleryImages[category].map(img => ({ ...img, category }));
+            const shuffled = this.shuffleArray([...categoryImages]);
+            this.displayedImages[category] = shuffled.slice(0, 8);
         });
+        
+        // Also create a mixed "all" category with 8 random images from all categories
+        const allShuffled = this.shuffleArray([...this.allImagesData]);
+        this.displayedImages['all'] = allShuffled.slice(0, 8);
+        
+        // Create gallery cards for all displayed images (initially hidden)
+        Object.entries(this.displayedImages).forEach(([category, images]) => {
+            images.forEach(image => {
+                const galleryCard = this.createGalleryCard(image, image.category, category);
+                this.galleryContainer.appendChild(galleryCard);
+                this.galleryItems.push(galleryCard);
+            });
+        });
+        
+        // Show initial filter (all)
+        this.filterItems('all');
     }
     
     // Fisher-Yates shuffle algorithm for truly random selection
@@ -63,10 +77,11 @@ class GalleryFilter {
         return shuffled;
     }
 
-    createGalleryCard(image, category) {
+    createGalleryCard(image, category, displayCategory) {
         const card = document.createElement('div');
         card.className = 'gallery-card';
         card.setAttribute('data-category', category);
+        card.setAttribute('data-display-category', displayCategory);
         
         // Use dynamic path construction that works for both Vercel and GitHub Pages
         const getImagePath = () => {
@@ -101,16 +116,23 @@ class GalleryFilter {
         const cardImage = card.querySelector('.card-image');
         
         // Show loading state initially
-        cardImage.style.backgroundColor = '#f0f0f0';
+        cardImage.style.backgroundColor = '#f5f5f5';
         
-        img.onload = () => {
-            // Hide loading placeholder and show image
-            placeholder.style.display = 'none';
+        // Preload image to ensure smooth display
+        const imagePreloader = new Image();
+        imagePreloader.onload = () => {
+            // Image is loaded, now show it
             img.style.opacity = '1';
+            placeholder.style.opacity = '0';
             cardImage.style.backgroundColor = 'transparent';
+            
+            // Remove placeholder after transition
+            setTimeout(() => {
+                placeholder.style.display = 'none';
+            }, 300);
         };
         
-        img.onerror = () => {
+        imagePreloader.onerror = () => {
             // Handle failed image loads
             placeholder.innerHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666;">
@@ -119,6 +141,9 @@ class GalleryFilter {
                 </div>
             `;
         };
+        
+        // Start loading the image
+        imagePreloader.src = imagePath;
         
         return card;
     }
@@ -135,25 +160,46 @@ class GalleryFilter {
             const card = e.target.closest('.gallery-card');
             if (!card) return;
             
-            const clickedIndex = this.galleryItems.indexOf(card);
-            if (clickedIndex === -1) return;
+            const clickedImage = {
+                filename: card.querySelector('img').src.split('/').pop(),
+                title: card.querySelector('.card-title').textContent,
+                category: card.dataset.category
+            };
             
-            // Get only visible images for lightbox
-            const visibleImages = this.galleryItems
-                .filter(item => item.style.display !== 'none')
-                .map(galleryItem => ({
-                    src: galleryItem.querySelector('img').src,
-                    title: galleryItem.querySelector('.card-title').textContent,
-                    category: galleryItem.querySelector('.card-category').textContent,
-                    alt: galleryItem.querySelector('img').alt,
-                }));
+            // Get all images based on current filter
+            let imagesToShow = [];
+            let clickedIndex = 0;
             
-            // Find the index of clicked item in visible items
-            const visibleIndex = this.galleryItems
-                .filter(item => item.style.display !== 'none')
-                .indexOf(card);
-                
-            this.lightbox.open(visibleImages, visibleIndex);
+            if (this.currentFilter === 'all') {
+                // Show ALL images from all categories
+                imagesToShow = this.allImagesData;
+            } else {
+                // Show all images from the selected category
+                imagesToShow = this.allImagesData.filter(img => img.category === this.currentFilter);
+            }
+            
+            // Build lightbox images array with proper paths
+            const lightboxImages = imagesToShow.map(image => {
+                const baseUrl = import.meta.env.BASE_URL || '/';
+                const cleanBaseUrl = baseUrl === '/' ? '' : baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+                return {
+                    src: `${cleanBaseUrl}/assets/gallery/${image.category}/${image.filename}`,
+                    title: image.title,
+                    category: image.category.charAt(0).toUpperCase() + image.category.slice(1),
+                    alt: image.alt
+                };
+            });
+            
+            // Find the index of clicked image in the full array
+            clickedIndex = imagesToShow.findIndex(img => 
+                img.filename === clickedImage.filename && 
+                img.category === clickedImage.category
+            );
+            
+            // If not found (shouldn't happen), default to 0
+            if (clickedIndex === -1) clickedIndex = 0;
+            
+            this.lightbox.open(lightboxImages, clickedIndex);
         });
     }
 
@@ -168,9 +214,10 @@ class GalleryFilter {
     }
 
     filterItems(filter) {
+        this.currentFilter = filter;
         this.galleryItems.forEach(item => {
-            const itemCategory = item.dataset.category;
-            const shouldShow = filter === 'all' || itemCategory === filter;
+            const displayCategory = item.dataset.displayCategory;
+            const shouldShow = displayCategory === filter;
 
             if (shouldShow) {
                 item.style.display = 'block';
