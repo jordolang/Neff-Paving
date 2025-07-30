@@ -3640,32 +3640,59 @@ img[src]:not([src=""]) ~ *::before {
         padding: 0 var(--spacing-md);
     }
     
-    /* Header adjustments for mobile */
+    /* Header adjustments for mobile - make it static and compact */
+    header {
+        position: static;
+        background: var(--asphalt-dark);
+        padding: var(--spacing-sm) 0;
+    }
+    
+    main {
+        padding-top: 0;
+    }
+    
     .header-container {
         flex-direction: column;
         text-align: center;
-        gap: var(--spacing-md);
+        gap: var(--spacing-sm);
+        padding: 0 var(--spacing-md);
     }
     
+    header h1 {
+        font-size: 1.25rem;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    /* Mobile navigation in 3x2 grid */
     nav ul {
-        gap: var(--spacing-lg);
-        flex-wrap: wrap;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
     }
     
+    nav a {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.875rem;
+        border-radius: var(--border-radius);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    nav a:hover {
+        background: var(--safety-yellow);
+        color: var(--asphalt-dark);
+        border-color: var(--safety-yellow);
+    }
+    
+    /* Hide social links on mobile to save space */
     .social-links {
-        order: -1;
-        justify-content: center;
-    }
-    
-    .social-links a {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .social-links svg {
-        width: 16px;
-        height: 16px;
+        display: none;
     }
     
     
