@@ -46,9 +46,15 @@ class GalleryFilter {
         card.className = 'gallery-card';
         card.setAttribute('data-category', category);
         
-        // Use direct path construction with the correct base URL
-        const baseUrl = import.meta.env.BASE_URL || '/Neff-Paving/';
-        const imagePath = `${baseUrl}assets/gallery/${category}/${image.filename}`;
+        // Use dynamic path construction that works for both Vercel and GitHub Pages
+        const getImagePath = () => {
+            const baseUrl = import.meta.env.BASE_URL || '/';
+            // Remove leading slash from baseUrl if it's just '/'
+            const cleanBaseUrl = baseUrl === '/' ? '' : baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+            return `${cleanBaseUrl}/assets/gallery/${category}/${image.filename}`;
+        };
+        
+        const imagePath = getImagePath();
         
         card.innerHTML = `
             <div class="card-image">
