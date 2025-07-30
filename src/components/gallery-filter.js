@@ -46,8 +46,9 @@ class GalleryFilter {
         card.className = 'gallery-card';
         card.setAttribute('data-category', category);
         
-        // Use the asset path utility to get the correct path
-        const imagePath = getAssetPath(`/assets/gallery/${category}/${image.filename}`);
+        // Use direct path construction with the correct base URL
+        const baseUrl = import.meta.env.BASE_URL || '/Neff-Paving/';
+        const imagePath = `${baseUrl}assets/gallery/${category}/${image.filename}`;
         
         card.innerHTML = `
             <div class="card-image">
