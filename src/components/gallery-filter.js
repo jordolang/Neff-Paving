@@ -80,10 +80,13 @@ class GalleryFilter {
         
         card.innerHTML = `
             <div class="card-image">
+                <div class="image-loading-placeholder">
+                    <div class="loading-spinner"></div>
+                </div>
                 <picture class="image">
                     <source media="(max-width: 600px)" srcset="${imagePath}">
                     <source media="(min-width: 601px)" srcset="${imagePath}">
-                    <img loading="lazy" decoding="async" src="${imagePath}" alt="${image.alt}" width="630" height="400">
+                    <img loading="eager" decoding="async" src="${imagePath}" alt="${image.alt}" width="630" height="400">
                 </picture>
             </div>
             <div class="card-overlay">
@@ -91,6 +94,31 @@ class GalleryFilter {
                 <div class="card-category">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
             </div>
         `;
+        
+        // Handle image loading states
+        const img = card.querySelector('img');
+        const placeholder = card.querySelector('.image-loading-placeholder');
+        const cardImage = card.querySelector('.card-image');
+        
+        // Show loading state initially
+        cardImage.style.backgroundColor = '#f0f0f0';
+        
+        img.onload = () => {
+            // Hide loading placeholder and show image
+            placeholder.style.display = 'none';
+            img.style.opacity = '1';
+            cardImage.style.backgroundColor = 'transparent';
+        };
+        
+        img.onerror = () => {
+            // Handle failed image loads
+            placeholder.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
+                    <div style="font-size: 0.875rem;">Image not available</div>
+                </div>
+            `;
+        };
         
         return card;
     }
