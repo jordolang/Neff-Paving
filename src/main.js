@@ -1619,50 +1619,133 @@ this.initMeasurementToolToggle();
      * Detects text truncation and adds read more buttons
      */
     initTestimonialReadMore() {
-        const testimonialCards = document.querySelectorAll('.testimonial-card');
-
-        const checkTruncation = (card) => {
+        const testimonials = document.querySelectorAll('.testimonial-card');
+        
+        testimonials.forEach(card => {
             const blockquote = card.querySelector('blockquote');
-            const readMoreBtn = card.querySelector('.read-more-btn');
-
-            if (blockquote.scrollHeight > blockquote.clientHeight) {
+            const button = card.querySelector('.read-more-btn');
+            
+            if (!blockquote || !button) return;
+            
+            // Check if text is truncated
+            const isOverflowing = blockquote.scrollHeight > 120;
+            
+            if (isOverflowing) {
                 card.classList.add('testimonial-truncated');
-                readMoreBtn.style.display = 'block';
+                
+                // Set initial button text
+                button.textContent = 'Read More';
+                
+                // Show button on touch devices
+                if (this.isTouchDevice()) {
+                    card.classList.add('show-read-more');
+                }
+                
+                // Handle button click/touch
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isExpanded = card.classList.contains('testimonial-expanded');
+                    
+                    if (isExpanded) {
+                        // Collapse
+                        card.classList.remove('testimonial-expanded');
+                        card.classList.add('testimonial-truncated');
+                        button.textContent = 'Read More';
+                        
+                        // Smooth scroll to top of card with less jarring animation
+                        setTimeout(() => {
+                            const cardTop = card.offsetTop;
+                            const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+                            const scrollTop = cardTop - headerHeight - 20;
+                            
+                            window.scrollTo({ 
+                                top: scrollTop,
+                                behavior: 'smooth'
+                            });
+                        }, 200); // Allow animation to start before scrolling
+                    } else {
+                        // Expand
+                        card.classList.remove('testimonial-truncated');
+                        card.classList.add('testimonial-expanded');
+                        button.textContent = 'Read Less';
+                        
+                        // Gentle scroll adjustment after expansion
+                        setTimeout(() => {
+                            const cardRect = card.getBoundingClientRect();
+                            const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+                            
+                            // Only scroll if card is partially cut off at top
+                            if (cardRect.top < headerHeight + 10) {
+                                const cardTop = card.offsetTop;
+                                const scrollTop = cardTop - headerHeight - 20;
+                                
+                                window.scrollTo({ 
+                                    top: scrollTop,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        }, 300); // Wait for expansion animation to mostly complete
+                    }
+                });
+                
+                // Handle keyboard navigation
+                button.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        button.click();
+                    }
+                });
+                
+                // Handle touch events for better mobile experience
+                let touchStartTime = 0;
+                
+                button.addEventListener('touchstart', (e) => {
+                    touchStartTime = Date.now();
+                });
+                
+                button.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    if (touchDuration < 500) { // Quick tap
+                        e.preventDefault();
+                        button.click();
+                    }
+                });
             } else {
+                // Remove truncation if text fits
                 card.classList.remove('testimonial-truncated');
-                readMoreBtn.style.display = 'none';
+                button.style.display = 'none';
             }
-        };
-
-        testimonialCards.forEach(card => {
-            checkTruncation(card);
-            const readMoreBtn = card.querySelector('.read-more-btn');
-
-            readMoreBtn.addEventListener('click', () => {
-                const isExpanded = card.classList.contains('testimonial-expanded');
-
-                if (isExpanded) {
-                    card.classList.remove('testimonial-expanded');
-                    card.classList.add('testimonial-truncated');
-                    readMoreBtn.textContent = 'Read More';
-                    card.removeAttribute('data-expanded');
-                } else {
-                    card.classList.add('testimonial-expanded');
-                    card.classList.remove('testimonial-truncated');
-                    readMoreBtn.textContent = 'Read Less';
-                    card.setAttribute('data-expanded', 'true');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        
+        // Intersection Observer to collapse testimonials when they leave viewport
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    const card = entry.target;
+                    const button = card.querySelector('.read-more-btn');
+                    if (card.classList.contains('testimonial-expanded')) {
+                        card.classList.remove('testimonial-expanded');
+                        card.classList.add('testimonial-truncated');
+                        if (button) {
+                            button.textContent = 'Read More';
+                        }
+                    }
                 }
             });
+        }, {
+            threshold: 0.1,
+            rootMargin: '-50px 0px'
         });
-
-        // Add Intersection Observer to collapse cards when they scroll out of view
-        this.setupIntersectionObserver(testimonialCards);
-
-        // Re-check truncation on window resize
-        window.addEventListener('resize', () => {
-            testimonialCards.forEach(checkTruncation);
+        
+        testimonials.forEach(card => {
+            observer.observe(card);
         });
+    }
+
+    isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     }
 
     setupIntersectionObserver(elements) {
