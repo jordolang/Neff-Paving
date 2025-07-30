@@ -1406,8 +1406,10 @@
 
     <!-- Google Maps API Script -->
     <script>
-        // Google Maps initialization function
+        // Google Maps initialization - DISABLED to prevent blocking main app
         function initGoogleMap() {
+            // This function is commented out to prevent Google Maps errors from blocking the gallery
+            /*
             const mapElement = document.getElementById('office-google-map');
             if (!mapElement) return;
 
@@ -1502,6 +1504,10 @@
 
             // Remove loading state
             mapElement.classList.remove('loading');
+            */
+            
+            // Use fallback immediately instead of trying to load Google Maps
+            createMapFallback();
         }
 
         // Facebook chat integration
