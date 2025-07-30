@@ -2337,7 +2337,7 @@ img[src]:not([src=""]) ~ *::before {
     flex-direction: column;
     overflow: hidden;
     padding-bottom: var(--spacing-sm);
-    padding-top: 48px; /* Space for positioned button */
+    padding-top: var(--spacing-lg); /* Normal padding since button is removed */
 }
 
 .testimonial-card .stars {
@@ -2398,47 +2398,10 @@ img[src]:not([src=""]) ~ *::before {
 }
 
 .read-more-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--traffic-orange);
-    color: var(--pure-white);
-    border: none;
-    padding: 8px 16px;
-    border-radius: var(--border-radius-lg);
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
-    opacity: 1;
-    visibility: visible;
-    box-shadow: 0 2px 12px rgba(231, 76, 60, 0.3);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    pointer-events: auto;
-    min-width: 70px;
-    max-width: 100px;
-    white-space: nowrap;
-    border: 2px solid var(--pure-white);
-    font-family: var(--font-primary);
-    line-height: 1;
+    display: none !important; /* Removed as per user request */
 }
 
-.read-more-btn:hover {
-    background: var(--safety-yellow);
-    color: var(--asphalt-dark);
-    transform: scale(1.05) translateY(-1px);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-    border-color: var(--asphalt-dark);
-}
-
-.read-more-btn:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
-}
-
-/* Removed all hover-based visibility rules - button is now always visible */
+/* Read more button and related hover/active styles removed as per user request */
 
 .testimonial-card.testimonial-expanded blockquote {
     max-height: none;
