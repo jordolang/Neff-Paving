@@ -7,8 +7,8 @@ export const GOOGLE_MAPS_CONFIG = {
   language: 'en'
 };
 
-// Default map options
-export const DEFAULT_MAP_OPTIONS = {
+// Default map options - only initialize if Google Maps is available
+export const DEFAULT_MAP_OPTIONS = typeof google !== 'undefined' && google.maps ? {
   zoom: 15,
   center: { lat: 39.9612, lng: -82.9988 }, // Columbus, Ohio
   mapTypeId: 'hybrid',
@@ -27,10 +27,20 @@ export const DEFAULT_MAP_OPTIONS = {
     position: google.maps.ControlPosition.RIGHT_TOP
   },
   fullscreenControl: true
+} : {
+  // Fallback options when Google Maps is not available
+  zoom: 15,
+  center: { lat: 39.9612, lng: -82.9988 },
+  mapTypeId: 'hybrid',
+  mapTypeControl: true,
+  zoomControl: true,
+  scaleControl: true,
+  streetViewControl: true,
+  fullscreenControl: true
 };
 
-// Drawing manager options
-export const DRAWING_MANAGER_OPTIONS = {
+// Drawing manager options - only initialize if Google Maps is available
+export const DRAWING_MANAGER_OPTIONS = typeof google !== 'undefined' && google.maps ? {
   drawingMode: google.maps.drawing.OverlayType.POLYGON,
   drawingControl: true,
   drawingControlOptions: {
@@ -41,6 +51,37 @@ export const DRAWING_MANAGER_OPTIONS = {
       google.maps.drawing.OverlayType.CIRCLE
     ]
   },
+  polygonOptions: {
+    fillColor: '#FFD700',
+    fillOpacity: 0.3,
+    strokeWeight: 2,
+    strokeColor: '#FFD700',
+    clickable: false,
+    editable: true,
+    zIndex: 1
+  },
+  rectangleOptions: {
+    fillColor: '#FFD700',
+    fillOpacity: 0.3,
+    strokeWeight: 2,
+    strokeColor: '#FFD700',
+    clickable: false,
+    editable: true,
+    zIndex: 1
+  },
+  circleOptions: {
+    fillColor: '#FFD700',
+    fillOpacity: 0.3,
+    strokeWeight: 2,
+    strokeColor: '#FFD700',
+    clickable: false,
+    editable: true,
+    zIndex: 1
+  }
+} : {
+  // Fallback options when Google Maps is not available
+  drawingMode: 'polygon',
+  drawingControl: true,
   polygonOptions: {
     fillColor: '#FFD700',
     fillOpacity: 0.3,
