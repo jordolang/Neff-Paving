@@ -1,68 +1,100 @@
 import GalleryModal from './gallery-modal.js';
+import projectsData from './data/projects.json';
 
-const projects = [
-    {
-        category: 'residential',
-        image: '/assets/images/projects/residential-driveway-1.jpg',
-        title: 'Modern Driveway',
-        description: 'Residential • 2023',
-        tag: 'Before/After'
-    },
-    {
-        category: 'commercial',
-        image: '/assets/images/projects/commercial-parking-1.jpg',
-        title: 'Retail Parking Lot',
-        description: 'Commercial • 2023',
-        tag: 'New Construction'
-    },
-    {
-        category: 'maintenance',
-        image: '/assets/images/projects/maintenance-repair-1.jpg',
-        title: 'Crack Sealing',
-        description: 'Maintenance • 2023',
-        tag: 'Preventive Care'
-    },
-    {
-        category: 'custom',
-        image: '/assets/images/projects/custom-decorative-1.jpg',
-        title: 'Decorative Asphalt',
-        description: 'Custom • 2023',
-        tag: 'Specialty Work'
-    },
-    {
-        category: 'residential',
-        image: '/assets/images/projects/residential-walkway-1.jpg',
-        title: 'Garden Walkway',
-        description: 'Residential • 2023',
-        tag: 'New Installation'
-    },
-    {
-        category: 'commercial',
-        image: '/assets/images/projects/commercial-warehouse-1.jpg',
-        title: 'Warehouse Access',
-        description: 'Commercial • 2023',
-        tag: 'Heavy Duty'
-    }
-];
+// Projects will be loaded from JSON file
+let projects = projectsData;
 
 export class Gallery {
     constructor() {
         this.filterButtons = document.querySelectorAll('.filter-btn');
         this.galleryGrid = document.querySelector('.gallery-grid');
         this.galleryModal = new GalleryModal();
+        this.isLoading = false;
 
-        this.loadProjects();
-        this.initFilters();
+        this.init();
     }
 
-    loadProjects() {
+    async init() {
+        try {
+            this.showLoading();
+            await this.loadProjects();
+            this.initFilters();
+            this.hideLoading();
+        } catch (error) {
+            console.error('Error initializing gallery:', error);
+            this.showError('Failed to load gallery. Please refresh the page.');
+        }
+    }
+
+    async loadProjects() {
         this.galleryGrid.innerHTML = ''; // Clear existing items
-        projects.forEach(project => {
+        
+        // Add error handling for missing images
+        const validProjects = projects.filter(project => {
+            return project.image && project.title && project.category;
+        });
+
+        if (validProjects.length === 0) {
+            this.showError('No gallery items found.');
+            return;
+        }
+
+        validProjects.forEach(project => {
             const item = this.createGalleryItem(project);
             this.galleryGrid.appendChild(item);
         });
+        
         this.galleryItems = document.querySelectorAll('.gallery-item');
         this.initModal();
+        this.preloadImages();
+    }
+
+    showLoading() {
+        this.isLoading = true;
+        this.galleryGrid.innerHTML = `
+            <div class="gallery-loading">
+                <div class="loading-spinner"></div>
+                <p>Loading gallery...</p>
+            </div>
+        `;
+    }
+
+    hideLoading() {
+        this.isLoading = false;
+        const loadingElement = this.galleryGrid.querySelector('.gallery-loading');
+        if (loadingElement) {
+            loadingElement.remove();
+        }
+    }
+
+    showError(message) {
+        this.galleryGrid.innerHTML = `
+            <div class="gallery-error">
+                <div class="error-icon">⚠️</div>
+                <p>${message}</p>
+                <button onclick="window.location.reload()" class="btn btn-primary">Retry</button>
+            </div>
+        `;
+    }
+
+    preloadImages() {
+        // Preload first few images for better performance
+        const firstImages = Array.from(this.galleryItems)
+            .slice(0, 6)
+            .map(item => item.querySelector('img'));
+        
+        firstImages.forEach(img => {
+            if (img && img.src) {
+                const preloadImg = new Image();
+                preloadImg.src = img.src;
+                
+                preloadImg.onerror = () => {
+                    // If image fails to load, show a placeholder
+                    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yMDAgMTUwTDE3NSAxMjVIMjI1TDIwMCAxNTBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik0yMDAgMTUwTDE3NSAxNzVIMjI1TDIwMCAxNTBaIiBmaWxsPSIjOUI5QkEwIi8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOUI5QkEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIG5vdCBhdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg==';
+                    img.alt = 'Image not available';
+                };
+            }
+        });
     }
 
     createGalleryItem(project) {
