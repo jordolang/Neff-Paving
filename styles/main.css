@@ -2015,9 +2015,83 @@ h6 { font-size: 18px; }
 
 .contact-form-section {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: var(--spacing-3xl);
     margin-top: var(--spacing-4xl);
+}
+
+.contact-cards-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.contact-cards-left .contact-method {
+    padding: var(--spacing-lg);
+    margin: 0;
+}
+
+.contact-form-container {
+    background: var(--concrete);
+    padding: var(--spacing-3xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.contact-form-container h3 {
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+    color: var(--asphalt-dark);
+    font-family: var(--font-primary);
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--asphalt-dark);
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--border-radius);
+    font-family: var(--font-secondary);
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--safety-yellow);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.contact-form .btn-primary {
+    margin-top: var(--spacing-lg);
+    width: 100%;
 }
 
 .form-container {
@@ -3599,6 +3673,28 @@ img[src]:not([src=""]) ~ *::before {
     .cert-grid,
     .contact-methods {
         grid-template-columns: 1fr;
+    }
+    
+    /* Contact form section responsive */
+    .contact-form-section {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+    
+    .contact-cards-left {
+        gap: var(--spacing-md);
+    }
+    
+    .contact-cards-left .contact-method {
+        padding: var(--spacing-md);
+    }
+    
+    .contact-form-container {
+        padding: var(--spacing-xl);
+    }
+    
+    .contact-form-container h3 {
+        font-size: 24px;
     }
     
     .services-grid {
