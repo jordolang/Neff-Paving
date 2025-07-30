@@ -2282,11 +2282,10 @@ img[src]:not([src=""]) ~ *::before {
     padding: var(--spacing-lg);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
-    min-height: 400px; /* Minimum height for consistency */
-    height: auto; /* Allow natural growth */
+    height: 400px; /* Fixed height until expanded */
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -2299,9 +2298,8 @@ img[src]:not([src=""]) ~ *::before {
 
 /* Enhanced card expansion animation */
 .testimonial-card.testimonial-expanded {
-    min-height: auto;
     height: auto;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
 }
 
 /* Haze overlay for truncated testimonials */
