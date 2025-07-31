@@ -1,9 +1,20 @@
 /**
  * Advanced Asset Loading Utility
  * Provides comprehensive asset loading with preloading, lazy loading, and caching
+ * Enhanced for Vercel deployment compatibility
  */
 
-import { getAssetPath, getEnvironmentConfig } from './base-url.js';
+import { getAssetPath, getEnvironmentConfig, IS_VERCEL, DEPLOY_MODE } from './base-url.js';
+
+// Debug logging for Vercel deployments
+const DEBUG_ASSETS = (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+  (typeof window !== 'undefined' && window.location.search.includes('debug=assets'));
+
+function debugLog(message, ...args) {
+  if (DEBUG_ASSETS) {
+    console.log(`🔧 [AssetLoader]${IS_VERCEL ? ' [Vercel]' : ''} ${message}`, ...args);
+  }
+}
 
 // Asset loading states
 const LOADING_STATES = {
@@ -49,8 +60,16 @@ export class AssetLoader {
    * @returns {Promise} Loading promise
    */
   async loadAsset(assetPath, options = {}) {
-    const resolvedPath = getAssetPath(assetPath);
-    const cacheKey = resolvedPath;
+    const config = getEnvironmentConfig();
+    const resolvedPath = getAssetPath(assetPath, {
+      forceAbsolute: !config.useRelativePaths,
+      addCacheBusting: options.addCacheBusting !== false
+    });
+    
+    debugLog(`Loading asset: ${assetPath} -> ${resolvedPath}`, { config, IS_VERCEL, DEPLOY_MODE });
+    
+    // Use original path for cache key to avoid conflicts across deployments
+    const cacheKey = `asset:${assetPath}:${config.cacheStrategy}:${DEPLOY_MODE}`;
     
     // Check cache first
     if (this.config.enableCache && assetCache.has(cacheKey)) {
@@ -130,16 +149,28 @@ export class AssetLoader {
   preloadCriticalAssets(assets = []) {
     if (!this.config.enablePreloading) return;
     
+    const config = getEnvironmentConfig();
+    
+    // Define critical assets with proper paths for current environment
     const defaultCriticalAssets = [
-      { path: '/assets/styles/main.css', type: 'style', priority: 'high' },
-      { path: '/entries/main.js', type: 'script', priority: 'high' },
-      { path: '/assets/images/logo.png', type: 'image', priority: 'medium' }
+      { path: 'assets/styles/main.css', type: 'style', priority: 'high' },
+      { path: 'entries/main.js', type: 'script', priority: 'high' },
+      { path: 'assets/images/logo.png', type: 'image', priority: 'medium' }
     ];
     
     const allAssets = [...defaultCriticalAssets, ...assets];
     
     allAssets.forEach(asset => {
-      this._createPreloadLink(asset);
+      // Resolve path correctly for current environment
+      const resolvedAsset = {
+        ...asset,
+        path: getAssetPath(asset.path, { 
+          forceAbsolute: !config.useRelativePaths,
+          addCacheBusting: false // Don't add cache busting to preload links
+        })
+      };
+      debugLog(`Preloading critical asset: ${asset.path} -> ${resolvedAsset.path}`);
+      this._createPreloadLink(resolvedAsset);
     });
   }
 
@@ -190,7 +221,11 @@ export class AssetLoader {
   loadImage(imagePath, options = {}) {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      const resolvedPath = getAssetPath(imagePath);
+      const config = getEnvironmentConfig();
+      const resolvedPath = getAssetPath(imagePath, {
+        forceAbsolute: !config.useRelativePaths,
+        addCacheBusting: options.addCacheBusting !== false
+      });
       
       img.onload = () => resolve(img);
       img.onerror = () => {
@@ -198,7 +233,10 @@ export class AssetLoader {
           const fallbackImg = new Image();
           fallbackImg.onload = () => resolve(fallbackImg);
           fallbackImg.onerror = () => reject(new Error(`Failed to load image: ${imagePath} and fallback`));
-          fallbackImg.src = getAssetPath(options.fallback);
+          fallbackImg.src = getAssetPath(options.fallback, {
+            forceAbsolute: !config.useRelativePaths,
+            addCacheBusting: options.addCacheBusting !== false
+          });
         } else {
           reject(new Error(`Failed to load image: ${imagePath}`));
         }
@@ -222,7 +260,11 @@ export class AssetLoader {
   loadCSS(cssPath, options = {}) {
     return new Promise((resolve, reject) => {
       const link = document.createElement('link');
-      const resolvedPath = getAssetPath(cssPath);
+      const config = getEnvironmentConfig();
+      const resolvedPath = getAssetPath(cssPath, {
+        forceAbsolute: !config.useRelativePaths,
+        addCacheBusting: options.addCacheBusting !== false
+      });
       
       link.rel = 'stylesheet';
       link.type = 'text/css';
@@ -247,7 +289,11 @@ export class AssetLoader {
   loadJS(jsPath, options = {}) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      const resolvedPath = getAssetPath(jsPath);
+      const config = getEnvironmentConfig();
+      const resolvedPath = getAssetPath(jsPath, {
+        forceAbsolute: !config.useRelativePaths,
+        addCacheBusting: options.addCacheBusting !== false
+      });
       
       script.src = resolvedPath;
       script.type = options.type || 'text/javascript';
@@ -336,8 +382,13 @@ export class AssetLoader {
       case 'js':
         return this.loadJS(assetPath, options);
       default:
-        // Generic fetch for other asset types
-        const response = await fetch(assetPath);
+        // Generic fetch for other asset types - ensure proper path resolution
+        const config = getEnvironmentConfig();
+        const resolvedAssetPath = getAssetPath(assetPath, {
+          forceAbsolute: !config.useRelativePaths,
+          addCacheBusting: options.addCacheBusting !== false
+        });
+        const response = await fetch(resolvedAssetPath);
         if (!response.ok) {
           throw new Error(`Failed to load asset: ${assetPath} (${response.status})`);
         }
@@ -360,25 +411,46 @@ export class AssetLoader {
   }
 
   _createPreloadLink(asset) {
-    // Check if already preloaded
-    const existingLink = document.querySelector(`link[href="${getAssetPath(asset.path)}"]`);
-    if (existingLink) return;
-    
-    const link = document.createElement('link');
-    link.rel = asset.type === 'font' ? 'preload' : 'prefetch';
-    link.href = getAssetPath(asset.path);
-    link.as = asset.as || asset.type;
-    
-    if (asset.type === 'font') {
-      link.type = 'font/woff2';
-      link.crossOrigin = 'anonymous';
+    try {
+      // Use the resolved path from the asset object (already resolved in preloadCriticalAssets)
+      const assetPath = asset.path;
+      
+      // Check if already preloaded
+      const existingLink = document.querySelector(`link[href="${assetPath}"]`);
+      if (existingLink) {
+        debugLog(`Preload link already exists for: ${assetPath}`);
+        return;
+      }
+      
+      const link = document.createElement('link');
+      link.rel = asset.type === 'font' ? 'preload' : 'prefetch';
+      link.href = assetPath;
+      link.as = asset.as || asset.type;
+      
+      if (asset.type === 'font') {
+        link.type = 'font/woff2';
+        link.crossOrigin = 'anonymous';
+      }
+      
+      if (asset.priority === 'high') {
+        link.fetchPriority = 'high';
+      }
+      
+      // Add error handling for preload links
+      link.onerror = () => {
+        debugLog(`Failed to preload asset: ${assetPath}`);
+      };
+      
+      link.onload = () => {
+        debugLog(`Successfully preloaded asset: ${assetPath}`);
+      };
+      
+      document.head.appendChild(link);
+      debugLog(`Added preload link: ${assetPath}`);
+      
+    } catch (error) {
+      console.warn('Failed to create preload link:', error, asset);
     }
-    
-    if (asset.priority === 'high') {
-      link.fetchPriority = 'high';
-    }
-    
-    document.head.appendChild(link);
   }
 
   async _loadLazyImage(img) {
@@ -386,12 +458,19 @@ export class AssetLoader {
       const src = img.dataset.src;
       if (!src) return;
       
-      const loadedImg = await this.loadImage(src, {
-        crossOrigin: img.crossOrigin,
-        decoding: 'async'
+      const config = getEnvironmentConfig();
+      const resolvedSrc = getAssetPath(src, {
+        forceAbsolute: !config.useRelativePaths,
+        addCacheBusting: true
       });
       
-      img.src = loadedImg.src;
+      const loadedImg = await this.loadImage(src, {
+        crossOrigin: img.crossOrigin,
+        decoding: 'async',
+        addCacheBusting: true
+      });
+      
+      img.src = resolvedSrc;
       img.removeAttribute('data-src');
       img.classList.add('loaded');
       
@@ -401,6 +480,15 @@ export class AssetLoader {
     } catch (error) {
       console.warn('Failed to load lazy image:', error);
       img.classList.add('error');
+      
+      // Try to set a fallback or placeholder if available
+      if (img.dataset.fallback) {
+        const config = getEnvironmentConfig();
+        img.src = getAssetPath(img.dataset.fallback, {
+          forceAbsolute: !config.useRelativePaths,
+          addCacheBusting: false
+        });
+      }
     }
   }
 

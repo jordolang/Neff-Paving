@@ -252,10 +252,10 @@ export function preloadCriticalAssets(assets = []) {
 
   // Default critical assets
   const defaultCriticalAssets = [
-    { type: 'style', href: '/assets/main.css', as: 'style' },
-    { type: 'script', href: '/src/main.js', as: 'script' },
+    { type: 'style', href: 'assets/main.css', as: 'style' },
+    { type: 'script', href: 'src/main.js', as: 'script' },
     { type: 'font', href: 'https://fonts.gstatic.com/s/oswald/v49/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fw.woff2', as: 'font', crossorigin: true },
-    { type: 'image', href: '/assets/images/logo.png', as: 'image' }
+    { type: 'image', href: 'assets/images/logo.png', as: 'image' }
   ];
 
   const allAssets = [...defaultCriticalAssets, ...assets];

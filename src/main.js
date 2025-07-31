@@ -418,7 +418,7 @@ class NeffPavingApp {
         // For Vercel deployment, use simple absolute paths from root
         const videoSource = video.querySelector('source');
         if (videoSource) {
-            const videoPath = '/assets/videos/optimized/neff-paving-1080p.mp4';
+            const videoPath = 'assets/videos/optimized/neff-paving-1080p.mp4';
             videoSource.src = videoPath;
         }
 
@@ -448,9 +448,9 @@ class NeffPavingApp {
      */
     preloadCriticalAssets() {
         const criticalAssets = [
-            { path: '/assets/images/hero-bg.jpg', type: 'image', priority: 'high' },
-            { path: '/assets/videos/optimized/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
-            { path: '/assets/images/logo.png', type: 'image', priority: 'high' }
+            { path: 'assets/images/hero-bg.jpg', type: 'image', priority: 'high' },
+            { path: 'assets/videos/optimized/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
+            { path: 'assets/images/logo.png', type: 'image', priority: 'high' }
         ];
         
         assetLoader.preloadCriticalAssets(criticalAssets);

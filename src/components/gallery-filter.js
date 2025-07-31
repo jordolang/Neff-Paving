@@ -82,8 +82,8 @@ class GalleryFilter {
         card.setAttribute('data-category', category);
         card.setAttribute('data-display-category', displayCategory);
         
-        // Use simple absolute path for Vercel deployment
-        const imagePath = `/assets/gallery/${category}/${image.filename}`;
+        // Use relative path for better deployment compatibility
+        const imagePath = `assets/gallery/${category}/${image.filename}`;
         
         // Create HTML structure without any src attributes - images loaded purely via JavaScript
         card.innerHTML = `
@@ -181,10 +181,10 @@ class GalleryFilter {
                 imagesToShow = this.allImagesData.filter(img => img.category === this.currentFilter);
             }
             
-            // Build lightbox images array with simple absolute paths
+            // Build lightbox images array with relative paths
             const lightboxImages = imagesToShow.map(image => {
                 return {
-                    src: `/assets/gallery/${image.category}/${image.filename}`,
+                    src: `assets/gallery/${image.category}/${image.filename}`,
                     title: image.title,
                     category: image.category.charAt(0).toUpperCase() + image.category.slice(1),
                     alt: image.alt

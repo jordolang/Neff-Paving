@@ -36,13 +36,13 @@ export function debugAssetPaths() {
     // Test asset path generation
     console.log('\n🔧 Asset Path Tests:');
     const testPaths = [
-        '/assets/images/logo.png',
-        '/assets/styles/main.css',
-        '/entries/main.js',
+        'assets/images/logo.png',
+        'assets/styles/main.css',
+        'entries/main.js',
         'assets/images/hero-bg.jpg',
         'styles/main.css',
         'https://external.com/image.jpg',
-        '/favicon.ico'
+        'favicon.ico'
     ];
     
     testPaths.forEach(path => {
@@ -87,13 +87,13 @@ export function debugAssetPaths() {
     // Test Vercel scenario
     if (DEPLOY_MODE === 'vercel' || (typeof __IS_VERCEL__ !== 'undefined' && __IS_VERCEL__)) {
         console.log('  🔵 Vercel deployment detected');
-        console.log('    Sample asset path:', getAssetPath('/assets/images/test.jpg', { forceAbsolute: true }));
+        console.log('    Sample asset path:', getAssetPath('assets/images/test.jpg', { forceAbsolute: true }));
     }
     
     // Test GitHub Pages scenario
     if (DEPLOY_MODE === 'github' || (typeof __IS_GITHUB_PAGES__ !== 'undefined' && __IS_GITHUB_PAGES__)) {
         console.log('  🟣 GitHub Pages deployment detected');
-        console.log('    Sample asset path:', getAssetPath('/assets/images/test.jpg', { useRelative: true }));
+        console.log('    Sample asset path:', getAssetPath('assets/images/test.jpg', { useRelative: true }));
     }
     
     console.groupEnd();
@@ -126,7 +126,7 @@ export function testAssetLoading() {
     
     // Test image loading
     const testImage = new Image();
-    const imagePath = getAssetPath('/assets/images/logo.png');
+    const imagePath = getAssetPath('assets/images/logo.png');
     console.log('Testing image load:', imagePath);
     
     testImage.onload = () => {
@@ -143,7 +143,7 @@ export function testAssetLoading() {
     const testCSS = document.createElement('link');
     testCSS.rel = 'stylesheet';
     testCSS.type = 'text/css';
-    const cssPath = getAssetPath('/assets/styles/test.css');
+    const cssPath = getAssetPath('assets/styles/test.css');
     console.log('Testing CSS load:', cssPath);
     
     testCSS.onload = () => {
