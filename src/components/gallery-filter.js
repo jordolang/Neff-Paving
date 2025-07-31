@@ -93,15 +93,16 @@ class GalleryFilter {
         
         const imagePath = getImagePath();
         
+        // Create HTML structure without any src attributes - images loaded purely via JavaScript
         card.innerHTML = `
             <div class="card-image">
                 <div class="image-loading-placeholder">
                     <div class="loading-spinner"></div>
                 </div>
                 <picture class="image">
-                    <source media="(max-width: 600px)" srcset="${imagePath}">
-                    <source media="(min-width: 601px)" srcset="${imagePath}">
-                    <img loading="eager" decoding="async" src="${imagePath}" alt="${image.alt}" width="630" height="400">
+                    <source media="(max-width: 600px)">
+                    <source media="(min-width: 601px)">
+                    <img loading="eager" decoding="async" alt="${image.alt}" width="630" height="400">
                 </picture>
             </div>
             <div class="card-overlay">
@@ -110,18 +111,26 @@ class GalleryFilter {
             </div>
         `;
         
-        // Handle image loading states
+        // Get DOM elements for image loading states
         const img = card.querySelector('img');
+        const sources = card.querySelectorAll('source');
         const placeholder = card.querySelector('.image-loading-placeholder');
         const cardImage = card.querySelector('.card-image');
         
-        // Show loading state initially
+        // Show loading state initially - image completely hidden
         cardImage.style.backgroundColor = '#f5f5f5';
+        img.style.opacity = '0';
         
         // Preload image to ensure smooth display
         const imagePreloader = new Image();
         imagePreloader.onload = () => {
-            // Image is loaded, now show it
+            // Image is loaded successfully, now set src attributes and show it
+            sources.forEach(source => {
+                source.srcset = imagePath;
+            });
+            img.src = imagePath;
+            
+            // Show the loaded image
             img.style.opacity = '1';
             placeholder.style.opacity = '0';
             cardImage.style.backgroundColor = 'transparent';
@@ -133,16 +142,18 @@ class GalleryFilter {
         };
         
         imagePreloader.onerror = () => {
-            // Handle failed image loads
+            // Handle failed image loads - show error message without setting src
             placeholder.innerHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
                     <div style="font-size: 0.875rem;">Image not available</div>
                 </div>
             `;
+            // Keep img hidden since it failed to load
+            img.style.display = 'none';
         };
         
-        // Start loading the image
+        // Start loading the image - this triggers the loading process
         imagePreloader.src = imagePath;
         
         return card;

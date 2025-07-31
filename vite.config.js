@@ -65,7 +65,14 @@ export default defineConfig(({ mode }) => {
     assetsDir: 'assets',
     sourcemap: mode !== 'production',
     // Optimize asset inlining
-    assetsInlineLimit: 8192, // Increased from 4096
+    assetsInlineLimit: (filePath, content) => {
+      // Exclude gallery images from inlining to preserve paths
+      if (filePath.includes('assets/gallery/')) {
+        return false;
+      }
+      // Default limit for other assets
+      return content.length < 8192;
+    },
     // Enhanced code splitting
     rollupOptions: {
       input: {
@@ -79,6 +86,15 @@ export default defineConfig(({ mode }) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
           
+          // Gallery images - preserve original paths without hashing
+          if (assetInfo.name && assetInfo.name.includes('gallery/')) {
+            // Extract the gallery path from the original name
+            const galleryMatch = assetInfo.name.match(/(gallery\/.+)/);
+            if (galleryMatch) {
+              return `assets/${galleryMatch[1]}`;
+            }
+          }
+          
           // Special handling for different asset types
           if (/md|json/i.test(ext)) {
             return `blog-posts/[name][extname]`
@@ -89,7 +105,7 @@ export default defineConfig(({ mode }) => {
             return `assets/fonts/[name]-[hash][extname]`
           }
           
-          // Images
+          // Images (excluding gallery images which are handled above)
           if (/png|jpe?g|gif|svg|webp/i.test(ext)) {
             return `assets/images/[name]-[hash][extname]`
           }
@@ -147,33 +163,119 @@ export default defineConfig(({ mode }) => {
   },
   // Enhanced plugin configuration
   plugins: [
-    // Copy gallery images to dist
+    // Copy gallery images to dist - runs after build process to avoid Vite asset pipeline
     {
       name: 'copy-gallery-images',
+      // Use writeBundle hook to ensure this runs after the build process
       async writeBundle() {
         const sourceDir = resolve(__dirname, 'assets/gallery');
         const targetDir = resolve(__dirname, 'dist/assets/gallery');
         
-        // Function to copy directory recursively
-        const copyDirectory = (src, dest) => {
-          mkdirSync(dest, { recursive: true });
-          const entries = readdirSync(src, { withFileTypes: true });
-          
-          for (const entry of entries) {
-            const srcPath = join(src, entry.name);
-            const destPath = join(dest, entry.name);
+        console.log('🔄 Starting gallery images copy process...');
+        console.log(`📂 Source: ${sourceDir}`);
+        console.log(`📂 Target: ${targetDir}`);
+        
+        // Statistics tracking
+        const stats = {
+          directories: 0,
+          files: 0,
+          totalSize: 0
+        };
+        
+        // Function to copy directory recursively while preserving exact structure
+        const copyDirectory = (src, dest, relativePath = '') => {
+          try {
+            // Ensure destination directory exists
+            mkdirSync(dest, { recursive: true });
             
-            if (entry.isDirectory()) {
-              copyDirectory(srcPath, destPath);
-            } else {
-              copyFileSync(srcPath, destPath);
+            // Read directory contents
+            const entries = readdirSync(src, { withFileTypes: true });
+            
+            // Log directory being processed
+            if (relativePath) {
+              console.log(`📁 Processing subdirectory: ${relativePath}`);
+              stats.directories++;
             }
+            
+            for (const entry of entries) {
+              const srcPath = join(src, entry.name);
+              const destPath = join(dest, entry.name);
+              const currentRelativePath = relativePath ? `${relativePath}/${entry.name}` : entry.name;
+              
+              if (entry.isDirectory()) {
+                // Recursively copy subdirectories
+                copyDirectory(srcPath, destPath, currentRelativePath);
+              } else {
+                // Copy files without modification or renaming
+                const srcStat = statSync(srcPath);
+                copyFileSync(srcPath, destPath);
+                
+                // Log each file copied
+                console.log(`  📄 Copied: ${currentRelativePath} (${(srcStat.size / 1024).toFixed(1)}KB)`);
+                stats.files++;
+                stats.totalSize += srcStat.size;
+              }
+            }
+          } catch (error) {
+            console.error(`❌ Error copying directory ${src}:`, error.message);
+            throw error;
           }
         };
         
-        // Copy gallery directory
-        copyDirectory(sourceDir, targetDir);
-        console.log('✅ Gallery images copied to dist/assets/gallery');
+        try {
+          // Verify source directory exists
+          if (!readdirSync(sourceDir).length) {
+            console.warn('⚠️ Source gallery directory is empty');
+            return;
+          }
+          
+          // Copy gallery directory with exact structure preservation
+          copyDirectory(sourceDir, targetDir);
+          
+          // Verify copy completed successfully
+          const verifyDirectory = (src, dest, path = '') => {
+            const srcEntries = readdirSync(src, { withFileTypes: true });
+            for (const entry of srcEntries) {
+              const srcPath = join(src, entry.name);
+              const destPath = join(dest, entry.name);
+              const currentPath = path ? `${path}/${entry.name}` : entry.name;
+              
+              if (entry.isDirectory()) {
+                if (!readdirSync(destPath).length && readdirSync(srcPath).length) {
+                  throw new Error(`Directory not copied correctly: ${currentPath}`);
+                }
+                verifyDirectory(srcPath, destPath, currentPath);
+              } else {
+                const srcStat = statSync(srcPath);
+                const destStat = statSync(destPath);
+                if (srcStat.size !== destStat.size) {
+                  throw new Error(`File size mismatch: ${currentPath}`);
+                }
+              }
+            }
+          };
+          
+          // Verify the copy
+          verifyDirectory(sourceDir, targetDir);
+          
+          // Success summary
+          console.log('\n✅ Gallery images copy completed successfully!');
+          console.log(`📊 Summary:`);
+          console.log(`   - Directories copied: ${stats.directories}`);
+          console.log(`   - Files copied: ${stats.files}`);
+          console.log(`   - Total size: ${(stats.totalSize / 1024 / 1024).toFixed(2)}MB`);
+          console.log(`📁 All gallery subdirectories confirmed in: dist/assets/gallery/`);
+          
+          // List all subdirectories copied
+          const subdirs = readdirSync(targetDir, { withFileTypes: true })
+            .filter(entry => entry.isDirectory())
+            .map(entry => entry.name);
+          console.log(`🗂️ Subdirectories copied: ${subdirs.join(', ')}`);
+          
+        } catch (error) {
+          console.error('❌ Gallery images copy failed:', error.message);
+          throw error;
+        }
       }
     },
     // Temporarily commented out enhanced-asset-processor plugin as it may be breaking paths
