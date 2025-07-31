@@ -415,16 +415,11 @@ class NeffPavingApp {
         const video = document.getElementById('hero-video');
         if (!video) return;
 
-        // Get the base URL for assets
-        const baseUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? '' 
-            : (window.location.pathname.includes('/Neff-Paving/') ? '/Neff-Paving' : '');
-        
-        // Update video source with proper base URL
+        // For Vercel deployment, use simple absolute paths from root
         const videoSource = video.querySelector('source');
         if (videoSource) {
-            const videoPath = 'assets/videos/optimized/neff-paving-1080p.mp4';
-            videoSource.src = baseUrl ? `${baseUrl}/${videoPath}` : videoPath;
+            const videoPath = '/assets/videos/optimized/neff-paving-1080p.mp4';
+            videoSource.src = videoPath;
         }
 
         // Add error handling

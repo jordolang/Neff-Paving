@@ -6,8 +6,10 @@ import { join } from 'path'
 export default defineConfig(({ mode }) => {
   // Dynamic base URL configuration
   const getBaseUrl = () => {
-    // Detect Vercel environment
-    if (mode === 'vercel' || process.env.VERCEL || process.env.VERCEL_ENV || process.env.VERCEL_URL) return '/';
+    // Detect Vercel environment more reliably
+    if (mode === 'vercel' || process.env.VERCEL === '1' || process.env.VERCEL_ENV || process.env.VERCEL_URL) {
+      return '/';
+    }
     if (mode === 'github') return '/Neff-Paving/';
     return process.env.VITE_BASE_URL || '/Neff-Paving/';
   };
@@ -52,7 +54,13 @@ export default defineConfig(({ mode }) => {
       __DEPLOY_MODE__: JSON.stringify(mode || 'github'),
       __PLATFORM__: JSON.stringify(process.env.VITE_PLATFORM || mode || 'github'),
       __IS_GITHUB_PAGES__: JSON.stringify(mode === 'github' || process.env.VITE_PLATFORM === 'github'),
-      __IS_VERCEL__: JSON.stringify(mode === 'vercel' || process.env.VITE_PLATFORM === 'vercel')
+      __IS_VERCEL__: JSON.stringify(
+        mode === 'vercel' || 
+        process.env.VITE_PLATFORM === 'vercel' || 
+        process.env.VERCEL === '1' || 
+        process.env.VERCEL_ENV || 
+        process.env.DEPLOY_PLATFORM === 'vercel'
+      )
     },
   // Performance optimizations
   optimizeDeps: {
@@ -67,11 +75,12 @@ export default defineConfig(({ mode }) => {
     // Optimize asset inlining
     assetsInlineLimit: (filePath, content) => {
       // Exclude gallery images from inlining to preserve paths
-      if (filePath.includes('assets/gallery/')) {
+      if (filePath && filePath.includes('gallery/')) {
         return false;
       }
-      // Default limit for other assets
-      return content.length < 8192;
+      // For Vercel, use smaller inline limit to ensure proper asset handling
+      const inlineLimit = mode === 'vercel' ? 4096 : 8192;
+      return content.length < inlineLimit;
     },
     // Enhanced code splitting
     rollupOptions: {
@@ -86,11 +95,12 @@ export default defineConfig(({ mode }) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
           
-          // Gallery images - preserve original paths without hashing
+          // Gallery images - preserve original paths without hashing for Vercel
           if (assetInfo.name && assetInfo.name.includes('gallery/')) {
             // Extract the gallery path from the original name
             const galleryMatch = assetInfo.name.match(/(gallery\/.+)/);
             if (galleryMatch) {
+              // For Vercel deployment, ensure paths start with assets/
               return `assets/${galleryMatch[1]}`;
             }
           }
@@ -100,28 +110,38 @@ export default defineConfig(({ mode }) => {
             return `blog-posts/[name][extname]`
           }
           
-          // Font files
+          // Font files - use consistent paths for Vercel
           if (/woff2?|ttf|eot/i.test(ext)) {
-            return `assets/fonts/[name]-[hash][extname]`
+            return mode === 'vercel' ? 
+              `assets/fonts/[name].[hash][extname]` : 
+              `assets/fonts/[name]-[hash][extname]`
           }
           
           // Images (excluding gallery images which are handled above)
           if (/png|jpe?g|gif|svg|webp/i.test(ext)) {
-            return `assets/images/[name]-[hash][extname]`
+            return mode === 'vercel' ? 
+              `assets/images/[name].[hash][extname]` : 
+              `assets/images/[name]-[hash][extname]`
           }
           
           // Videos
           if (/mp4|webm|ogg/i.test(ext)) {
-            return `assets/videos/[name]-[hash][extname]`
+            return mode === 'vercel' ? 
+              `assets/videos/[name].[hash][extname]` : 
+              `assets/videos/[name]-[hash][extname]`
           }
           
           // CSS files
           if (/css/i.test(ext)) {
-            return `assets/styles/[name]-[hash][extname]`
+            return mode === 'vercel' ? 
+              `assets/styles/[name].[hash][extname]` : 
+              `assets/styles/[name]-[hash][extname]`
           }
           
           // Default for other assets
-          return `assets/[name]-[hash][extname]`
+          return mode === 'vercel' ? 
+            `assets/[name].[hash][extname]` : 
+            `assets/[name]-[hash][extname]`
         },
         
         // Chunk file naming for better caching
@@ -318,11 +338,13 @@ export default defineConfig(({ mode }) => {
         };
         
         const processVercelPaths = (content) => {
-          // Ensure all asset paths are absolute from root
-          return content.replace(
-            /(href|src)="\/([^"]+)"/g,
-            '$1="/$2"'
-          );
+          // For Vercel, ensure all asset paths are absolute from root
+          // Remove any duplicate slashes and ensure proper asset path structure
+          return content
+            .replace(/(href|src)="\/+/g, '$1="/')
+            .replace(/(href|src)="([^"]*?)([^/])(\.(?:css|js|png|jpg|jpeg|gif|svg|webp|mp4|webm|ico|woff|woff2)(?:[?#][^"]*)?)"/g, '$1="/$2$3$4"')
+            .replace(/(href|src)="\/assets\/gallery\//g, '$1="/assets/gallery/')
+            .replace(/(url\(['"]?)\/+/g, '$1/')
         };
         
         const processGitHubPaths = (content, baseUrl) => {

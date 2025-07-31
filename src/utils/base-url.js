@@ -3,13 +3,109 @@
  * Provides comprehensive asset handling with relative paths and dynamic resolution
  */
 
-// Get base URL from build-time configuration
-export const BASE_URL = typeof __BASE_URL__ !== 'undefined' ? __BASE_URL__ : '/Neff-Paving/';
-export const DEPLOY_MODE = typeof __DEPLOY_MODE__ !== 'undefined' ? __DEPLOY_MODE__ : 'github';
+/**
+ * Detect Vercel environment at runtime
+ * @returns {boolean} True if running on Vercel
+ */
+function detectVercelEnvironment() {
+  // Check build-time variables first
+  if (typeof __IS_VERCEL__ !== 'undefined' && __IS_VERCEL__) return true;
+  
+  // Runtime environment detection for Vercel
+  if (typeof window !== 'undefined') {
+    // Check for Vercel-specific environment indicators
+    const hostname = window.location.hostname;
+    
+    // Vercel deployment URLs
+    if (hostname.endsWith('.vercel.app')) return true;
+    if (hostname.includes('vercel.app')) return true;
+    
+    // Custom domains deployed on Vercel (check for Vercel headers/characteristics)
+    // This could be extended with more specific Vercel detection logic
+    
+    // Check for Vercel Analytics script (if present)
+    const vercelScript = document.querySelector('script[src*="vercel-scripts.com"]');
+    if (vercelScript) return true;
+  }
+  
+  // Check for Vercel environment variables
+  if (typeof process !== 'undefined' && process.env) {
+    if (process.env.VERCEL || process.env.VERCEL_ENV || process.env.VERCEL_URL) return true;
+    if (process.env.VITE_PLATFORM === 'vercel' || process.env.DEPLOY_PLATFORM === 'vercel') return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Detect GitHub Pages environment at runtime
+ * @returns {boolean} True if running on GitHub Pages
+ */
+function detectGitHubPagesEnvironment() {
+  // Check build-time variables first
+  if (typeof __IS_GITHUB_PAGES__ !== 'undefined' && __IS_GITHUB_PAGES__) return true;
+  
+  // Runtime environment detection for GitHub Pages
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    
+    // GitHub Pages URLs
+    if (hostname.endsWith('.github.io')) return true;
+    if (hostname === 'github.io') return true;
+    
+    // Check pathname for GitHub Pages repository pattern
+    const pathname = window.location.pathname;
+    if (pathname.startsWith('/Neff-Paving/')) return true;
+  }
+  
+  // Check for GitHub environment variables
+  if (typeof process !== 'undefined' && process.env) {
+    if (process.env.GITHUB_PAGES || process.env.GITHUB_ACTIONS) return true;
+    if (process.env.VITE_PLATFORM === 'github' || process.env.DEPLOY_PLATFORM === 'github') return true;
+  }
+  
+  return false;
+}
+
+// Detect current environment
+const IS_VERCEL_DETECTED = detectVercelEnvironment();
+const IS_GITHUB_PAGES_DETECTED = detectGitHubPagesEnvironment();
+
+// Get base URL from build-time configuration with improved fallback logic
+export const BASE_URL = (() => {
+  // Use build-time variable if available
+  if (typeof __BASE_URL__ !== 'undefined') return __BASE_URL__;
+  
+  // Runtime detection fallback
+  if (IS_VERCEL_DETECTED) return '/';
+  if (IS_GITHUB_PAGES_DETECTED) return '/Neff-Paving/';
+  
+  // Development fallback
+  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') return '/';
+  
+  // Final fallback - assume GitHub Pages
+  return '/Neff-Paving/';
+})();
+
+export const DEPLOY_MODE = (() => {
+  // Use build-time variable if available
+  if (typeof __DEPLOY_MODE__ !== 'undefined') return __DEPLOY_MODE__;
+  
+  // Runtime detection fallback
+  if (IS_VERCEL_DETECTED) return 'vercel';
+  if (IS_GITHUB_PAGES_DETECTED) return 'github';
+  
+  // Development fallback
+  if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') return 'development';
+  
+  // Final fallback
+  return 'github';
+})();
+
 export const BUILD_TIMESTAMP = typeof __BUILD_TIMESTAMP__ !== 'undefined' ? __BUILD_TIMESTAMP__ : Date.now();
 export const DEPLOY_TIME = typeof __DEPLOY_TIME__ !== 'undefined' ? __DEPLOY_TIME__ : Date.now();
-export const IS_VERCEL = typeof __IS_VERCEL__ !== 'undefined' ? __IS_VERCEL__ : false;
-export const IS_GITHUB_PAGES = typeof __IS_GITHUB_PAGES__ !== 'undefined' ? __IS_GITHUB_PAGES__ : false;
+export const IS_VERCEL = IS_VERCEL_DETECTED;
+export const IS_GITHUB_PAGES = IS_GITHUB_PAGES_DETECTED;
 
 // Debug build-time variables in development or with debug flag
 const shouldDebug = (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||

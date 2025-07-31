@@ -125,7 +125,7 @@ export function getAllGalleryImages() {
       allImages.push({
         ...image,
         category,
-        path: `assets/gallery/${category}/${image.filename}`
+        path: `/assets/gallery/${category}/${image.filename}`
       });
     });
   });

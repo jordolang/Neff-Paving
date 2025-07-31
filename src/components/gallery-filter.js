@@ -2,7 +2,6 @@
 import { gsap } from 'gsap';
 import Lightbox from './lightbox.js';
 import { galleryImages } from '../data/gallery-images.js';
-import { getAssetPath } from '../utils/base-url.js';
 
 class GalleryFilter {
     constructor(galleryElement) {
@@ -83,15 +82,8 @@ class GalleryFilter {
         card.setAttribute('data-category', category);
         card.setAttribute('data-display-category', displayCategory);
         
-        // Use dynamic path construction that works for both Vercel and GitHub Pages
-        const getImagePath = () => {
-            const baseUrl = import.meta.env.BASE_URL || '/';
-            // Remove leading slash from baseUrl if it's just '/'
-            const cleanBaseUrl = baseUrl === '/' ? '' : baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-            return `${cleanBaseUrl}/assets/gallery/${category}/${image.filename}`;
-        };
-        
-        const imagePath = getImagePath();
+        // Use simple absolute path for Vercel deployment
+        const imagePath = `/assets/gallery/${category}/${image.filename}`;
         
         // Create HTML structure without any src attributes - images loaded purely via JavaScript
         card.innerHTML = `
@@ -189,12 +181,10 @@ class GalleryFilter {
                 imagesToShow = this.allImagesData.filter(img => img.category === this.currentFilter);
             }
             
-            // Build lightbox images array with proper paths
+            // Build lightbox images array with simple absolute paths
             const lightboxImages = imagesToShow.map(image => {
-                const baseUrl = import.meta.env.BASE_URL || '/';
-                const cleanBaseUrl = baseUrl === '/' ? '' : baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
                 return {
-                    src: `${cleanBaseUrl}/assets/gallery/${image.category}/${image.filename}`,
+                    src: `/assets/gallery/${image.category}/${image.filename}`,
                     title: image.title,
                     category: image.category.charAt(0).toUpperCase() + image.category.slice(1),
                     alt: image.alt
