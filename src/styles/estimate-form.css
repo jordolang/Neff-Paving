@@ -331,7 +331,7 @@
     opacity: 0.9;
 }
 
-/* Loading spinner for ArcGIS */
+/* Loading spinner */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -1264,9 +1264,7 @@
 .measurement-container,
 .measurement-results,
 .map-container,
-.map-iframe-container,
-.arcgis-container,
-.arcgis-map {
+.map-iframe-container {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
