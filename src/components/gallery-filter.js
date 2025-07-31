@@ -2,6 +2,7 @@
 import { gsap } from 'gsap';
 import Lightbox from './lightbox.js';
 import { galleryImages } from '../data/gallery-images.js';
+import { getAssetPath } from '../utils/base-url.js';
 
 class GalleryFilter {
     constructor(galleryElement) {
@@ -82,8 +83,10 @@ class GalleryFilter {
         card.setAttribute('data-category', category);
         card.setAttribute('data-display-category', displayCategory);
         
-        // Use relative path for better deployment compatibility
-        const imagePath = `assets/gallery/${category}/${image.filename}`;
+        // Use getAssetPath to properly resolve the image path for the current environment
+        const imagePath = getAssetPath(`/assets/gallery/${category}/${image.filename}`, {
+            addCacheBusting: true
+        });
         
         // Create HTML structure without any src attributes - images loaded purely via JavaScript
         card.innerHTML = `
@@ -181,10 +184,12 @@ class GalleryFilter {
                 imagesToShow = this.allImagesData.filter(img => img.category === this.currentFilter);
             }
             
-            // Build lightbox images array with relative paths
+            // Build lightbox images array with proper asset paths
             const lightboxImages = imagesToShow.map(image => {
                 return {
-                    src: `assets/gallery/${image.category}/${image.filename}`,
+                    src: getAssetPath(`/assets/gallery/${image.category}/${image.filename}`, {
+                        addCacheBusting: true
+                    }),
                     title: image.title,
                     category: image.category.charAt(0).toUpperCase() + image.category.slice(1),
                     alt: image.alt
