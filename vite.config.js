@@ -310,30 +310,15 @@ export default defineConfig(({ mode }) => {
         const generatePreloadTags = (bundle, mode) => {
           const criticalAssets = [];
           
-          // Find critical CSS
-          const cssFiles = Object.keys(bundle).filter(name => name.endsWith('.css'));
-          cssFiles.forEach(file => {
-            criticalAssets.push(`    <link rel="preload" href="/${file}" as="style" onload="this.onload=null;this.rel='stylesheet'">`);
-          });
-          
-          // Find main JS entry
-          const jsFiles = Object.keys(bundle).filter(name => name.startsWith('entries/main-'));
-          jsFiles.forEach(file => {
-            criticalAssets.push(`    <link rel="modulepreload" href="/${file}">`);
-          });
+          // Find critical CSS - but don't add preload tags since they're already in the HTML
+          // Vite automatically handles preloading, so we don't need to duplicate
           
           return criticalAssets.join('\n');
         };
         
         const addMainScript = (content, bundle, timestamp) => {
-          // Find main JS entry file
-          const mainScriptFile = Object.keys(bundle).find(name => name.startsWith('entries/main-'));
-          if (mainScriptFile) {
-            const scriptTag = `<script type="module" crossorigin src="/${mainScriptFile}?v=${timestamp}"></script>`;
-            
-            // Add the script tag before </body>
-            return content.replace('</body>', `  ${scriptTag}\n</body>`);
-          }
+          // Vite automatically adds script tags, so we don't need to add them manually
+          // This prevents duplicate script tags
           return content;
         };
         
@@ -342,9 +327,10 @@ export default defineConfig(({ mode }) => {
           // Remove any duplicate slashes and ensure proper asset path structure
           return content
             .replace(/(href|src)="\/+/g, '$1="/')
-            .replace(/(href|src)="([^"]*?)([^/])(\.(?:css|js|png|jpg|jpeg|gif|svg|webp|mp4|webm|ico|woff|woff2)(?:[?#][^"]*)?)"/g, '$1="/$2$3$4"')
             .replace(/(href|src)="\/assets\/gallery\//g, '$1="/assets/gallery/')
             .replace(/(url\(['"]?)\/+/g, '$1/')
+            // Ensure all assets start with single slash but don't add if already present
+            .replace(/(href|src)="(?!\/|https?:\/\/)([^\"]*\.(css|js|png|jpg|jpeg|gif|svg|webp|mp4|webm|ico|woff|woff2)(?:[?#][^"]*)?)"/g, '$1="/$2"')
         };
         
         const processGitHubPaths = (content, baseUrl) => {

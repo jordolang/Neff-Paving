@@ -227,21 +227,26 @@ class GalleryFilter {
             }
         });
 
-        // Animate the visible items
-        const visibleItems = this.galleryItems.filter(item => item.style.display === 'block');
-        gsap.fromTo(visibleItems, 
-            {
-                opacity: 0,
-                y: 40
-            },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                stagger: 0.15,
-                ease: 'power2.out'
-            }
+        // Animate the visible items - with existence checks
+        const visibleItems = this.galleryItems.filter(item => 
+            item && item.style.display === 'block'
         );
+        
+        if (visibleItems.length > 0) {
+            gsap.fromTo(visibleItems, 
+                {
+                    opacity: 0,
+                    y: 40
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: 'power2.out'
+                }
+            );
+        }
     }
 }
 

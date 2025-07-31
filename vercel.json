@@ -1,10 +1,11 @@
 {
-  "buildCommand": "npm run build:optimized:vercel",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "env": {
     "NODE_ENV": "production",
     "DEPLOY_PLATFORM": "vercel",
-    "VITE_PLATFORM": "vercel"
+    "VITE_PLATFORM": "vercel",
+    "VERCEL": "1"
   },
   "cleanUrls": true,
   "trailingSlash": false,

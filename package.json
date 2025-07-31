@@ -12,14 +12,16 @@
     "build:optimized": "node scripts/deploy-optimized.js",
     "build:optimized:github": "cross-env DEPLOY_PLATFORM=github node scripts/deploy-optimized.js",
     "build:optimized:vercel": "cross-env DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
-    "vercel-build": "cross-env DEPLOY_PLATFORM=vercel node scripts/deploy-optimized.js",
+    "vercel-build": "cross-env VERCEL=1 VERCEL_ENV=production DEPLOY_PLATFORM=vercel VITE_PLATFORM=vercel node scripts/deploy-optimized.js",
     "verify:build": "node scripts/verify-build.js",
     "verify:vercel": "node scripts/verify-vercel-build.js",
+    "test:vercel": "node scripts/test-vercel-config.js",
     "preview": "vite preview",
     "deploy": "npm run build:github && gh-pages -d dist",
     "deploy:github": "npm run build:github && gh-pages -d dist",
     "deploy:vercel": "npm run build:vercel",
-    "test:sw": "node scripts/test-sw.js"
+    "test:sw": "node scripts/test-sw.js",
+    "verify:assets": "node verify-assets.js"
   },
   "keywords": [
     "paving",

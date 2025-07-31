@@ -1,5 +1,5 @@
-// Import CSS - using absolute path for better deployment compatibility
-import '../styles/main.css'
+// Import CSS - using Vite alias for better deployment compatibility
+import '@styles/main.css'
 
 // Import Vercel Speed Insights
 import { injectSpeedInsights } from '@vercel/speed-insights'
@@ -150,10 +150,11 @@ class NeffPavingApp {
         const video = document.getElementById('hero-video');
         if (!video) return;
 
-        // For Vercel deployment, use simple absolute paths from root
+        // Use Vite's asset resolution for better deployment compatibility
         const videoSource = video.querySelector('source');
         if (videoSource) {
-            const videoPath = 'assets/videos/optimized/neff-paving-1080p.mp4';
+            // Use dynamic import or direct path - Vite will handle asset resolution
+            const videoPath = '/assets/videos/optimized/neff-paving-1080p.mp4';
             videoSource.src = videoPath;
         }
 
@@ -183,9 +184,9 @@ class NeffPavingApp {
      */
     preloadCriticalAssets() {
         const criticalAssets = [
-            { path: 'assets/images/hero-bg.jpg', type: 'image', priority: 'high' },
-            { path: 'assets/videos/optimized/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
-            { path: 'assets/images/logo.png', type: 'image', priority: 'high' }
+            { path: '/assets/images/posters/hero-poster-1920x1080.jpg', type: 'image', priority: 'high' },
+            { path: '/assets/videos/optimized/neff-paving-1080p.mp4', type: 'video', priority: 'medium' },
+            { path: '/assets/images/neff-favicon.png', type: 'image', priority: 'high' }
         ];
         
         assetLoader.preloadCriticalAssets(criticalAssets);
@@ -212,79 +213,97 @@ class NeffPavingApp {
     
     
     initSectionAnimations() {
-        // Enhanced animations for new sections
+        // Enhanced animations for new sections - with existence checks
         
-        // Service cards hover effects
-        document.querySelectorAll('.service-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                gsap.to(card, {
-                    scale: 1.03,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                })
-            })
-            
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, {
-                    scale: 1,
-                    duration: 0.3,
-                    ease: 'power2.out'
-                })
-            })
-        })
-        
-        // Team member animations
-        document.querySelectorAll('.team-member').forEach((member, index) => {
-            gsap.from(member, {
-                y: 50,
-                opacity: 0,
-                duration: 0.8,
-                delay: index * 0.1,
-                scrollTrigger: {
-                    trigger: member,
-                    start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+        // Create GSAP context for section animations
+        this.sectionContext = gsap.context(() => {
+            // Service cards hover effects
+            const serviceCards = document.querySelectorAll('.service-card')
+            serviceCards.forEach(card => {
+                if (card) {
+                    card.addEventListener('mouseenter', () => {
+                        gsap.to(card, {
+                            scale: 1.03,
+                            duration: 0.3,
+                            ease: 'power2.out'
+                        })
+                    })
+                    
+                    card.addEventListener('mouseleave', () => {
+                        gsap.to(card, {
+                            scale: 1,
+                            duration: 0.3,
+                            ease: 'power2.out'
+                        })
+                    })
                 }
             })
-        })
-        
-        // Contact method cards - no animation delay for immediate display
-        document.querySelectorAll('.contact-method').forEach((method, index) => {
-            // Remove any hidden state that might be set
-            method.style.opacity = '1'
-            method.style.transform = 'none'
-        })
-        
-        // Stats counter animation
-        document.querySelectorAll('.stat-number').forEach(stat => {
-            const finalValue = stat.textContent
-            stat.textContent = '0'
             
-            gsap.to(stat, {
-                textContent: finalValue,
-                duration: 2,
-                ease: 'power2.out',
-                snap: { textContent: 1 },
-                scrollTrigger: {
-                    trigger: stat,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
+            // Team member animations
+            const teamMembers = document.querySelectorAll('.team-member')
+            teamMembers.forEach((member, index) => {
+                if (member) {
+                    gsap.from(member, {
+                        y: 50,
+                        opacity: 0,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        scrollTrigger: {
+                            trigger: member,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    })
                 }
             })
-        })
-        
-        // Certification icons animation
-        document.querySelectorAll('.cert-icon').forEach((icon, index) => {
-            gsap.from(icon, {
-                scale: 0,
-                rotation: 180,
-                duration: 0.5,
-                delay: index * 0.05,
-                ease: 'back.out(1.7)',
-                scrollTrigger: {
-                    trigger: icon,
-                    start: 'top 85%',
-                    toggleActions: 'play none none reverse'
+            
+            // Contact method cards - no animation delay for immediate display
+            const contactMethods = document.querySelectorAll('.contact-method')
+            contactMethods.forEach((method, index) => {
+                if (method) {
+                    // Remove any hidden state that might be set
+                    method.style.opacity = '1'
+                    method.style.transform = 'none'
+                }
+            })
+            
+            // Stats counter animation
+            const statNumbers = document.querySelectorAll('.stat-number')
+            statNumbers.forEach(stat => {
+                if (stat && stat.textContent) {
+                    const finalValue = stat.textContent
+                    stat.textContent = '0'
+                    
+                    gsap.to(stat, {
+                        textContent: finalValue,
+                        duration: 2,
+                        ease: 'power2.out',
+                        snap: { textContent: 1 },
+                        scrollTrigger: {
+                            trigger: stat,
+                            start: 'top 80%',
+                            toggleActions: 'play none none none'
+                        }
+                    })
+                }
+            })
+            
+            // Certification icons animation
+            const certIcons = document.querySelectorAll('.cert-icon')
+            certIcons.forEach((icon, index) => {
+                if (icon) {
+                    gsap.from(icon, {
+                        scale: 0,
+                        rotation: 180,
+                        duration: 0.5,
+                        delay: index * 0.05,
+                        ease: 'back.out(1.7)',
+                        scrollTrigger: {
+                            trigger: icon,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    })
                 }
             })
         })
@@ -298,20 +317,29 @@ class NeffPavingApp {
             offset: 100
         })
 
-        // GSAP animations for hero section
-        gsap.from('.hero-content h2', {
-            duration: 1.5,
-            y: 50,
-            opacity: 0,
-            ease: 'power3.out'
-        })
+        // Create GSAP context for better cleanup and error handling
+        this.gsapContext = gsap.context(() => {
+            // GSAP animations for hero section - with existence checks
+            const heroTitle = document.querySelector('.hero-content h2')
+            if (heroTitle) {
+                gsap.from(heroTitle, {
+                    duration: 1.5,
+                    y: 50,
+                    opacity: 0,
+                    ease: 'power3.out'
+                })
+            }
 
-        gsap.from('.hero-content p', {
-            duration: 1.5,
-            y: 30,
-            opacity: 0,
-            delay: 0.3,
-            ease: 'power3.out'
+            const heroText = document.querySelector('.hero-content p')
+            if (heroText) {
+                gsap.from(heroText, {
+                    duration: 1.5,
+                    y: 30,
+                    opacity: 0,
+                    delay: 0.3,
+                    ease: 'power3.out'
+                })
+            }
         })
     }
 
@@ -367,111 +395,146 @@ class NeffPavingApp {
         // Check if user prefers reduced motion
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         
-        if (!prefersReducedMotion) {
-            // Parallax effect for hero content
-            gsap.to('.hero-content', {
-                yPercent: 10,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: '#hero',
-                    start: 'top bottom',
-                    end: 'bottom top',
-                    scrub: 2
+        // Create GSAP context for scroll effects
+        this.scrollContext = gsap.context(() => {
+            if (!prefersReducedMotion) {
+                // Parallax effect for hero content - with existence check
+                const heroContent = document.querySelector('.hero-content')
+                const heroSection = document.getElementById('hero')
+                if (heroContent && heroSection) {
+                    gsap.to(heroContent, {
+                        yPercent: 10,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: heroSection,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: 2
+                        }
+                    })
                 }
-            })
-        }
-        
-        // Enhanced hero content animations
-        const heroTimeline = gsap.timeline({
-            scrollTrigger: {
-                trigger: '#hero',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
             }
-        })
-        
-        heroTimeline
-            .from('.hero-title', {
-                y: 60,
-                opacity: 0,
-                duration: 1.2,
-                ease: 'power3.out'
-            })
-            .from('.hero-subtitle', {
-                y: 40,
-                opacity: 0,
-                duration: 1,
-                ease: 'power3.out'
-            }, '-=0.8')
-            .from('.hero-cta .btn', {
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.2,
-                ease: 'power3.out'
-            }, '-=0.6')
-            .from('.feature-badge', {
-                y: 20,
-                opacity: 0,
-                duration: 0.6,
-                stagger: 0.1,
-                ease: 'power3.out'
-            }, '-=0.4')
-        
-        // Services section animations
-        gsap.from('.asphalt-service-grid .service-card, .concrete-service-container .service-card', {
-            y: 80,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: 'power3.out',
-            scrollTrigger: {
-                trigger: '.services-section',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        })
-        
-        // Gallery section animations
-        gsap.from('.gallery-item', {
-            scale: 0.8,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-                trigger: '.gallery-container',
-                start: 'top 80%',
-                toggleActions: 'play none none reverse'
-            }
-        })
-        
-        // Header background opacity on scroll
-        gsap.to('header', {
-            backgroundColor: 'rgba(44, 62, 80, 0.98)',
-            scrollTrigger: {
-                trigger: 'body',
-                start: 'top -50px',
-                end: 'top -100px',
-                scrub: 1
-            }
-        })
-        
-        
-        // Smooth reveal animation for sections
-        gsap.utils.toArray('section').forEach((section, index) => {
-            if (section.id !== 'hero') {
-                gsap.from(section, {
-                    opacity: 0,
-                    y: 50,
-                    duration: 1,
+            
+            // Enhanced hero content animations - with existence checks
+            const heroSection = document.getElementById('hero')
+            if (heroSection) {
+                const heroTimeline = gsap.timeline({
                     scrollTrigger: {
-                        trigger: section,
-                        start: 'top 85%',
+                        trigger: heroSection,
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                })
+                
+                const heroTitle = document.querySelector('.hero-title')
+                if (heroTitle) {
+                    heroTimeline.from(heroTitle, {
+                        y: 60,
+                        opacity: 0,
+                        duration: 1.2,
+                        ease: 'power3.out'
+                    })
+                }
+                
+                const heroSubtitle = document.querySelector('.hero-subtitle')
+                if (heroSubtitle) {
+                    heroTimeline.from(heroSubtitle, {
+                        y: 40,
+                        opacity: 0,
+                        duration: 1,
+                        ease: 'power3.out'
+                    }, '-=0.8')
+                }
+                
+                const heroButtons = document.querySelectorAll('.hero-cta .btn')
+                if (heroButtons.length > 0) {
+                    heroTimeline.from(heroButtons, {
+                        y: 30,
+                        opacity: 0,
+                        duration: 0.8,
+                        stagger: 0.2,
+                        ease: 'power3.out'
+                    }, '-=0.6')
+                }
+                
+                const featureBadges = document.querySelectorAll('.feature-badge')
+                if (featureBadges.length > 0) {
+                    heroTimeline.from(featureBadges, {
+                        y: 20,
+                        opacity: 0,
+                        duration: 0.6,
+                        stagger: 0.1,
+                        ease: 'power3.out'
+                    }, '-=0.4')
+                }
+            }
+            
+            // Services section animations - with existence checks
+            const servicesSection = document.querySelector('.services-section')
+            const serviceCards = document.querySelectorAll('.asphalt-service-grid .service-card, .concrete-service-container .service-card')
+            if (servicesSection && serviceCards.length > 0) {
+                gsap.from(serviceCards, {
+                    y: 80,
+                    opacity: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: servicesSection,
+                        start: 'top 80%',
                         toggleActions: 'play none none reverse'
                     }
                 })
             }
+            
+            // Gallery section animations - with existence checks
+            const galleryContainer = document.querySelector('.gallery-container, .gallery')
+            const galleryItems = document.querySelectorAll('.gallery-item, .gallery-card')
+            if (galleryContainer && galleryItems.length > 0) {
+                gsap.from(galleryItems, {
+                    scale: 0.8,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: galleryContainer,
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                })
+            }
+            
+            // Header background opacity on scroll - with existence check
+            const header = document.querySelector('header')
+            if (header) {
+                gsap.to(header, {
+                    backgroundColor: 'rgba(44, 62, 80, 0.98)',
+                    scrollTrigger: {
+                        trigger: 'body',
+                        start: 'top -50px',
+                        end: 'top -100px',
+                        scrub: 1
+                    }
+                })
+            }
+            
+            // Smooth reveal animation for sections - with existence checks
+            const sections = document.querySelectorAll('section')
+            sections.forEach((section, index) => {
+                if (section && section.id !== 'hero') {
+                    gsap.from(section, {
+                        opacity: 0,
+                        y: 50,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    })
+                }
+            })
         })
     }
 
@@ -1318,6 +1381,37 @@ class NeffPavingApp {
         return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     }
     
+    /**
+     * Clean up GSAP contexts and animations
+     * Call this when destroying the app instance
+     */
+    destroy() {
+        try {
+            // Kill all GSAP contexts to prevent memory leaks
+            if (this.gsapContext) {
+                this.gsapContext.kill()
+                this.gsapContext = null
+            }
+            
+            if (this.scrollContext) {
+                this.scrollContext.kill()
+                this.scrollContext = null
+            }
+            
+            if (this.sectionContext) {
+                this.sectionContext.kill()
+                this.sectionContext = null
+            }
+            
+            // Kill all ScrollTriggers
+            ScrollTrigger.killAll()
+            
+            console.log('NeffPavingApp contexts cleaned up')
+        } catch (error) {
+            console.error('Error cleaning up GSAP contexts:', error)
+        }
+    }
+    
 }
 
 // Initialize the app when DOM is loaded
@@ -1348,9 +1442,19 @@ function initializeApp() {
 }
 
 // Try multiple initialization approaches to ensure it runs
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
-} else {
-    // DOM is already loaded, initialize immediately
-    initializeApp();
+function ensureDOMReady() {
+    return new Promise((resolve) => {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', resolve);
+        } else {
+            // DOM is already loaded
+            resolve();
+        }
+    });
 }
+
+// Initialize app with proper DOM ready check
+ensureDOMReady().then(() => {
+    // Add small delay to ensure all elements are fully rendered
+    setTimeout(initializeApp, 100);
+});
