@@ -48,32 +48,6 @@ export class FormValidationService {
           'Cannot account for elevation changes',
           'May be less accurate for complex terrain'
         ]
-      },
-      'arcgis-3d': {
-        title: 'ArcGIS 3D Measurement Tool',
-        description: 'Advanced 3D measurement with terrain analysis',
-        instructions: [
-          'Wait for the 3D scene to load completely',
-          'Use the navigation controls to position the view',
-          'Click the "Area Measurement" tool in the toolbar',
-          'Click on the terrain to start measuring',
-          'Continue clicking to add measurement points',
-          'Double-click to finish the measurement',
-          'View results in the measurement panel'
-        ],
-        benefits: [
-          'True 3D measurements with elevation data',
-          'Terrain-aware calculations for slopes and hills',
-          'More accurate for complex topography',
-          'Professional-grade measurement precision',
-          'Automatic calculation of surface area on slopes'
-        ],
-        limitations: [
-          'Requires modern browser with WebGL support',
-          'Longer loading time for 3D scene',
-          'May require more computer resources',
-          'Steeper learning curve for new users'
-        ]
       }
     };
 
@@ -242,7 +216,7 @@ export class FormValidationService {
   recommendMeasurementTool(serviceType, projectDescription = '', hasSlope = false) {
     const recommendation = {
       primary: 'google-maps',
-      secondary: 'arcgis-3d',
+      secondary: 'google-maps',
       reasoning: []
     };
 
@@ -253,9 +227,9 @@ export class FormValidationService {
     );
 
     if (hasSlope || hasSlopeKeyword) {
-      recommendation.primary = 'arcgis-3d';
+      recommendation.primary = 'google-maps';
       recommendation.secondary = 'google-maps';
-      recommendation.reasoning.push('3D measurement recommended for sloped terrain');
+      recommendation.reasoning.push('2D measurement suitable for most terrain types');
     }
 
     // Commercial projects often benefit from 3D measurement
@@ -269,7 +243,7 @@ export class FormValidationService {
     // Emergency repairs usually need quick 2D measurement
     if (serviceType === 'emergency') {
       recommendation.primary = 'google-maps';
-      recommendation.secondary = 'arcgis-3d';
+      recommendation.secondary = 'google-maps';
       recommendation.reasoning.push('Quick 2D measurement suitable for emergency repairs');
     }
 

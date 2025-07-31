@@ -5,7 +5,6 @@
 
 const STORAGE_KEYS = {
     GOOGLE_MAPS_DATA: 'neff_paving_google_maps_measurements',
-    ARCGIS_DATA: 'neff_paving_arcgis_measurements',
     ACTIVE_TOOL: 'neff_paving_active_measurement_tool',
     MEASUREMENT_SESSION: 'neff_paving_measurement_session'
 };
@@ -133,7 +132,6 @@ export function hasMeasurementData() {
 export function getAllMeasurementData() {
     return {
         googleMaps: getMeasurementData('google-maps'),
-        arcgis: getMeasurementData('arcgis'),
         activeTool: getActiveTool()
     };
 }
@@ -161,21 +159,6 @@ export function getMeasurementSummary() {
         summary.totalMeasurements++;
     }
     
-    if (allData.arcgis) {
-        summary.hasData = true;
-        const arcgisSummary = allData.arcgis.getMeasurementSummary ? 
-            allData.arcgis.getMeasurementSummary() : 
-            { measurementCount: { areas: 0, distances: 0 } };
-        
-        summary.tools.push({
-            type: 'arcgis',
-            name: 'ArcGIS 3D',
-            hasArea: arcgisSummary.measurementCount.areas > 0,
-            area: arcgisSummary.totalArea?.value || 0,
-            timestamp: allData.arcgis.timestamp
-        });
-        summary.totalMeasurements += arcgisSummary.measurementCount.areas + arcgisSummary.measurementCount.distances;
-    }
     
     return summary;
 }
@@ -195,10 +178,6 @@ export function restoreMeasurementData(toolType, toolInstance) {
             return true;
         }
         
-        if (toolType === 'arcgis' && toolInstance.restoreMeasurementData) {
-            toolInstance.restoreMeasurementData(data);
-            return true;
-        }
         
         return false;
     } catch (error) {
@@ -227,8 +206,6 @@ function getStorageKey(toolType) {
     switch (toolType) {
         case 'google-maps':
             return STORAGE_KEYS.GOOGLE_MAPS_DATA;
-        case 'arcgis':
-            return STORAGE_KEYS.ARCGIS_DATA;
         default:
             throw new Error(`Unknown tool type: ${toolType}`);
     }
@@ -246,9 +223,6 @@ function updateSessionMetadata() {
             metadata.tools.push('google-maps');
         }
         
-        if (sessionStorage.getItem(STORAGE_KEYS.ARCGIS_DATA)) {
-            metadata.tools.push('arcgis');
-        }
         
         sessionStorage.setItem(STORAGE_KEYS.MEASUREMENT_SESSION, JSON.stringify(metadata));
     } catch (error) {

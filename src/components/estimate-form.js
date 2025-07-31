@@ -273,41 +273,8 @@ export class EstimateForm {
 
                         <!-- Map Container -->
                         <div class="map-container">
-                            <!-- Tool Selection -->
-                            <div class="tool-selection">
-                                <button type="button" class="toggle-btn active" data-tool="arcgis-3d" id="arcgis-toggle">
-                                    🗺️ ArcGIS 3D Measurement
-                                </button>
-                                <button type="button" class="toggle-btn" data-tool="google-maps" id="google-maps-toggle">
-                                    📍 Google Maps Measurement
-                                </button>
-                            </div>
-
-                            <!-- ArcGIS Container (Default/Active) -->
-                            <div id="arcgis-container" class="map-placeholder" style="display: block;">
-                                <div id="arcgis-scene-view" style="height: 400px; width: 100%; position: relative;">
-                                    <div id="arcgis-placeholder" style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f5f5f5; border-radius: 8px; flex-direction: column; gap: 1rem;">
-                                        <div class="loading-spinner" style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #ffd700; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                                        <p style="color: #6b6b6b; font-size: 16px; margin: 0;">Loading ArcGIS 3D scene...</p>
-                                    </div>
-                                </div>
-                                <div id="arcgis-results" class="measurement-results" style="display: none; margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <h4 style="margin: 0 0 0.5rem 0; color: #2c2c2c; font-size: 18px;">Measurement Results</h4>
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                                        <div class="result-item">
-                                            <span style="font-weight: 600; color: #495057;">Line Measurement:</span>
-                                            <span id="line-result" style="color: #007bff; font-weight: 600;">0 m</span>
-                                        </div>
-                                        <div class="result-item">
-                                            <span style="font-weight: 600; color: #495057;">Area Measurement:</span>
-                                            <span id="area-result" style="color: #28a745; font-weight: 600;">0 m²</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Google Maps Container (Hidden by default) -->
-                            <div id="google-maps-container" class="map-placeholder" style="display: none;">
+                            <!-- Google Maps Container -->
+                            <div id="google-maps-container" class="map-placeholder" style="display: block;">
                                 <div id="google-maps-measurement" style="height: 400px; width: 100%; position: relative;">
                                     <p style="text-align: center; padding: 2rem; color: #6b6b6b;">Google Maps measurement tool will load here</p>
                                 </div>
@@ -380,7 +347,6 @@ export class EstimateForm {
         const getQuoteButton = document.getElementById('get-quote');
         const resetButton = document.getElementById('reset-form');
         const serviceTypeSelect = document.getElementById('serviceType');
-        const arcgisToggle = document.getElementById('arcgis-toggle');
         const googleMapsToggle = document.getElementById('google-maps-toggle');
 
         // Form submission
@@ -402,9 +368,6 @@ export class EstimateForm {
         form.addEventListener('blur', (e) => this.handleFieldValidation(e), true);
 
         // Measurement tool toggle buttons
-        if (arcgisToggle) {
-            arcgisToggle.addEventListener('click', () => this.toggleMeasurementTool('arcgis-3d'));
-        }
         if (googleMapsToggle) {
             googleMapsToggle.addEventListener('click', () => this.toggleMeasurementTool('google-maps'));
         }
@@ -635,14 +598,14 @@ export class EstimateForm {
     updateMeasurementStatus() {
         const statusDiv = document.getElementById('measurement-status');
         
-        if (this.measurementData && (this.measurementData.googleMaps || this.measurementData.arcgis)) {
-            const data = this.measurementData.googleMaps || this.measurementData.arcgis;
+        if (this.measurementData && this.measurementData.googleMaps) {
+            const data = this.measurementData.googleMaps;
             const area = data.areaInSquareFeet || data.area || 0;
             
             statusDiv.innerHTML = `
                 <div class="measurement-success">
                     <strong>✅ Area Measured: ${area.toLocaleString()} sq ft</strong>
-                    <p>Using ${this.measurementData.activeTool === 'google-maps' ? 'Google Maps' : 'ArcGIS 3D'} tool</p>
+                    <p>Using Google Maps tool</p>
                 </div>
             `;
 
@@ -674,7 +637,7 @@ export class EstimateForm {
         // Check if form is valid for submission
         const hasRequiredFields = this.checkRequiredFields();
         const hasMeasurement = this.measurementData && 
-            (this.measurementData.googleMaps || this.measurementData.arcgis);
+            this.measurementData.googleMaps;
 
         submitButton.disabled = !hasRequiredFields || !hasMeasurement;
         getQuoteButton.disabled = !hasMeasurement;
@@ -718,226 +681,24 @@ export class EstimateForm {
      * Initialize the measurement tools in the estimate form
      */
     initializeMeasurementTools() {
-        // Initialize ArcGIS tool by default
-        this.loadArcGISMeasurementTool();
+        // Initialize Google Maps tool by default
+        this.initializeGoogleMaps();
     }
 
     /**
-     * Toggle between measurement tools
+     * Initialize Google Maps measurement tool
      */
-    toggleMeasurementTool(toolType) {
-        const arcgisToggle = document.getElementById('arcgis-toggle');
-        const googleMapsToggle = document.getElementById('google-maps-toggle');
-        const arcgisContainer = document.getElementById('arcgis-container');
-        const googleMapsContainer = document.getElementById('google-maps-container');
-
-        // Update button states
-        document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-        
-        if (toolType === 'arcgis-3d') {
-            arcgisToggle.classList.add('active');
-            arcgisContainer.style.display = 'block';
-            googleMapsContainer.style.display = 'none';
-            
-            // Load ArcGIS if not already loaded
-            if (!this.arcgisLoaded) {
-                this.loadArcGISMeasurementTool();
-            }
-        } else if (toolType === 'google-maps') {
-            googleMapsToggle.classList.add('active');
-            arcgisContainer.style.display = 'none';
-            googleMapsContainer.style.display = 'block';
-            
-            // Load Google Maps if not already loaded
-            if (!this.googleMapsLoaded) {
-                this.loadGoogleMapsMeasurementTool();
-            }
+    initializeGoogleMaps() {
+        // Load Google Maps if not already loaded
+        if (!this.googleMapsLoaded) {
+            this.loadGoogleMapsMeasurementTool();
         }
-
-        // Update active tool
-        this.activeMeasurementTool = toolType;
+        this.activeMeasurementTool = 'google-maps';
     }
 
-    /**
-     * Load ArcGIS measurement tool
-     */
-    async loadArcGISMeasurementTool() {
-        if (this.arcgisLoaded) return;
-        
-        try {
-            this.arcgisLoaded = true;
-            
-            // Load CSS first
-            const cssLink = document.createElement('link');
-            cssLink.rel = 'stylesheet';
-            cssLink.href = 'https://js.arcgis.com/4.33/esri/themes/light/main.css';
-            document.head.appendChild(cssLink);
 
-            // Load Calcite components
-            const calciteScript = document.createElement('script');
-            calciteScript.type = 'module';
-            calciteScript.src = 'https://js.arcgis.com/calcite-components/3.2.1/calcite.esm.js';
-            document.head.appendChild(calciteScript);
 
-            // Load main ArcGIS SDK
-            const scriptTag = document.createElement('script');
-            scriptTag.src = 'https://js.arcgis.com/4.33/';
-            
-            scriptTag.onload = () => {
-                // Load map components
-                const mapComponentsScript = document.createElement('script');
-                mapComponentsScript.type = 'module';
-                mapComponentsScript.src = 'https://js.arcgis.com/4.33/map-components/';
-                mapComponentsScript.onload = () => {
-                    this.initializeArcGISScene();
-                };
-                document.head.appendChild(mapComponentsScript);
-            };
-            
-            document.head.appendChild(scriptTag);
-            
-        } catch (error) {
-            console.error('Error loading ArcGIS:', error);
-            this.showArcGISError(error);
-        }
-    }
 
-    /**
-     * Initialize ArcGIS scene and measurement tools
-     */
-    initializeArcGISScene() {
-        const sceneViewContainer = document.getElementById('arcgis-scene-view');
-        const arcGISPlaceholder = document.getElementById('arcgis-placeholder');
-        const arcGISResults = document.getElementById('arcgis-results');
-        const lineResult = document.getElementById('line-result');
-        const areaResult = document.getElementById('area-result');
-
-        // Create the ArcGIS scene element
-        sceneViewContainer.innerHTML = `
-            <arcgis-scene item-id="5ce0de673d3b41a3bf3a217942211c4b" style="height: 100%; width: 100%;">
-                <arcgis-zoom position="top-left"></arcgis-zoom>
-                <arcgis-navigation-toggle position="top-left"></arcgis-navigation-toggle>
-                <arcgis-compass position="top-left"></arcgis-compass>
-                <arcgis-expand id="expand-line" position="top-right" group="top-right">
-                    <arcgis-direct-line-measurement-3d></arcgis-direct-line-measurement-3d>
-                </arcgis-expand>
-                <arcgis-expand id="expand-area" position="top-right" group="top-right">
-                    <arcgis-area-measurement-3d></arcgis-area-measurement-3d>
-                </arcgis-expand>
-            </arcgis-scene>
-        `;
-
-        // Wait for the scene to be ready
-        setTimeout(() => {
-            const viewElement = sceneViewContainer.querySelector('arcgis-scene');
-            const directLineMeasurement3d = sceneViewContainer.querySelector('arcgis-direct-line-measurement-3d');
-            const areaMeasurement3d = sceneViewContainer.querySelector('arcgis-area-measurement-3d');
-            const expandDirectLine = sceneViewContainer.querySelector('#expand-line');
-            const expandArea = sceneViewContainer.querySelector('#expand-area');
-
-            if (viewElement && directLineMeasurement3d && areaMeasurement3d) {
-                viewElement.viewOnReady().then(() => {
-                    this.setupArcGISMeasurementObservers(
-                        expandDirectLine,
-                        expandArea,
-                        directLineMeasurement3d,
-                        areaMeasurement3d,
-                        lineResult,
-                        areaResult,
-                        arcGISResults
-                    );
-                });
-            }
-        }, 1000);
-    }
-
-    /**
-     * Set up ArcGIS measurement observers
-     */
-    setupArcGISMeasurementObservers(expandDirectLine, expandArea, directLineMeasurement3d, areaMeasurement3d, lineResult, areaResult, arcGISResults) {
-        // Observer for direct line measurement
-        const observerLine = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                if (mutation.target.expanded) {
-                    directLineMeasurement3d.start();
-                    arcGISResults.style.display = 'block';
-                } else {
-                    directLineMeasurement3d.clear();
-                    areaMeasurement3d.clear();
-                    lineResult.textContent = '0 m';
-                    areaResult.textContent = '0 m²';
-                    if (!expandArea.expanded) {
-                        arcGISResults.style.display = 'none';
-                    }
-                }
-            });
-        });
-        observerLine.observe(expandDirectLine, { attributeFilter: ['expanded'] });
-
-        // Observer for area measurement
-        const observerArea = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                if (mutation.target.expanded) {
-                    areaMeasurement3d.start();
-                    arcGISResults.style.display = 'block';
-                } else {
-                    directLineMeasurement3d.clear();
-                    areaMeasurement3d.clear();
-                    lineResult.textContent = '0 m';
-                    areaResult.textContent = '0 m²';
-                    if (!expandDirectLine.expanded) {
-                        arcGISResults.style.display = 'none';
-                    }
-                }
-            });
-        });
-        observerArea.observe(expandArea, { attributeFilter: ['expanded'] });
-
-        // Listen for measurement events
-        directLineMeasurement3d.addEventListener('measure-complete', (event) => {
-            if (event.detail && event.detail.distance) {
-                lineResult.textContent = `${event.detail.distance.toFixed(2)} ${event.detail.unit || 'm'}`;
-                this.updateProjectSizeFromMeasurement(event.detail, 'distance');
-            }
-        });
-
-        areaMeasurement3d.addEventListener('measure-complete', (event) => {
-            if (event.detail && event.detail.area) {
-                areaResult.textContent = `${event.detail.area.toFixed(2)} ${event.detail.unit || 'm²'}`;
-                this.updateProjectSizeFromMeasurement(event.detail, 'area');
-            }
-        });
-    }
-
-    /**
-     * Update project size input from measurement
-     */
-    updateProjectSizeFromMeasurement(measurementData, type) {
-        if (type === 'area' && measurementData.area) {
-            // Convert square meters to square feet
-            const areaInSqFt = Math.round(measurementData.area * 10.764);
-            
-            // Update hidden fields
-            document.getElementById('calculatedSquareFootage').value = areaInSqFt;
-            document.getElementById('measurementTool').value = 'arcgis-3d';
-            document.getElementById('measurementTimestamp').value = new Date().toISOString();
-            
-            // Update measurement data
-            this.measurementData = {
-                arcgis: {
-                    area: areaInSqFt,
-                    areaInSquareFeet: areaInSqFt,
-                    coordinates: [],
-                    timestamp: new Date().toISOString()
-                },
-                activeTool: 'arcgis-3d'
-            };
-            
-            // Update UI
-            this.updateMeasurementStatus();
-            this.updateSubmitButtonState();
-        }
-    }
 
     /**
      * Load Google Maps measurement tool
@@ -949,30 +710,12 @@ export class EstimateForm {
         this.googleMapsLoaded = true;
     }
 
-    /**
-     * Show ArcGIS error message
-     */
-    showArcGISError(error) {
-        const placeholder = document.getElementById('arcgis-placeholder');
-        if (placeholder) {
-            placeholder.innerHTML = `
-                <div style="text-align: center; padding: 2rem; color: #dc3545;">
-                    <div style="font-size: 48px; margin-bottom: 1rem;">⚠️</div>
-                    <h3 style="margin-bottom: 1rem; color: #dc3545;">Failed to Load ArcGIS</h3>
-                    <p style="margin-bottom: 1.5rem; color: #6c757d;">Unable to load the 3D measurement tool. This might be due to a network issue or service unavailability.</p>
-                    <button onclick="window.location.reload();" 
-                            style="padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry</button>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #6c757d;">Please try refreshing the page or contact us directly for assistance.</p>
-                </div>
-            `;
-        }
-    }
 
     /**
      * Handle get quote button click
      */
     async handleGetQuote() {
-        if (!this.measurementData || (!this.measurementData.googleMaps && !this.measurementData.arcgis)) {
+        if (!this.measurementData || !this.measurementData.googleMaps) {
             alert('Please measure the project area first using the map tool above.');
             return;
         }
@@ -1015,7 +758,7 @@ export class EstimateForm {
             throw new Error('No measurement data available');
         }
 
-        const data = this.measurementData.googleMaps || this.measurementData.arcgis;
+        const data = this.measurementData.googleMaps;
         const squareFootage = data.areaInSquareFeet || data.area || 0;
         
         // Base pricing per square foot

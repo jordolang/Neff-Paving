@@ -48,9 +48,6 @@ class NeffPavingApp {
         this.isLoading = false
         this.formProgress = 0
         this.areaFinderInstance = null
-        this.arcGISInstance = null
-        this.arcGISLoaded = false
-        this.arcGISLoading = false
         this.activeMeasurementTool = 'google-maps'
         this.galleryFilter = null
         this.init();
@@ -110,7 +107,6 @@ class NeffPavingApp {
         }
         
         this.initLazyLoading();
-        this.initMeasurementToolToggle();
         
         try {
             this.initServiceWorker();
@@ -141,272 +137,11 @@ class NeffPavingApp {
         console.log('Neff Paving app initialized successfully')
     }
 
-    /**
-     * Initialize measurement tool toggle
-     */
-    initMeasurementToolToggle() {
-        const buttons = document.querySelectorAll('.toggle-btn');
-        const googleMapsContainer = document.getElementById('google-maps-container');
-        const arcGISContainer = document.getElementById('arcgis-container');
-        const arcGISPlaceholder = document.getElementById('arcgis-placeholder');
 
-        // Ensure ArcGIS container is always visible
-        if (arcGISContainer) {
-            arcGISContainer.style.display = 'block';
-            arcGISContainer.style.visibility = 'visible';
-            arcGISContainer.style.opacity = '1';
-        }
 
-        // Load ArcGIS immediately if not already loaded
-        if (!this.arcGISLoaded && !this.arcGISLoading) {
-            this.arcGISLoading = true;
-            if (arcGISPlaceholder) {
-                arcGISPlaceholder.style.display = 'flex';
-            }
 
-            this.loadArcGIS().then(() => {
-                this.arcGISLoaded = true;
-                this.arcGISLoading = false;
-                if (arcGISPlaceholder) {
-                    arcGISPlaceholder.style.display = 'none';
-                }
-            }).catch(error => {
-                console.error('Error loading ArcGIS:', error);
-                this.arcGISLoading = false;
-                if (arcGISPlaceholder) {
-                    this.showArcGISError(arcGISPlaceholder, error);
-                }
-            });
-        }
 
-        // Remove event listeners from toggle buttons to prevent hiding
-        buttons.forEach(button => {
-            const tool = button.dataset.tool;
-            
-            // Remove active class from all buttons except ArcGIS
-            button.classList.remove('active');
-            if (tool === 'arcgis-3d') {
-                button.classList.add('active');
-            }
-            
-            // Disable the button click functionality that would hide the map
-            button.style.pointerEvents = 'none';
-            button.style.opacity = '0.6';
-        });
-        
-        // Set active tool to ArcGIS
-        this.activeMeasurementTool = 'arcgis-3d';
-    }
 
-    /**
-     * Load ArcGIS SDK and components
-     */
-    async loadArcGIS() {
-        return new Promise((resolve, reject) => {
-            if (this.arcGISLoaded) {
-                resolve();
-                return;
-            }
-
-            // Load CSS first
-            const cssLink = document.createElement('link');
-            cssLink.rel = 'stylesheet';
-            cssLink.href = 'https://js.arcgis.com/4.33/esri/themes/light/main.css';
-            document.head.appendChild(cssLink);
-
-            // Load Calcite components
-            const calciteScript = document.createElement('script');
-            calciteScript.type = 'module';
-            calciteScript.src = 'https://js.arcgis.com/calcite-components/3.2.1/calcite.esm.js';
-            document.head.appendChild(calciteScript);
-
-            // Load main ArcGIS SDK
-            const scriptTag = document.createElement('script');
-            scriptTag.src = 'https://js.arcgis.com/4.33/';
-            scriptTag.onload = () => {
-                // Load map components
-                const mapComponentsScript = document.createElement('script');
-                mapComponentsScript.type = 'module';
-                mapComponentsScript.src = 'https://js.arcgis.com/4.33/map-components/';
-                mapComponentsScript.onload = () => {
-                    this.initializeArcGISScene();
-                    resolve();
-                };
-                mapComponentsScript.onerror = reject;
-                document.head.appendChild(mapComponentsScript);
-            };
-            scriptTag.onerror = reject;
-            document.head.appendChild(scriptTag);
-        });
-    }
-
-    /**
-     * Initialize ArcGIS scene and measurement tools
-     */
-    initializeArcGISScene() {
-        const sceneViewContainer = document.getElementById('arcgis-scene-view');
-        const arcGISPlaceholder = document.getElementById('arcgis-placeholder');
-        const arcGISResults = document.getElementById('arcgis-results');
-        const lineResult = document.getElementById('line-result');
-        const areaResult = document.getElementById('area-result');
-
-        // Create the ArcGIS scene element
-        sceneViewContainer.innerHTML = `
-            <arcgis-scene item-id="5ce0de673d3b41a3bf3a217942211c4b" style="height: 100%; width: 100%;">
-                <arcgis-zoom position="top-left"></arcgis-zoom>
-                <arcgis-navigation-toggle position="top-left"></arcgis-navigation-toggle>
-                <arcgis-compass position="top-left"></arcgis-compass>
-                <arcgis-expand id="expand-line" position="top-right" group="top-right">
-                    <arcgis-direct-line-measurement-3d></arcgis-direct-line-measurement-3d>
-                </arcgis-expand>
-                <arcgis-expand id="expand-area" position="top-right" group="top-right">
-                    <arcgis-area-measurement-3d></arcgis-area-measurement-3d>
-                </arcgis-expand>
-            </arcgis-scene>
-        `;
-
-        // Wait for the scene to be ready
-        setTimeout(() => {
-            const viewElement = sceneViewContainer.querySelector('arcgis-scene');
-            const directLineMeasurement3d = sceneViewContainer.querySelector('arcgis-direct-line-measurement-3d');
-            const areaMeasurement3d = sceneViewContainer.querySelector('arcgis-area-measurement-3d');
-            const expandDirectLine = sceneViewContainer.querySelector('#expand-line');
-            const expandArea = sceneViewContainer.querySelector('#expand-area');
-
-            if (viewElement && directLineMeasurement3d && areaMeasurement3d) {
-                viewElement.viewOnReady().then(() => {
-                    // Set up measurement observers
-                    this.setupArcGISMeasurementObservers(
-                        expandDirectLine,
-                        expandArea,
-                        directLineMeasurement3d,
-                        areaMeasurement3d,
-                        lineResult,
-                        areaResult,
-                        arcGISResults
-                    );
-                });
-            }
-        }, 1000);
-    }
-
-    /**
-     * Set up ArcGIS measurement observers
-     */
-    setupArcGISMeasurementObservers(expandDirectLine, expandArea, directLineMeasurement3d, areaMeasurement3d, lineResult, areaResult, arcGISResults) {
-        // Observer for direct line measurement
-        const observerLine = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                if (mutation.target.expanded) {
-                    directLineMeasurement3d.start();
-                    arcGISResults.style.display = 'block';
-                } else {
-                    directLineMeasurement3d.clear();
-                    areaMeasurement3d.clear();
-                    lineResult.textContent = '0 m';
-                    areaResult.textContent = '0 m²';
-                    if (!expandArea.expanded) {
-                        arcGISResults.style.display = 'none';
-                    }
-                }
-            });
-        });
-        observerLine.observe(expandDirectLine, { attributeFilter: ['expanded'] });
-
-        // Observer for area measurement
-        const observerArea = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                if (mutation.target.expanded) {
-                    areaMeasurement3d.start();
-                    arcGISResults.style.display = 'block';
-                } else {
-                    directLineMeasurement3d.clear();
-                    areaMeasurement3d.clear();
-                    lineResult.textContent = '0 m';
-                    areaResult.textContent = '0 m²';
-                    if (!expandDirectLine.expanded) {
-                        arcGISResults.style.display = 'none';
-                    }
-                }
-            });
-        });
-        observerArea.observe(expandArea, { attributeFilter: ['expanded'] });
-
-        // Listen for measurement events
-        directLineMeasurement3d.addEventListener('measure-complete', (event) => {
-            if (event.detail && event.detail.distance) {
-                lineResult.textContent = `${event.detail.distance.toFixed(2)} ${event.detail.unit || 'm'}`;
-                // Update project size input if available
-                this.updateProjectSizeFromMeasurement(event.detail, 'distance');
-            }
-        });
-
-        areaMeasurement3d.addEventListener('measure-complete', (event) => {
-            if (event.detail && event.detail.area) {
-                areaResult.textContent = `${event.detail.area.toFixed(2)} ${event.detail.unit || 'm²'}`;
-                // Update project size input if available
-                this.updateProjectSizeFromMeasurement(event.detail, 'area');
-            }
-        });
-
-        // Store reference for later use
-        window.arcGISTool = {
-            getMeasurementData: () => {
-                const lineText = lineResult.textContent;
-                const areaText = areaResult.textContent;
-                const areaValue = parseFloat(areaText.split(' ')[0]);
-                const lineValue = parseFloat(lineText.split(' ')[0]);
-                
-                if (areaValue > 0) {
-                    return {
-                        area: areaValue * 10.764, // Convert m² to sq ft
-                        perimeter: lineValue * 3.28084, // Convert m to ft
-                        coordinates: [], // Could be enhanced to return actual coordinates
-                        unit: 'sqft'
-                    };
-                }
-                return null;
-            },
-            clearMeasurements: () => {
-                directLineMeasurement3d.clear();
-                areaMeasurement3d.clear();
-                lineResult.textContent = '0 m';
-                areaResult.textContent = '0 m²';
-                arcGISResults.style.display = 'none';
-            }
-        };
-    }
-
-    /**
-     * Update project size input from ArcGIS measurement
-     */
-    updateProjectSizeFromMeasurement(measurementData, type) {
-        const projectSizeInput = document.getElementById('project-size');
-        if (projectSizeInput && type === 'area' && measurementData.area) {
-            // Convert square meters to square feet
-            const areaInSqFt = Math.round(measurementData.area * 10.764);
-            projectSizeInput.value = `${areaInSqFt} sq ft`;
-            projectSizeInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    }
-
-    /**
-     * Show ArcGIS error message with retry option
-     */
-    showArcGISError(placeholder, error) {
-        placeholder.innerHTML = `
-            <div style="text-align: center; padding: 2rem; color: #dc3545;">
-                <div style="font-size: 48px; margin-bottom: 1rem;">⚠️</div>
-                <h3 style="margin-bottom: 1rem; color: #dc3545;">Failed to Load ArcGIS</h3>
-                <p style="margin-bottom: 1.5rem; color: #6c757d;">Unable to load the 3D measurement tool. This might be due to a network issue or service unavailability.</p>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="window.location.reload();" 
-                            style="padding: 0.5rem 1rem; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry</button>
-                </div>
-                <p style="margin-top: 1rem; font-size: 0.9rem; color: #6c757d;">Please try refreshing the page or contact us directly for assistance.</p>
-            </div>
-        `;
-    }
 
     /**
      * Initialize hero video with proper path handling
@@ -950,7 +685,7 @@ class NeffPavingApp {
      * @returns {Object|null} Measurement data object or null if no tool is active
      */
     getMeasurementData() {
-        // Check for ArcGIS/Google Maps AreaFinder instance
+        // Check for Google Maps AreaFinder instance
         if (this.areaFinderInstance && this.areaFinderInstance.getAreaData()) {
             const areaData = this.areaFinderInstance.getAreaData()
             return {
@@ -963,21 +698,6 @@ class NeffPavingApp {
             }
         }
         
-        // Check for other potential measurement tools (ArcGIS, etc.)
-        // This can be extended to support other mapping libraries
-        if (window.arcGISTool && window.arcGISTool.getMeasurementData) {
-            const arcData = window.arcGISTool.getMeasurementData()
-            if (arcData && arcData.area) {
-                return {
-                    toolType: 'arcgis',
-                    areaInSquareFeet: arcData.area,
-                    areaInAcres: arcData.area / 43560,
-                    perimeter: arcData.perimeter || 0,
-                    coordinates: arcData.coordinates || [],
-                    timestamp: new Date().toISOString()
-                }
-            }
-        }
         
         return null
     }
@@ -996,7 +716,7 @@ class NeffPavingApp {
         }
         
         // Check if tool type is supported
-        const supportedTools = ['google-maps', 'arcgis']
+        const supportedTools = ['google-maps']
         if (!supportedTools.includes(measurementData.toolType)) {
             return false
         }
@@ -1014,10 +734,6 @@ class NeffPavingApp {
             this.areaFinderInstance.clearShapes()
         }
         
-        // Clear ArcGIS data if present
-        if (window.arcGISTool && window.arcGISTool.clearMeasurements) {
-            window.arcGISTool.clearMeasurements()
-        }
     }
     
     showSuccessMessage(message = 'Thank You!', type = 'success') {

@@ -53,11 +53,11 @@ export class BoundaryStorageService {
                 best_for: ['Topographic analysis', 'Slope calculation', 'Elevation mapping']
             },
             '3d': {
-                source: 'ArcGIS 3D',
+                source: 'Google Maps',
                 typical_resolution: '1m',
                 update_frequency: 'Variable',
-                accuracy: 'Very High',
-                best_for: ['Complex terrain', 'Accurate measurements', 'Professional surveys']
+                accuracy: 'High',
+                best_for: ['Standard measurements', 'General surveys']
             }
         };
     }
@@ -599,7 +599,7 @@ export class BoundaryStorageService {
 
         try {
             // Check each tool type
-            ['google-maps', 'arcgis', 'enhanced-area-finder'].forEach(toolType => {
+            ['google-maps', 'enhanced-area-finder'].forEach(toolType => {
                 const metadataKey = `boundary_metadata_${toolType}`;
                 const metadata = JSON.parse(sessionStorage.getItem(metadataKey) || '{}');
                 

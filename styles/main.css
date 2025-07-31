@@ -3152,108 +3152,6 @@ img[src]:not([src=""]) ~ *::before {
     color: var(--asphalt-dark);
 }
 
-/* ArcGIS Integration Styles */
-.arcgis-container {
-    background: var(--concrete);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-lg);
-    padding: var(--spacing-3xl);
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    position: relative;
-    min-height: 500px;
-}
-
-.arcgis-container h3 {
-    text-align: center;
-    color: var(--asphalt-dark);
-    font-family: var(--font-primary);
-    margin-bottom: var(--spacing-xl);
-    font-size: 24px;
-}
-
-.arcgis-map {
-    width: 100%;
-    height: 500px;
-    min-height: 500px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    background: var(--light-gray);
-    position: relative;
-    overflow: hidden;
-    display: block;
-    visibility: visible;
-}
-
-/* Toggle/Tab Button Styles */
-.arcgis-toggle {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-    flex-wrap: wrap;
-}
-
-.arcgis-toggle button {
-    background: var(--pure-white);
-    border: 2px solid var(--safety-yellow);
-    color: var(--asphalt-dark);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--border-radius);
-    font-family: var(--font-primary);
-    font-weight: 600;
-    font-size: 14px;
-    transition: var(--transition);
-    cursor: pointer;
-    min-width: 120px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-}
-
-.arcgis-toggle button.active {
-    background: var(--safety-yellow);
-    color: var(--asphalt-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.arcgis-toggle button:hover:not(.active),
-.arcgis-toggle button:focus:not(.active) {
-    background: rgba(255, 215, 0, 0.1);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-}
-
-.arcgis-toggle button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.arcgis-toggle button svg {
-    width: 16px;
-    height: 16px;
-}
-
-/* Loading States and Animations */
-.arcgis-loading {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    border-radius: var(--border-radius);
-}
 
 .loading-spinner {
     width: 40px;
@@ -3281,9 +3179,6 @@ img[src]:not([src=""]) ~ *::before {
     50% { opacity: 0.5; }
 }
 
-.arcgis-pulse {
-    animation: pulse 2s ease-in-out infinite;
-}
 
 /* Measurement Tools Panel */
 .measurement-tools {
@@ -3480,49 +3375,6 @@ img[src]:not([src=""]) ~ *::before {
     height: 16px;
 }
 
-/* Error States */
-.arcgis-error {
-    background: #fee;
-    border: 1px solid var(--error-red);
-    color: var(--error-red);
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius);
-    text-align: center;
-    font-family: var(--font-secondary);
-    margin: var(--spacing-lg) 0;
-}
-
-.arcgis-error h4 {
-    margin-bottom: var(--spacing-sm);
-    font-size: 16px;
-}
-
-.arcgis-error p {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-/* Success States */
-.arcgis-success {
-    background: #efe;
-    border: 1px solid var(--success-green);
-    color: var(--success-green);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius);
-    font-family: var(--font-secondary);
-    font-size: 14px;
-    margin-top: var(--spacing-md);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.arcgis-success svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-}
 
 /* Facebook Chat Widget Integration */
 .chat-widget {
@@ -3824,27 +3676,6 @@ img[src]:not([src=""]) ~ *::before {
         height: 50px; /* Adjusted fade height for mobile */
     }
     
-    /* ArcGIS Integration Mobile Responsive */
-    .arcgis-container {
-        padding: var(--spacing-lg);
-        margin: 0 var(--spacing-md);
-    }
-    
-    .arcgis-map {
-        height: 350px;
-    }
-    
-    .arcgis-toggle {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    .arcgis-toggle button {
-        width: 100%;
-        min-width: auto;
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-size: 13px;
-    }
     
     .measurement-tools {
         padding: var(--spacing-md);
@@ -3887,11 +3718,6 @@ img[src]:not([src=""]) ~ *::before {
         padding: var(--spacing-sm);
     }
     
-    .arcgis-error,
-    .arcgis-success {
-        padding: var(--spacing-md);
-        font-size: 13px;
-    }
 }
 
 /* --- RESPONSIVE BREAKPOINTS (NEW - Step 7) --- */
