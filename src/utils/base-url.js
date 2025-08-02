@@ -76,7 +76,33 @@ export const BASE_URL = (() => {
   // Use build-time variable if available
   if (typeof __BASE_URL__ !== 'undefined') return __BASE_URL__;
   
-  // Runtime detection fallback
+  // Enhanced runtime detection
+  if (typeof window !== 'undefined') {
+    const pathname = window.location.pathname;
+    const hostname = window.location.hostname;
+    
+    // Check if we're on Vercel
+    if (hostname.endsWith('.vercel.app') || hostname.includes('vercel.app')) {
+      return '/';
+    }
+    
+    // Check if we're on GitHub Pages
+    if (hostname.endsWith('.github.io') || hostname === 'github.io') {
+      return '/Neff-Paving/';
+    }
+    
+    // Check if we're in development with GitHub Pages base URL structure
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && pathname.startsWith('/Neff-Paving/')) {
+      return '/Neff-Paving/';
+    }
+    
+    // Regular development environment
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return '/';
+    }
+  }
+  
+  // Legacy environment variable detection
   if (IS_VERCEL_DETECTED) return '/';
   if (IS_GITHUB_PAGES_DETECTED) return '/Neff-Paving/';
   
@@ -91,7 +117,33 @@ export const DEPLOY_MODE = (() => {
   // Use build-time variable if available
   if (typeof __DEPLOY_MODE__ !== 'undefined') return __DEPLOY_MODE__;
   
-  // Runtime detection fallback
+  // Enhanced runtime detection with development base URL consideration
+  if (typeof window !== 'undefined') {
+    const pathname = window.location.pathname;
+    const hostname = window.location.hostname;
+    
+    // Check if we're on Vercel
+    if (hostname.endsWith('.vercel.app') || hostname.includes('vercel.app')) {
+      return 'vercel';
+    }
+    
+    // Check if we're on GitHub Pages
+    if (hostname.endsWith('.github.io') || hostname === 'github.io') {
+      return 'github';
+    }
+    
+    // Check if we're in development with GitHub Pages base URL structure
+    if ((hostname === 'localhost' || hostname === '127.0.0.1') && pathname.startsWith('/Neff-Paving/')) {
+      return 'github'; // Treat as GitHub Pages for asset path resolution
+    }
+    
+    // Regular development environment
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'development';
+    }
+  }
+  
+  // Legacy environment variable detection
   if (IS_VERCEL_DETECTED) return 'vercel';
   if (IS_GITHUB_PAGES_DETECTED) return 'github';
   
@@ -149,8 +201,22 @@ const ASSET_CONFIG = {
  * @returns {object} Environment-specific asset configuration
  */
 export function getEnvironmentConfig() {
+  // Check for actual development environment vs development with GitHub base URL
   const isDev = typeof process !== 'undefined' && process.env.NODE_ENV === 'development';
-  if (isDev) return ASSET_CONFIG.development;
+  const isLocalhost = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const hasGitHubBasePath = typeof window !== 'undefined' && 
+    window.location.pathname.startsWith('/Neff-Paving/');
+  
+  // If we're on localhost but simulating GitHub Pages structure, use GitHub config
+  if (isLocalhost && hasGitHubBasePath) {
+    return ASSET_CONFIG.github;
+  }
+  
+  // Regular development environment
+  if (isDev && isLocalhost) {
+    return ASSET_CONFIG.development;
+  }
   
   return ASSET_CONFIG[DEPLOY_MODE] || ASSET_CONFIG.github;
 }
@@ -189,13 +255,31 @@ export function createUrl(path) {
  */
 export function getAssetPath(assetPath, options = {}) {
   const isDebug = (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
-    (typeof window !== 'undefined' && window.location.search.includes('debug=assets'));
+    (typeof window !== 'undefined' && window.location.search.includes('debug=assets')) ||
+    (typeof window !== 'undefined' && window.localStorage?.getItem('debug-assets') === 'true');
   
   if (isDebug) {
-    console.log('🔧 getAssetPath called with:', { assetPath, options, DEPLOY_MODE, BASE_URL });
+    console.group('🔧 getAssetPath Debug Info');
+    console.log('📥 Input:', { assetPath, options });
+    console.log('🌍 Environment:', { DEPLOY_MODE, BASE_URL, IS_VERCEL, IS_GITHUB_PAGES });
+    console.log('⚙️ Build Variables:', {
+      __BASE_URL__: typeof __BASE_URL__ !== 'undefined' ? __BASE_URL__ : 'UNDEFINED',
+      __DEPLOY_MODE__: typeof __DEPLOY_MODE__ !== 'undefined' ? __DEPLOY_MODE__ : 'UNDEFINED',
+      __IS_VERCEL__: typeof __IS_VERCEL__ !== 'undefined' ? __IS_VERCEL__ : 'UNDEFINED',
+      __IS_GITHUB_PAGES__: typeof __IS_GITHUB_PAGES__ !== 'undefined' ? __IS_GITHUB_PAGES__ : 'UNDEFINED'
+    });
   }
   
   const config = getEnvironmentConfig();
+  if (isDebug) {
+    console.log('🔧 Config:', config);
+    console.log('🏠 Window location:', typeof window !== 'undefined' ? {
+      hostname: window.location.hostname,
+      pathname: window.location.pathname,
+      href: window.location.href
+    } : 'Not in browser');
+  }
+  
   const {
     useRelative = config.useRelativePaths,
     addCacheBusting = true,
@@ -207,39 +291,82 @@ export function getAssetPath(assetPath, options = {}) {
   // Handle different path types
   if (assetPath.startsWith('http://') || assetPath.startsWith('https://')) {
     // External URL - return as-is
-    if (isDebug) console.log('↩️  External URL, returning as-is:', assetPath);
+    if (isDebug) {
+      console.log('↩️  External URL detected, returning as-is:', assetPath);
+      console.groupEnd();
+    }
     return assetPath;
   }
 
   // Remove leading slash for processing
   const cleanPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
+  if (isDebug) console.log('🧹 Clean path (no leading slash):', cleanPath);
 
+  // Path resolution logic with enhanced debugging
   if (forceAbsolute || DEPLOY_MODE === 'vercel' || IS_VERCEL) {
     // Use absolute paths from root for Vercel
     resolvedPath = '/' + cleanPath;
-    if (isDebug) console.log('🔵 Vercel absolute path:', resolvedPath);
+    if (isDebug) console.log('🔵 Vercel absolute path logic applied:', resolvedPath);
   } else if (useRelative && (DEPLOY_MODE === 'github' || IS_GITHUB_PAGES)) {
     // Use relative paths with base URL for GitHub Pages
     const baseUrl = BASE_URL === '/' ? '' : (BASE_URL.endsWith('/') ? BASE_URL.slice(0, -1) : BASE_URL);
     resolvedPath = baseUrl + '/' + cleanPath;
-    if (isDebug) console.log('🟣 GitHub relative path:', resolvedPath);
+    if (isDebug) {
+      console.log('🟣 GitHub Pages relative path logic applied');
+      console.log('  - Base URL processed:', baseUrl);
+      console.log('  - Combined path:', resolvedPath);
+    }
   } else {
     // Default to absolute path
     resolvedPath = '/' + cleanPath;
-    if (isDebug) console.log('⚪ Default absolute path:', resolvedPath);
+    if (isDebug) console.log('⚪ Default absolute path logic applied:', resolvedPath);
   }
 
   // Fix any double slashes (except after protocol)
+  const beforeSlashFix = resolvedPath;
   resolvedPath = resolvedPath.replace(/([^:])\/{2,}/g, '$1/');
+  if (isDebug && beforeSlashFix !== resolvedPath) {
+    console.log('🔧 Fixed double slashes:');
+    console.log('  - Before:', beforeSlashFix);
+    console.log('  - After:', resolvedPath);
+  }
 
   // Add cache busting for non-development environments
   if (addCacheBusting && config.cacheStrategy !== 'none') {
     const separator = resolvedPath.includes('?') ? '&' : '?';
     const timestamp = config.cacheStrategy === 'aggressive' ? DEPLOY_TIME : BUILD_TIMESTAMP;
+    const beforeCacheBusting = resolvedPath;
     resolvedPath += `${separator}v=${timestamp}`;
+    if (isDebug) {
+      console.log('⏰ Cache busting applied:');
+      console.log('  - Strategy:', config.cacheStrategy);
+      console.log('  - Timestamp:', timestamp);
+      console.log('  - Before:', beforeCacheBusting);
+      console.log('  - After:', resolvedPath);
+    }
+  } else if (isDebug) {
+    console.log('⏰ Cache busting skipped:', {
+      addCacheBusting,
+      cacheStrategy: config.cacheStrategy
+    });
   }
 
-  if (isDebug) console.log('✅ Final resolved path:', resolvedPath);
+  if (isDebug) {
+    console.log('✅ Final resolved path:', resolvedPath);
+    
+    // Additional path validation
+    const hasDoubleSlash = resolvedPath.includes('//') && !resolvedPath.startsWith('http');
+    const hasIncorrectBase = resolvedPath.includes('/Neff-Paving//') || resolvedPath.includes('//Neff-Paving/');
+    
+    if (hasDoubleSlash || hasIncorrectBase) {
+      console.warn('⚠️  Potential path issues detected:');
+      if (hasDoubleSlash) console.warn('  - Contains double slashes');
+      if (hasIncorrectBase) console.warn('  - Incorrect base URL format');
+    }
+    
+    console.groupEnd();
+  }
+  
   return resolvedPath;
 }
 

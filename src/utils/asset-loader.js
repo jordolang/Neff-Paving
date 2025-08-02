@@ -213,7 +213,7 @@ export class AssetLoader {
   }
 
   /**
-   * Load image with fallback options
+   * Load image with simple error logging
    * @param {string} imagePath - Path to the image
    * @param {object} options - Loading options
    * @returns {Promise} Promise resolving to Image element
@@ -229,17 +229,8 @@ export class AssetLoader {
       
       img.onload = () => resolve(img);
       img.onerror = () => {
-        if (options.fallback) {
-          const fallbackImg = new Image();
-          fallbackImg.onload = () => resolve(fallbackImg);
-          fallbackImg.onerror = () => reject(new Error(`Failed to load image: ${imagePath} and fallback`));
-          fallbackImg.src = getAssetPath(options.fallback, {
-            forceAbsolute: !config.useRelativePaths,
-            addCacheBusting: options.addCacheBusting !== false
-          });
-        } else {
-          reject(new Error(`Failed to load image: ${imagePath}`));
-        }
+        console.error(`Failed to load image: ${imagePath}`);
+        reject(new Error(`Failed to load image: ${imagePath}`));
       };
       
       // Set attributes
@@ -453,44 +444,39 @@ export class AssetLoader {
     }
   }
 
-  async _loadLazyImage(img) {
-    try {
-      const src = img.dataset.src;
-      if (!src) return;
-      
-      const config = getEnvironmentConfig();
-      const resolvedSrc = getAssetPath(src, {
-        forceAbsolute: !config.useRelativePaths,
-        addCacheBusting: true
-      });
-      
-      const loadedImg = await this.loadImage(src, {
-        crossOrigin: img.crossOrigin,
-        decoding: 'async',
-        addCacheBusting: true
-      });
-      
-      img.src = resolvedSrc;
-      img.removeAttribute('data-src');
-      img.classList.add('loaded');
-      
-      // Trigger load event
-      img.dispatchEvent(new Event('load'));
-      
-    } catch (error) {
-      console.warn('Failed to load lazy image:', error);
-      img.classList.add('error');
-      
-      // Try to set a fallback or placeholder if available
-      if (img.dataset.fallback) {
-        const config = getEnvironmentConfig();
-        img.src = getAssetPath(img.dataset.fallback, {
-          forceAbsolute: !config.useRelativePaths,
-          addCacheBusting: false
-        });
-      }
+    async _loadLazyImage(img) {
+        try {
+            const src = img.dataset.src;
+            if (!src) return;
+            
+            const config = getEnvironmentConfig();
+            const resolvedSrc = getAssetPath(src, {
+                forceAbsolute: !config.useRelativePaths,
+                addCacheBusting: true
+            });
+            
+            // Directly load the image without placeholder
+            img.src = resolvedSrc;
+            img.removeAttribute('data-src');
+            img.classList.add('loaded');
+            
+            // Trigger load event
+            img.dispatchEvent(new Event('load'));
+            
+        } catch (error) {
+            console.warn('Failed to load lazy image:', error);
+            img.classList.add('error');
+            
+            // Try to set a fallback if available
+            if (img.dataset.fallback) {
+                const config = getEnvironmentConfig();
+                img.src = getAssetPath(img.dataset.fallback, {
+                    forceAbsolute: !config.useRelativePaths,
+                    addCacheBusting: false
+                });
+            }
+        }
     }
-  }
 
   _processQueue() {
     while (this.loadQueue.length > 0 && this.currentLoads < this.config.maxConcurrentLoads) {

@@ -15,7 +15,6 @@ export class PaymentForm {
       ...options
     };
     
-    this.isProcessing = false;
     this.paymentElements = null;
     this.clientSecret = null;
     
@@ -110,23 +109,14 @@ export class PaymentForm {
             type="submit" 
             id="submit-payment" 
             class="payment-submit-btn"
-            disabled
-          >
-            <span id="button-text">Process Payment</span>
-            <div id="spinner" class="spinner hidden"></div>
+>
+            Process Payment
           </button>
 
           <!-- Error Display -->
           <div id="payment-message" class="payment-message hidden"></div>
         </form>
 
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="loading-overlay hidden">
-          <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p>Processing your payment...</p>
-          </div>
-        </div>
       </div>
     `;
 
@@ -281,15 +271,6 @@ export class PaymentForm {
         cursor: not-allowed;
       }
 
-      .spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid #ffffff;
-        border-top: 2px solid transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
       .hidden {
         display: none !important;
       }
@@ -313,37 +294,6 @@ export class PaymentForm {
         border: 1px solid #bbf7d0;
       }
 
-      .loading-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-      }
-
-      .loading-content {
-        text-align: center;
-      }
-
-      .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #e5e7eb;
-        border-top: 4px solid #2563eb;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 16px;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
 
       @media (max-width: 640px) {
         .payment-form-container {
@@ -365,7 +315,7 @@ export class PaymentForm {
     const submitButton = document.getElementById('submit-payment');
     
     // Initialize payment elements after creating the form
-    await this.initializePaymentElements();
+    this.initializePaymentElements();
 
     // Form submission
     form.addEventListener('submit', (e) => this.handleSubmit(e));
@@ -379,7 +329,6 @@ export class PaymentForm {
 
   async initializePaymentElements() {
     try {
-      this.showLoading(true);
 
       // Get customer info from form
       const customerInfo = this.getCustomerInfo();
@@ -413,22 +362,16 @@ export class PaymentForm {
         }
       });
 
-      this.showLoading(false);
       this.validateForm();
     } catch (error) {
       console.error('Error initializing payment elements:', error);
       this.showError('Failed to initialize payment form. Please refresh and try again.');
-      this.showLoading(false);
     }
   }
 
   async handleSubmit(event) {
     event.preventDefault();
 
-    if (this.isProcessing) return;
-
-    this.isProcessing = true;
-    this.showLoading(true);
     this.hideMessage();
 
     try {
@@ -467,9 +410,6 @@ export class PaymentForm {
       console.error('Payment error:', error);
       this.showMessage('An unexpected error occurred. Please try again.', 'error');
       this.options.onError({ error: error.message });
-    } finally {
-      this.isProcessing = false;
-      this.showLoading(false);
     }
   }
 
@@ -492,29 +432,11 @@ export class PaymentForm {
     const isValid = nameInput.value.trim() && 
                    emailInput.value.trim() && 
                    emailInput.validity.valid &&
-                   this.paymentElements &&
-                   !this.isProcessing;
+                   this.paymentElements;
 
     submitButton.disabled = !isValid;
   }
 
-  showLoading(show) {
-    const overlay = document.getElementById('loading-overlay');
-    const spinner = document.getElementById('spinner');
-    const buttonText = document.getElementById('button-text');
-
-    if (show) {
-      overlay.classList.remove('hidden');
-      spinner.classList.remove('hidden');
-      buttonText.textContent = 'Processing...';
-      this.options.onLoading(true);
-    } else {
-      overlay.classList.add('hidden');
-      spinner.classList.add('hidden');
-      buttonText.textContent = 'Process Payment';
-      this.options.onLoading(false);
-    }
-  }
 
   showMessage(message, type = 'error') {
     const messageElement = document.getElementById('payment-message');

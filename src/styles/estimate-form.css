@@ -331,15 +331,6 @@
     opacity: 0.9;
 }
 
-/* Loading spinner */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-spinner {
-    animation: spin 1s linear infinite;
-}
 
 .help-text {
     color: #6b6b6b;
@@ -434,25 +425,6 @@
     transform: none;
 }
 
-.btn-loading {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.spinner {
-    width: 1rem;
-    height: 1rem;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 
 /* Form Actions */
 .form-actions {
@@ -699,10 +671,6 @@
     }
 }
 
-/* Loading state for submit button */
-.btn-loading .spinner {
-    animation: spin 1s linear infinite;
-}
 
 /* Custom scrollbar for textareas */
 .form-textarea::-webkit-scrollbar {
@@ -1288,35 +1256,6 @@
     visibility: visible !important;
 }
 
-/* Enhanced loading spinner */
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #e2e8f0;
-    border-top: 4px solid #3b82f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
-}
-
-/* Enhanced map container with better visual feedback */
-.map-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.map-container.loading::before {
-    opacity: 1;
-}
 
 /* Ensure iframe takes full space */
 .map-iframe-container iframe {

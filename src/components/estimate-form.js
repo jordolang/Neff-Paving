@@ -307,16 +307,10 @@ export class EstimateForm {
                             Reset Form
                         </button>
                         <button type="submit" class="btn btn-primary" id="submit-estimate" disabled>
-                            <span class="btn-text">Request Estimate</span>
-                            <span class="btn-loading" style="display: none;">
-                                <span class="spinner"></span> Processing...
-                            </span>
+                            Request Estimate
                         </button>
                         <button type="button" class="btn btn-secondary" id="get-quote" disabled style="margin-left: 1rem;">
-                            <span class="btn-text">Get Quick Quote</span>
-                            <span class="btn-loading" style="display: none;">
-                                <span class="spinner"></span> Calculating...
-                            </span>
+                            Get Quick Quote
                         </button>
                     </div>
                     
@@ -386,7 +380,6 @@ export class EstimateForm {
         if (this.isSubmitting) return;
 
         this.isSubmitting = true;
-        this.updateSubmitButtonState(true);
 
         // Collect form data
         const formData = new FormData(event.target);
@@ -403,7 +396,6 @@ export class EstimateForm {
         if (!validation.isValid) {
             this.displayValidationErrors(validation);
             this.isSubmitting = false;
-            this.updateSubmitButtonState(false);
             return;
         }
 
@@ -453,7 +445,6 @@ export class EstimateForm {
             this.handleSubmitError(error);
         } finally {
             this.isSubmitting = false;
-            this.updateSubmitButtonState(false);
         }
     }
 
@@ -532,8 +523,6 @@ export class EstimateForm {
                 break;
         }
 
-        // Update submit button state
-        this.updateSubmitButtonState();
     }
 
     showFieldError(field, message) {
@@ -614,24 +603,10 @@ export class EstimateForm {
         }
     }
 
-    updateSubmitButtonState(isLoading = false) {
+    updateSubmitButtonState() {
         const submitButton = document.getElementById('submit-estimate');
         const getQuoteButton = document.getElementById('get-quote');
-        const btnText = submitButton.querySelector('.btn-text');
-        const btnLoading = submitButton.querySelector('.btn-loading');
-        const getQuoteText = getQuoteButton.querySelector('.btn-text');
-        const getQuoteLoading = getQuoteButton.querySelector('.btn-loading');
         
-        if (isLoading) {
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'inline-flex';
-            submitButton.disabled = true;
-            return;
-        }
-
-        btnText.style.display = 'inline';
-        btnLoading.style.display = 'none';
-
         // Check if form is valid for submission
         const hasRequiredFields = this.checkRequiredFields();
         const hasMeasurement = this.measurementData && 
@@ -639,11 +614,6 @@ export class EstimateForm {
 
         submitButton.disabled = !hasRequiredFields || !hasMeasurement;
         getQuoteButton.disabled = !hasMeasurement;
-
-        if (!hasMeasurement) {
-            getQuoteText.style.display = 'inline';
-            getQuoteLoading.style.display = 'none';
-        }
     }
 
     checkRequiredFields() {
@@ -716,15 +686,6 @@ export class EstimateForm {
             return;
         }
 
-        const getQuoteButton = document.getElementById('get-quote');
-        const btnText = getQuoteButton.querySelector('.btn-text');
-        const btnLoading = getQuoteButton.querySelector('.btn-loading');
-
-        // Show loading state
-        btnText.style.display = 'none';
-        btnLoading.style.display = 'inline-flex';
-        getQuoteButton.disabled = true;
-
         try {
             // Get current form data
             const serviceType = document.getElementById('serviceType').value || 'residential';
@@ -738,11 +699,6 @@ export class EstimateForm {
         } catch (error) {
             console.error('Error calculating pricing:', error);
             alert('Unable to calculate pricing. Please try again.');
-        } finally {
-            // Reset button state
-            btnText.style.display = 'inline';
-            btnLoading.style.display = 'none';
-            getQuoteButton.disabled = false;
         }
     }
 

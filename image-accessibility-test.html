@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Accessibility Test - Neff Paving Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .test-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+        }
+        .test-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        .test-item .info {
+            padding: 10px;
+            font-size: 12px;
+        }
+        .status {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #fff3cd; color: #856404; }
+        
+        .webp-support {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .webp-support.supported { background: #d4edda; color: #155724; }
+        .webp-support.not-supported { background: #f8d7da; color: #721c24; }
+        
+        h1 { color: #2c2c2c; }
+        h2 { color: #555; border-bottom: 2px solid #ffd700; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Image Accessibility Test - Neff Paving Gallery</h1>
+    
+    <div id="webp-support" class="webp-support">Checking WebP support...</div>
+    
+    <div class="test-section">
+        <h2>📊 Test Results Summary</h2>
+        <div id="summary">Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>🏢 Commercial Images (Sample)</h2>
+        <div class="test-grid" id="commercial-grid"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🏠 Residential Images (Sample)</h2>
+        <div class="test-grid" id="residential-grid"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🏗️ Equipment Images</h2>
+        <div class="test-grid" id="equipment-grid"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧱 Concrete Images</h2>
+        <div class="test-grid" id="concrete-grid"></div>
+    </div>
+
+    <script>
+        // Check WebP support
+        function checkWebPSupport() {
+            const webpSupport = document.getElementById('webp-support');
+            
+            const webp = new Image();
+            webp.onload = webp.onerror = function () {
+                if (webp.height == 2) {
+                    webpSupport.textContent = '✅ WebP format is supported by this browser';
+                    webpSupport.className = 'webp-support supported';
+                } else {
+                    webpSupport.textContent = '❌ WebP format is NOT supported by this browser';
+                    webpSupport.className = 'webp-support not-supported';
+                }
+            };
+            webp.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+        }
+
+        // Gallery images data (subset for testing)
+        const testImages = {
+            commercial: [
+                'advance-auto-parking-lot.webp',
+                'holiday-inn-express.webp',
+                'apartment-complex.webp',
+                'church-parking-lot.webp',
+                'five-below.webp'
+            ],
+            residential: [
+                'custom-mansion-driveway.webp',
+                'stone-lined-paved-driveway.webp',
+                'driveway-turnaround-area.webp',
+                'asphalt-driveway-barn.webp',
+                'bungalow-driveway.webp'
+            ],
+            equipment: [
+                'leeboy-closeup.webp',
+                'leeboy-dropping-tar.webp',
+                'leeboy-top-down.webp',
+                'loading-leeboy-2.webp',
+                'loading-leeboy.webp'
+            ],
+            concrete: [
+                'concrete-pad.webp',
+                'convenience-store.webp',
+                'manhole-cover.webp',
+                'square-drain-cover.webp'
+            ]
+        };
+
+        let totalImages = 0;
+        let loadedImages = 0;
+        let failedImages = 0;
+
+        function createTestItem(category, filename) {
+            const item = document.createElement('div');
+            item.className = 'test-item';
+            
+            const img = document.createElement('img');
+            const imagePath = `/assets/gallery/${category}/${filename}`;
+            
+            img.src = imagePath;
+            img.alt = `Test image: ${filename}`;
+            img.loading = 'lazy';
+            
+            const info = document.createElement('div');
+            info.className = 'info';
+            
+            const status = document.createElement('span');
+            status.className = 'status loading';
+            status.textContent = 'Loading...';
+            
+            info.innerHTML = `
+                <div><strong>${filename}</strong></div>
+                <div>Path: ${imagePath}</div>
+                <div id="status-${category}-${filename.replace('.', '-')}">${status.outerHTML}</div>
+            `;
+            
+            totalImages++;
+            
+            img.onload = function() {
+                loadedImages++;
+                const statusEl = document.getElementById(`status-${category}-${filename.replace('.', '-')}`);
+                statusEl.innerHTML = '<span class="status success">✅ Loaded</span>';
+                updateSummary();
+            };
+            
+            img.onerror = function() {
+                failedImages++;
+                const statusEl = document.getElementById(`status-${category}-${filename.replace('.', '-')}`);
+                statusEl.innerHTML = '<span class="status error">❌ Failed</span>';
+                updateSummary();
+            };
+            
+            item.appendChild(img);
+            item.appendChild(info);
+            
+            return item;
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            const processed = loadedImages + failedImages;
+            const pending = totalImages - processed;
+            
+            summary.innerHTML = `
+                <div><strong>Total Images Tested:</strong> ${totalImages}</div>
+                <div><strong>✅ Successfully Loaded:</strong> ${loadedImages}</div>
+                <div><strong>❌ Failed to Load:</strong> ${failedImages}</div>
+                <div><strong>⏳ Pending:</strong> ${pending}</div>
+                <div><strong>Success Rate:</strong> ${totalImages > 0 ? Math.round((loadedImages / totalImages) * 100) : 0}%</div>
+            `;
+        }
+
+        function loadTestImages() {
+            Object.entries(testImages).forEach(([category, images]) => {
+                const grid = document.getElementById(`${category}-grid`);
+                images.forEach(filename => {
+                    const testItem = createTestItem(category, filename);
+                    grid.appendChild(testItem);
+                });
+            });
+            
+            updateSummary();
+        }
+
+        // Initialize tests
+        checkWebPSupport();
+        loadTestImages();
+
+        // Test direct image access with fetch
+        async function testImageFetch() {
+            console.log('🔍 Testing direct image access with fetch...');
+            
+            const testPath = '/assets/gallery/commercial/advance-auto-parking-lot.webp';
+            
+            try {
+                const response = await fetch(testPath);
+                console.log(`✅ Fetch test - Status: ${response.status} ${response.statusText}`);
+                console.log(`📄 Content-Type: ${response.headers.get('content-type')}`);
+                console.log(`📏 Content-Length: ${response.headers.get('content-length')} bytes`);
+            } catch (error) {
+                console.error(`❌ Fetch test failed:`, error);
+            }
+        }
+
+        // Run fetch test after a short delay
+        setTimeout(testImageFetch, 1000);
+
+        console.log('🔍 Image Accessibility Test initialized');
+        console.log('📊 Check the browser Network tab for detailed HTTP request information');
+    </script>
+</body>
+</html>

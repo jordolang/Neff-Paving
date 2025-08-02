@@ -1,5 +1,5 @@
 
-import { gsap } from 'gsap';
+// import { gsap } from 'gsap'; // Temporarily disabled for simplified version
 import Lightbox from './lightbox.js';
 import { galleryImages } from '../data/gallery-images.js';
 import { getAssetPath } from '../utils/base-url.js';
@@ -83,22 +83,31 @@ class GalleryFilter {
         card.setAttribute('data-category', category);
         card.setAttribute('data-display-category', displayCategory);
         
-        // Use getAssetPath to properly resolve the image path for the current environment
-        const imagePath = getAssetPath(`/assets/gallery/${category}/${image.filename}`, {
-            addCacheBusting: true
-        });
+        // SIMPLIFIED VERSION - minimal implementation for testing
         
-        // Create HTML structure without any src attributes - images loaded purely via JavaScript
+        // Generate all possible image paths for debugging
+        const originalPath = `/assets/gallery/${category}/${image.filename}`;
+        const hardcodedPath = `/Neff-Paving/assets/gallery/${category}/${image.filename}`;
+        const resolvedPath = getAssetPath(originalPath, { addCacheBusting: true });
+        const simplePath = `assets/gallery/${category}/${image.filename}`;
+        const relativePath = `./assets/gallery/${category}/${image.filename}`;
+        
+        // Log ALL image paths to console for debugging
+        console.group(`🖼️ SIMPLIFIED Gallery Card: ${image.filename}`);
+        console.log('Original path:', originalPath);
+        console.log('Hardcoded GitHub path:', hardcodedPath);
+        console.log('Resolved path:', resolvedPath);
+        console.log('Simple path:', simplePath);
+        console.log('Relative path:', relativePath);
+        console.log('Category:', category);
+        console.log('Display category:', displayCategory);
+        console.log('Image data:', image);
+        console.groupEnd();
+        
+        // Use minimal HTML structure - no loading attributes or placeholders
         card.innerHTML = `
             <div class="card-image">
-                <div class="image-loading-placeholder">
-                    <div class="loading-spinner"></div>
-                </div>
-                <picture class="image">
-                    <source media="(max-width: 600px)">
-                    <source media="(min-width: 601px)">
-                    <img loading="eager" decoding="async" alt="${image.alt}" width="630" height="400">
-                </picture>
+                <img src="${resolvedPath}" alt="${image.alt}" width="630" height="400">
             </div>
             <div class="card-overlay">
                 <div class="card-title">${image.title}</div>
@@ -106,50 +115,26 @@ class GalleryFilter {
             </div>
         `;
         
-        // Get DOM elements for image loading states
+        // Display images immediately - no opacity transitions or placeholders
         const img = card.querySelector('img');
-        const sources = card.querySelectorAll('source');
-        const placeholder = card.querySelector('.image-loading-placeholder');
-        const cardImage = card.querySelector('.card-image');
         
-        // Show loading state initially - image completely hidden
-        cardImage.style.backgroundColor = '#f5f5f5';
-        img.style.opacity = '0';
-        
-        // Preload image to ensure smooth display
-        const imagePreloader = new Image();
-        imagePreloader.onload = () => {
-            // Image is loaded successfully, now set src attributes and show it
-            sources.forEach(source => {
-                source.srcset = imagePath;
-            });
-            img.src = imagePath;
-            
-            // Show the loaded image
-            img.style.opacity = '1';
-            placeholder.style.opacity = '0';
-            cardImage.style.backgroundColor = 'transparent';
-            
-            // Remove placeholder after transition
-            setTimeout(() => {
-                placeholder.style.display = 'none';
-            }, 300);
-        };
-        
-        imagePreloader.onerror = () => {
-            // Handle failed image loads - show error message without setting src
-            placeholder.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666;">
+        // Simple error handling - just log and show error message
+        img.onerror = () => {
+            console.error(`❌ SIMPLIFIED: Failed to load image:`, resolvedPath);
+            img.style.display = 'none';
+            card.querySelector('.card-image').innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; background: #f5f5f5; color: #666;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
                     <div style="font-size: 0.875rem;">Image not available</div>
+                    <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">${image.filename}</div>
                 </div>
             `;
-            // Keep img hidden since it failed to load
-            img.style.display = 'none';
         };
         
-        // Start loading the image - this triggers the loading process
-        imagePreloader.src = imagePath;
+        // Log when image loads successfully
+        img.onload = () => {
+            console.log(`✅ SIMPLIFIED: Successfully loaded image:`, resolvedPath);
+        };
         
         return card;
     }
@@ -232,26 +217,14 @@ class GalleryFilter {
             }
         });
 
-        // Animate the visible items - with existence checks
+        // SIMPLIFIED VERSION - No animations, display immediately
         const visibleItems = this.galleryItems.filter(item => 
             item && item.style.display === 'block'
         );
         
-        if (visibleItems.length > 0) {
-            gsap.fromTo(visibleItems, 
-                {
-                    opacity: 0,
-                    y: 40
-                },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    stagger: 0.15,
-                    ease: 'power2.out'
-                }
-            );
-        }
+        console.log(`🔄 SIMPLIFIED: Showing ${visibleItems.length} items for filter '${filter}'`);
+        
+        // No GSAP animations - images display immediately without transitions
     }
 }
 

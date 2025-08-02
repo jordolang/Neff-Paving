@@ -27,7 +27,7 @@ export class LocationMaps {
     }
 
     setupMapPlaceholders() {
-        // Update both map placeholders to be clickable
+        // Update both map placeholders to be clickable - no loading indicators
         Object.values(this.locations).forEach(location => {
             const mapElement = document.getElementById(location.mapId);
             if (mapElement) {

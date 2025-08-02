@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Path Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-image {
+            max-width: 200px;
+            height: auto;
+            border: 2px solid #ddd;
+            margin: 10px;
+        }
+        .test-image.error {
+            border-color: #f44336;
+        }
+        .test-image.success {
+            border-color: #4caf50;
+        }
+        .path-info {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 5px 0;
+        }
+        .error { color: #f44336; }
+        .success { color: #4caf50; }
+        .warning { color: #ff9800; }
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Asset Path Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>Debug Controls</h2>
+        <button onclick="enableAssetDebug()">Enable Debug Logging</button>
+        <button onclick="disableAssetDebug()">Disable Debug Logging</button>
+        <button onclick="debugAssetPaths()">Run Debug Analysis</button>
+        <button onclick="testHardcodedPaths()">Test Hardcoded Paths</button>
+        <button onclick="testCacheBusting()">Test Cache Busting</button>
+        <button onclick="verifyBaseUrlConfig()">Verify Base URL Config</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Environment Information</h2>
+        <div id="env-info">Loading...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>Hardcoded Path Tests</h2>
+        <p>These images use hardcoded paths without any asset processing:</p>
+        <div id="hardcoded-tests">
+            <div>
+                <div class="path-info">Path: /assets/images/neff-favicon.png</div>
+                <img src="/assets/images/neff-favicon.png" alt="Favicon test" class="test-image" 
+                     onload="this.classList.add('success')" 
+                     onerror="this.classList.add('error')">
+            </div>
+            <div>
+                <div class="path-info">Path: /Neff-Paving/assets/images/neff-favicon.png</div>
+                <img src="/Neff-Paving/assets/images/neff-favicon.png" alt="GitHub Pages path test" class="test-image"
+                     onload="this.classList.add('success')" 
+                     onerror="this.classList.add('error')">
+            </div>
+            <div>
+                <div class="path-info">Path: assets/images/neff-favicon.png (relative)</div>
+                <img src="assets/images/neff-favicon.png" alt="Relative path test" class="test-image"
+                     onload="this.classList.add('success')" 
+                     onerror="this.classList.add('error')">
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Gallery Image Tests</h2>
+        <p>These images test gallery paths that are typically problematic:</p>
+        <div id="gallery-tests">
+            <div>
+                <div class="path-info">Path: /assets/gallery/commercial/advance-auto-parking-lot.webp</div>
+                <img src="/assets/gallery/commercial/advance-auto-parking-lot.webp" alt="Commercial gallery test" class="test-image"
+                     onload="this.classList.add('success')" 
+                     onerror="this.classList.add('error')">
+            </div>
+            <div>
+                <div class="path-info">Path: /Neff-Paving/assets/gallery/commercial/advance-auto-parking-lot.webp</div>
+                <img src="/Neff-Paving/assets/gallery/commercial/advance-auto-parking-lot.webp" alt="GitHub Pages gallery test" class="test-image"
+                     onload="this.classList.add('success')" 
+                     onerror="this.classList.add('error')">
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Processed Path Tests</h2>
+        <p>These images will be processed by the getAssetPath function:</p>
+        <div id="processed-tests">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Network Requests Log</h2>
+        <div id="network-log"></div>
+    </div>
+
+    <script type="module">
+        // Import the debug functions
+        import { 
+            debugAssetPaths, 
+            testHardcodedPaths, 
+            testCacheBusting, 
+            verifyBaseUrlConfig,
+            enableAssetDebug,
+            disableAssetDebug
+        } from './src/debug-assets.js';
+        
+        import { getAssetPath, BASE_URL, DEPLOY_MODE, getEnvironmentConfig } from './src/utils/base-url.js';
+
+        // Make functions globally available
+        window.debugAssetPaths = debugAssetPaths;
+        window.testHardcodedPaths = testHardcodedPaths;
+        window.testCacheBusting = testCacheBusting;
+        window.verifyBaseUrlConfig = verifyBaseUrlConfig;
+        window.enableAssetDebug = enableAssetDebug;
+        window.disableAssetDebug = disableAssetDebug;
+
+        // Display environment information
+        function displayEnvironmentInfo() {
+            const envInfo = document.getElementById('env-info');
+            envInfo.innerHTML = `
+                <div class="path-info">
+                    <strong>Current URL:</strong> ${window.location.href}<br>
+                    <strong>Hostname:</strong> ${window.location.hostname}<br>
+                    <strong>Pathname:</strong> ${window.location.pathname}<br>
+                    <strong>BASE_URL:</strong> ${BASE_URL}<br>
+                    <strong>DEPLOY_MODE:</strong> ${DEPLOY_MODE}<br>
+                    <strong>Environment Config:</strong> ${JSON.stringify(getEnvironmentConfig(), null, 2)}
+                </div>
+            `;
+        }
+
+        // Create processed path tests
+        function createProcessedTests() {
+            const container = document.getElementById('processed-tests');
+            const testPaths = [
+                'assets/images/neff-favicon.png',
+                'assets/gallery/commercial/advance-auto-parking-lot.webp',
+                'assets/gallery/residential/asphalt-driveway-barn.webp'
+            ];
+
+            testPaths.forEach(path => {
+                const processedPath = getAssetPath(path);
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div class="path-info">
+                        Original: ${path}<br>
+                        Processed: ${processedPath}
+                    </div>
+                    <img src="${processedPath}" alt="Processed path test" class="test-image"
+                         onload="this.classList.add('success')" 
+                         onerror="this.classList.add('error')">
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Log network requests
+        let networkLog = [];
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            const url = args[0];
+            console.log('Fetch request:', url);
+            networkLog.push({ type: 'fetch', url, timestamp: new Date().toISOString() });
+            updateNetworkLog();
+            return originalFetch.apply(this, args);
+        };
+
+        // Monitor image load events
+        document.addEventListener('load', (e) => {
+            if (e.target.tagName === 'IMG') {
+                networkLog.push({ 
+                    type: 'image_load_success', 
+                    url: e.target.src, 
+                    timestamp: new Date().toISOString() 
+                });
+                updateNetworkLog();
+            }
+        }, true);
+
+        document.addEventListener('error', (e) => {
+            if (e.target.tagName === 'IMG') {
+                networkLog.push({ 
+                    type: 'image_load_error', 
+                    url: e.target.src, 
+                    timestamp: new Date().toISOString() 
+                });
+                updateNetworkLog();
+            }
+        }, true);
+
+        function updateNetworkLog() {
+            const logContainer = document.getElementById('network-log');
+            logContainer.innerHTML = networkLog.slice(-10).map(entry => 
+                `<div class="path-info ${entry.type.includes('error') ? 'error' : 'success'}">
+                    [${entry.timestamp}] ${entry.type}: ${entry.url}
+                </div>`
+            ).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            displayEnvironmentInfo();
+            createProcessedTests();
+            
+            // Enable debug logging by default
+            enableAssetDebug();
+            
+            console.log('🔧 Asset Debug Test Page Loaded');
+            console.log('Open the browser console to see detailed asset path debugging information.');
+            console.log('Use the buttons above to run various tests.');
+        });
+    </script>
+</body>
+</html>

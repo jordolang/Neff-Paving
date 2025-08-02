@@ -31,9 +31,6 @@ class Lightbox {
                         </button>
                         <div class="lightbox-image-container">
                             <img class="lightbox-image" src="" alt="" loading="lazy">
-                            <div class="lightbox-loading">
-                                <div class="loading-spinner"></div>
-                            </div>
                         </div>
                         <button class="lightbox-nav lightbox-next" aria-label="Next image" title="Next">
                             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -56,7 +53,6 @@ class Lightbox {
         this.lightboxImage = this.lightboxElement.querySelector('.lightbox-image');
         this.lightboxTitle = this.lightboxElement.querySelector('.lightbox-title');
         this.lightboxDescription = this.lightboxElement.querySelector('.lightbox-description');
-        this.lightboxLoading = this.lightboxElement.querySelector('.lightbox-loading');
         this.currentIndexElement = this.lightboxElement.querySelector('.current-index');
         this.totalImagesElement = this.lightboxElement.querySelector('.total-images');
     }
@@ -100,11 +96,10 @@ class Lightbox {
 
         // Image load event
         this.lightboxImage.addEventListener('load', () => {
-            this.lightboxLoading.style.display = 'none';
+            // Image loaded successfully - no loading indicator to hide
         });
 
         this.lightboxImage.addEventListener('error', () => {
-            this.lightboxLoading.style.display = 'none';
             this.lightboxImage.alt = 'Image failed to load';
         });
     }
@@ -157,9 +152,6 @@ class Lightbox {
 
     loadImage() {
         const imageData = this.images[this.currentIndex];
-        
-        // Show loading
-        this.lightboxLoading.style.display = 'flex';
         
         // Update content
         this.lightboxTitle.textContent = imageData.title || '';

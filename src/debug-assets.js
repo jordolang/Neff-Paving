@@ -228,11 +228,139 @@ if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development' ||
     });
 }
 
+// Test with hardcoded paths first to isolate the issue
+export function testHardcodedPaths() {
+    console.group('🔍 Testing Hardcoded Paths');
+    
+    const testPaths = [
+        '/assets/gallery/commercial/advance-auto-parking-lot.webp',
+        '/assets/gallery/residential/asphalt-driveway-barn.webp',
+        '/assets/images/logo.png',
+        'favicon.ico'
+    ];
+    
+    testPaths.forEach(path => {
+        console.log(`Testing hardcoded path: ${path}`);
+        
+        // Test image loading
+        const img = new Image();
+        img.onload = () => {
+            console.log(`✅ Hardcoded path loaded successfully: ${path}`);
+        };
+        img.onerror = () => {
+            console.error(`❌ Hardcoded path failed to load: ${path}`);
+        };
+        img.src = path;
+    });
+    
+    console.groupEnd();
+}
+
+// Enable debug mode for asset paths
+export function enableAssetDebug() {
+    if (typeof window !== 'undefined') {
+        window.localStorage.setItem('debug-assets', 'true');
+        console.log('🔧 Asset debugging enabled. Reload the page to see detailed logs.');
+    }
+}
+
+// Disable debug mode for asset paths
+export function disableAssetDebug() {
+    if (typeof window !== 'undefined') {
+        window.localStorage.removeItem('debug-assets');
+        console.log('🔧 Asset debugging disabled.');
+    }
+}
+
+// Test cache busting parameters
+export function testCacheBusting() {
+    console.group('🔍 Cache Busting Tests');
+    
+    const testPath = '/assets/images/logo.png';
+    
+    // Test with cache busting enabled
+    const withCacheBusting = getAssetPath(testPath, { addCacheBusting: true });
+    console.log('With cache busting:', withCacheBusting);
+    
+    // Test with cache busting disabled
+    const withoutCacheBusting = getAssetPath(testPath, { addCacheBusting: false });
+    console.log('Without cache busting:', withoutCacheBusting);
+    
+    // Check if cache busting is causing issues
+    const img1 = new Image();
+    const img2 = new Image();
+    
+    img1.onload = () => console.log('✅ Cache busted path loads correctly');
+    img1.onerror = () => console.error('❌ Cache busted path failed to load');
+    img1.src = withCacheBusting;
+    
+    img2.onload = () => console.log('✅ Non-cache busted path loads correctly');
+    img2.onerror = () => console.error('❌ Non-cache busted path failed to load');
+    img2.src = withoutCacheBusting;
+    
+    console.groupEnd();
+}
+
+// Verify base URL configuration for current environment
+export function verifyBaseUrlConfig() {
+    console.group('🔍 Base URL Configuration Verification');
+    
+    console.log('Current window location:', {
+        href: window.location.href,
+        hostname: window.location.hostname,
+        pathname: window.location.pathname,
+        origin: window.location.origin
+    });
+    
+    console.log('Base URL constants:', {
+        BASE_URL,
+        DEPLOY_MODE,
+        getBaseUrl: getBaseUrl(),
+        environmentConfig: getEnvironmentConfig()
+    });
+    
+    // Test if we're in the correct environment
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isGitHubPages = window.location.hostname.endsWith('.github.io');
+    const isVercel = window.location.hostname.endsWith('.vercel.app');
+    
+    console.log('Environment detection:', {
+        isLocalhost,
+        isGitHubPages,
+        isVercel,
+        detectedEnvironment: isLocalhost ? 'development' : (isGitHubPages ? 'github' : (isVercel ? 'vercel' : 'unknown'))
+    });
+    
+    // Test base URL construction
+    const testPaths = ['index.html', 'assets/styles/main.css', 'assets/images/logo.png'];
+    testPaths.forEach(path => {
+        const fullUrl = createUrl(path);
+        console.log(`createUrl('${path}') => '${fullUrl}'`);
+    });
+    
+    console.groupEnd();
+}
+
 // Make functions available globally for debugging
 if (typeof window !== 'undefined') {
     window.debugAssetPaths = debugAssetPaths;
     window.testAssetLoading = testAssetLoading;
+    window.testHardcodedPaths = testHardcodedPaths;
+    window.testCacheBusting = testCacheBusting;
+    window.verifyBaseUrlConfig = verifyBaseUrlConfig;
+    window.enableAssetDebug = enableAssetDebug;
+    window.disableAssetDebug = disableAssetDebug;
     window.fixDoubleSlashes = fixDoubleSlashes;
     window.disableAssetOptimization = disableAssetOptimization;
     window.enableAssetOptimization = enableAssetOptimization;
+    
+    // Add a helper message
+    console.log('🔧 Asset Debug Functions Available:');
+    console.log('  - enableAssetDebug(): Enable detailed asset path logging');
+    console.log('  - disableAssetDebug(): Disable detailed asset path logging');
+    console.log('  - debugAssetPaths(): Run comprehensive asset path debug');
+    console.log('  - testHardcodedPaths(): Test hardcoded paths to isolate issues');
+    console.log('  - testCacheBusting(): Test cache busting parameter behavior');
+    console.log('  - verifyBaseUrlConfig(): Verify base URL configuration');
+    console.log('  - testAssetLoading(): Test actual asset loading');
 }
