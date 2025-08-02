@@ -7,12 +7,16 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
+// Import gallery component (CRITICAL for gallery functionality)
+import GalleryFilter from './components/gallery-filter.js';
+
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger)
 
 // Simple application class
 class NeffPavingApp {
     constructor() {
+        this.galleryFilter = null;
         this.init();
     }
 
@@ -27,6 +31,14 @@ class NeffPavingApp {
         
         // Initialize navigation
         this.initNavigation()
+        
+        // Initialize gallery (CRITICAL for gallery functionality)
+        try {
+            this.initGalleryFilters()
+            console.log('Gallery initialized successfully')
+        } catch (error) {
+            console.error('Gallery initialization failed:', error)
+        }
         
         console.log('Neff Paving app initialized successfully')
     }
@@ -62,6 +74,65 @@ class NeffPavingApp {
             once: true,
             offset: 100
         });
+        
+        // Remove any loading states immediately
+        this.removeLoadingStates();
+    }
+    
+    removeLoadingStates() {
+        // Force immediate display of all content - no loading screens or spinners
+        const style = document.createElement('style');
+        style.textContent = `
+            /* Force immediate visibility - no loading states */
+            .loading,
+            .spinner,
+            .loader,
+            .loading-overlay,
+            .progress-bar,
+            .loading-indicator {
+                display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+            }
+            
+            /* Ensure all gallery images are immediately visible */
+            .gallery-card,
+            .gallery-item,
+            .gallery img,
+            .card-image img {
+                opacity: 1 !important;
+                visibility: visible !important;
+                display: block !important;
+            }
+            
+            /* Ensure forms work without loading indicators */
+            .form-loading,
+            .btn .loading,
+            .submit-loading {
+                display: none !important;
+            }
+            
+            /* Remove any transition delays that might appear as loading */
+            .gallery-card,
+            .service-card,
+            .contact-method {
+                transition-delay: 0s !important;
+            }
+            
+            /* Force maps and images to display immediately */
+            .map-placeholder,
+            .image-placeholder {
+                background: transparent !important;
+            }
+            
+            /* Disable animations that might look like loading */
+            .spin {
+                animation: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('✅ Loading states removed - content displays immediately');
     }
 
     initNavigation() {
@@ -78,6 +149,13 @@ class NeffPavingApp {
                 }
             })
         })
+    }
+    
+    initGalleryFilters() {
+        const galleryElement = document.getElementById('gallery');
+        if (galleryElement) {
+            this.galleryFilter = new GalleryFilter(galleryElement);
+        }
     }
 }
 
