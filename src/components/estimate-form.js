@@ -5,7 +5,7 @@
 
 import { FormValidationService } from '../services/form-validation-service.js';
 import { EstimateService } from '../services/estimate-service.js';
-import { getMeasurementData, getAllMeasurementData, hasMeasurementData } from '../utils/measurement-storage.js';
+import { getMeasurementData, getAllMeasurementData, hasMeasurementData, handleFormSubmission, handleFormReset } from '../utils/measurement-storage.js';
 
 export class EstimateForm {
     constructor(containerId) {
@@ -475,9 +475,7 @@ export class EstimateForm {
         `;
 
         // Clear measurement data
-        import('../utils/measurement-storage.js').then(({ handleFormSubmission }) => {
-            handleFormSubmission();
-        });
+        handleFormSubmission();
     }
 
     handleSubmitError(error) {
@@ -671,9 +669,7 @@ export class EstimateForm {
             });
             
             // Clear measurement data
-            import('../utils/measurement-storage.js').then(({ handleFormReset }) => {
-                handleFormReset();
-            });
+            handleFormReset();
         }
     }
 

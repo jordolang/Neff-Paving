@@ -1428,12 +1428,12 @@ function initializeApp() {
         try {
             const galleryElement = document.getElementById('gallery');
             if (galleryElement) {
-                import('./components/gallery-filter.js').then(module => {
-                    new module.default(galleryElement);
+                try {
+                    new GalleryFilter(galleryElement);
                     console.log('Fallback gallery initialization successful');
-                }).catch(galleryError => {
+                } catch (galleryError) {
                     console.error('Fallback gallery initialization failed:', galleryError);
-                });
+                }
             }
         } catch (fallbackError) {
             console.error('Fallback initialization failed:', fallbackError);
