@@ -1,0 +1,698 @@
+# API Documentation - Neff Paving
+
+## Overview
+
+This document describes the REST API endpoints for the Neff Paving system. The API is designed with RESTful principles and provides comprehensive access to all system functionality.
+
+**Base URL:** `https://your-domain.vercel.app/api/v1`  
+**Authentication:** JWT Bearer Token  
+**Content-Type:** `application/json`
+
+## Authentication
+
+### POST /auth/login
+Authenticate user and receive JWT token.
+
+**Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "securepassword"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "user_123",
+      "email": "user@example.com",
+      "role": "admin",
+      "name": "John Doe"
+    },
+    "expiresIn": "24h"
+  }
+}
+```
+
+### POST /auth/refresh
+Refresh JWT token.
+
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiresIn": "24h"
+  }
+}
+```
+
+### POST /auth/logout
+Invalidate JWT token.
+
+**Headers:**
+```
+Authorization: Bearer {token}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Successfully logged out"
+}
+```
+
+## Job Management
+
+### GET /jobs
+Retrieve paginated list of jobs.
+
+**Query Parameters:**
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20, max: 100)
+- `status` - Filter by status (pending, confirmed, completed, cancelled)
+- `service_type` - Filter by service type
+- `date_from` - Filter jobs from date (YYYY-MM-DD)
+- `date_to` - Filter jobs to date (YYYY-MM-DD)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "jobs": [
+      {
+        "id": "job_123",
+        "customer_name": "John Smith",
+        "customer_email": "john@example.com",
+        "customer_phone": "+1234567890",
+        "service_type": "residential_driveway",
+        "status": "confirmed",
+        "scheduled_date": "2025-08-15T10:00:00Z",
+        "address": "123 Main St, Columbus, OH 43215",
+        "area_sqft": 1200,
+        "estimated_cost": 4500.00,
+        "notes": "Customer requests premium sealcoating",
+        "calendly_event_uri": "https://api.calendly.com/scheduled_events/123",
+        "created_at": "2025-08-01T14:30:00Z",
+        "updated_at": "2025-08-02T09:15:00Z"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "total_pages": 5,
+      "total_items": 95,
+      "items_per_page": 20
+    }
+  }
+}
+```
+
+### GET /jobs/{jobId}
+Retrieve specific job details.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "job_123",
+    "customer_name": "John Smith",
+    "customer_email": "john@example.com",
+    "customer_phone": "+1234567890",
+    "service_type": "residential_driveway",
+    "status": "confirmed",
+    "scheduled_date": "2025-08-15T10:00:00Z",
+    "address": "123 Main St, Columbus, OH 43215",
+    "coordinates": {
+      "lat": 39.9612,
+      "lng": -82.9988
+    },
+    "area_sqft": 1200,
+    "estimated_cost": 4500.00,
+    "final_cost": null,
+    "notes": "Customer requests premium sealcoating",
+    "boundary_data": {
+      "type": "polygon",
+      "coordinates": [[[-82.9988, 39.9612], [-82.9985, 39.9612], ...]]
+    },
+    "calendly_event_uri": "https://api.calendly.com/scheduled_events/123",
+    "contract_id": "contract_456",
+    "payment_status": "pending",
+    "crew_assigned": ["crew_001", "crew_002"],
+    "equipment_assigned": ["equipment_003"],
+    "created_at": "2025-08-01T14:30:00Z",
+    "updated_at": "2025-08-02T09:15:00Z"
+  }
+}
+```
+
+### POST /jobs
+Create new job.
+
+**Request:**
+```json
+{
+  "customer_name": "John Smith",
+  "customer_email": "john@example.com",
+  "customer_phone": "+1234567890",
+  "service_type": "residential_driveway",
+  "address": "123 Main St, Columbus, OH 43215",
+  "coordinates": {
+    "lat": 39.9612,
+    "lng": -82.9988
+  },
+  "area_sqft": 1200,
+  "estimated_cost": 4500.00,
+  "notes": "Customer requests premium sealcoating",
+  "boundary_data": {
+    "type": "polygon",
+    "coordinates": [[[-82.9988, 39.9612], [-82.9985, 39.9612], ...]]
+  },
+  "preferred_date": "2025-08-15",
+  "preferred_time": "morning"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "job_123",
+    "status": "pending",
+    "created_at": "2025-08-01T14:30:00Z"
+  }
+}
+```
+
+### PUT /jobs/{jobId}
+Update job details.
+
+**Request:**
+```json
+{
+  "status": "confirmed",
+  "scheduled_date": "2025-08-15T10:00:00Z",
+  "final_cost": 4750.00,
+  "crew_assigned": ["crew_001", "crew_002"],
+  "notes": "Updated with final measurements"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "job_123",
+    "updated_at": "2025-08-02T09:15:00Z"
+  }
+}
+```
+
+### DELETE /jobs/{jobId}
+Cancel/delete job.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Job successfully cancelled"
+}
+```
+
+## Estimates
+
+### POST /estimates
+Submit estimate request.
+
+**Request:**
+```json
+{
+  "customer_name": "Jane Doe",
+  "customer_email": "jane@example.com",
+  "customer_phone": "+1234567890",
+  "service_type": "commercial_parking",
+  "address": "456 Business Blvd, Columbus, OH 43215",
+  "area_sqft": 5000,
+  "description": "Parking lot resurfacing needed",
+  "preferred_contact": "email",
+  "preferred_timeframe": "within_month"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "estimate_789",
+    "reference_number": "EST-2025-0789",
+    "status": "submitted",
+    "created_at": "2025-08-01T16:45:00Z"
+  }
+}
+```
+
+### GET /estimates
+Retrieve estimates (admin only).
+
+**Query Parameters:**
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 20)
+- `status` - Filter by status
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "estimates": [
+      {
+        "id": "estimate_789",
+        "reference_number": "EST-2025-0789",
+        "customer_name": "Jane Doe",
+        "customer_email": "jane@example.com",
+        "service_type": "commercial_parking",
+        "status": "reviewed",
+        "estimated_cost": 12500.00,
+        "created_at": "2025-08-01T16:45:00Z"
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "total_pages": 2,
+      "total_items": 35,
+      "items_per_page": 20
+    }
+  }
+}
+```
+
+## Gallery Management
+
+### GET /gallery
+Retrieve gallery images.
+
+**Query Parameters:**
+- `category` - Filter by category (commercial, residential, concrete, equipment)
+- `limit` - Number of images to return
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "images": [
+      {
+        "id": "img_001",
+        "filename": "commercial-parking-lot.webp",
+        "category": "commercial",
+        "title": "Commercial Parking Lot",
+        "description": "Large commercial parking lot resurfacing project",
+        "url": "/assets/gallery/commercial/commercial-parking-lot.webp",
+        "thumbnail_url": "/assets/gallery/commercial/thumbnails/commercial-parking-lot.webp",
+        "width": 1920,
+        "height": 1080,
+        "file_size": 245760,
+        "uploaded_at": "2025-07-15T12:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+### POST /gallery
+Upload new gallery image.
+
+**Request:** `multipart/form-data`
+- `file` - Image file
+- `category` - Image category
+- `title` - Image title
+- `description` - Image description
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "img_002",
+    "url": "/assets/gallery/residential/new-driveway.webp",
+    "uploaded_at": "2025-08-01T18:30:00Z"
+  }
+}
+```
+
+## Scheduling Integration
+
+### GET /scheduling/availability
+Check available time slots.
+
+**Query Parameters:**
+- `service_type` - Type of service
+- `date` - Date to check (YYYY-MM-DD)
+- `duration` - Service duration in hours
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "available_slots": [
+      {
+        "start_time": "09:00",
+        "end_time": "12:00",
+        "calendly_event_type": "residential-paving"
+      },
+      {
+        "start_time": "13:00",
+        "end_time": "16:00",
+        "calendly_event_type": "residential-paving"
+      }
+    ]
+  }
+}
+```
+
+### POST /scheduling/book
+Book appointment through Calendly.
+
+**Request:**
+```json
+{
+  "event_type_uuid": "calendly-event-type-uuid",
+  "start_time": "2025-08-15T09:00:00Z",
+  "end_time": "2025-08-15T12:00:00Z",
+  "invitee": {
+    "name": "John Smith",
+    "email": "john@example.com",
+    "phone": "+1234567890"
+  },
+  "job_id": "job_123"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "calendly_event_uri": "https://api.calendly.com/scheduled_events/456",
+    "booking_reference": "CAL-2025-456",
+    "start_time": "2025-08-15T09:00:00Z",
+    "end_time": "2025-08-15T12:00:00Z"
+  }
+}
+```
+
+## Payment Processing
+
+### POST /payments/create-intent
+Create Stripe payment intent.
+
+**Request:**
+```json
+{
+  "job_id": "job_123",
+  "amount": 4500.00,
+  "currency": "usd",
+  "description": "Residential driveway paving",
+  "customer_email": "john@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "client_secret": "pi_1234567890_secret_abcdef",
+    "payment_intent_id": "pi_1234567890",
+    "amount": 4500.00,
+    "currency": "usd"
+  }
+}
+```
+
+### POST /payments/confirm
+Confirm payment completion.
+
+**Request:**
+```json
+{
+  "payment_intent_id": "pi_1234567890",
+  "job_id": "job_123"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "payment_status": "succeeded",
+    "amount_received": 4500.00,
+    "transaction_id": "txn_1234567890"
+  }
+}
+```
+
+## Webhooks
+
+### POST /webhooks/calendly
+Handle Calendly webhook events.
+
+**Request:** (Calendly payload)
+```json
+{
+  "event": "invitee.created",
+  "created_at": "2025-08-01T15:00:00.000000Z",
+  "payload": {
+    "event_type": {
+      "uuid": "calendly-event-type-uuid",
+      "name": "Residential Paving Consultation"
+    },
+    "event": {
+      "uuid": "calendly-event-uuid",
+      "start_time": "2025-08-15T09:00:00.000000Z",
+      "end_time": "2025-08-15T12:00:00.000000Z"
+    },
+    "invitee": {
+      "uuid": "calendly-invitee-uuid",
+      "name": "John Smith",
+      "email": "john@example.com"
+    }
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Webhook processed successfully"
+}
+```
+
+### POST /webhooks/stripe
+Handle Stripe webhook events.
+
+**Request:** (Stripe payload)
+```json
+{
+  "id": "evt_1234567890",
+  "type": "payment_intent.succeeded",
+  "data": {
+    "object": {
+      "id": "pi_1234567890",
+      "amount": 450000,
+      "currency": "usd",
+      "status": "succeeded"
+    }
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Webhook processed successfully"
+}
+```
+
+## Analytics
+
+### GET /analytics/dashboard
+Get dashboard analytics data.
+
+**Query Parameters:**
+- `period` - Time period (7d, 30d, 90d, 1y)
+- `timezone` - Timezone for date calculations
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "total_jobs": 245,
+      "completed_jobs": 198,
+      "pending_jobs": 47,
+      "total_revenue": 892500.00,
+      "average_job_value": 3640.82
+    },
+    "trends": {
+      "jobs_by_month": [
+        {"month": "2025-01", "count": 18},
+        {"month": "2025-02", "count": 22},
+        {"month": "2025-03", "count": 25}
+      ],
+      "revenue_by_month": [
+        {"month": "2025-01", "revenue": 65400.00},
+        {"month": "2025-02", "revenue": 80200.00},
+        {"month": "2025-03", "revenue": 91050.00}
+      ]
+    },
+    "service_types": [
+      {"type": "residential_driveway", "count": 98, "percentage": 40.0},
+      {"type": "commercial_parking", "count": 73, "percentage": 29.8},
+      {"type": "maintenance_repair", "count": 74, "percentage": 30.2}
+    ]
+  }
+}
+```
+
+## Error Responses
+
+All endpoints return consistent error responses:
+
+### 400 Bad Request
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request data",
+    "details": {
+      "customer_email": ["Invalid email format"],
+      "area_sqft": ["Must be a positive number"]
+    }
+  }
+}
+```
+
+### 401 Unauthorized
+```json
+{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or expired token"
+  }
+}
+```
+
+### 403 Forbidden
+```json
+{
+  "success": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Insufficient permissions"
+  }
+}
+```
+
+### 404 Not Found
+```json
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Resource not found"
+  }
+}
+```
+
+### 500 Internal Server Error
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "An unexpected error occurred",
+    "request_id": "req_1234567890"
+  }
+}
+```
+
+## Rate Limiting
+
+API endpoints are rate-limited to prevent abuse:
+
+- **Authentication endpoints:** 5 requests per minute per IP
+- **Job creation:** 10 requests per hour per authenticated user
+- **General endpoints:** 100 requests per minute per authenticated user
+- **Webhook endpoints:** No rate limit (validated by signature)
+
+Rate limit headers are included in responses:
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1627834800
+```
+
+## Pagination
+
+List endpoints support pagination:
+
+**Query Parameters:**
+- `page` - Page number (starts at 1)
+- `limit` - Items per page (max varies by endpoint)
+
+**Response includes pagination metadata:**
+```json
+{
+  "pagination": {
+    "current_page": 2,
+    "total_pages": 10,
+    "total_items": 195,
+    "items_per_page": 20,
+    "has_next": true,
+    "has_previous": true
+  }
+}
+```
+
+## API Versioning
+
+The API uses URL versioning (`/api/v1/`). When breaking changes are introduced, a new version will be created (`/api/v2/`) with appropriate migration period and deprecation notices.
+
+## Testing
+
+Test the API using the provided Postman collection or curl commands:
+
+```bash
+# Get all jobs
+curl -H "Authorization: Bearer {token}" \
+     "https://your-domain.vercel.app/api/v1/jobs"
+
+# Create new estimate
+curl -X POST \
+     -H "Content-Type: application/json" \
+     -d '{"customer_name":"Test User","service_type":"residential"}' \
+     "https://your-domain.vercel.app/api/v1/estimates"
+```
