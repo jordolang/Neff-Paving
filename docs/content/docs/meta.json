@@ -1,0 +1,9 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "system/overview",
+    "api/overview",
+    "deployment/vercel",
+    "security/best-practices"
+  ]
+}

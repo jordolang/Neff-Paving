@@ -1,0 +1,312 @@
+---
+title: Vercel Deployment
+description: Guide for deploying the Neff Paving documentation to Vercel
+---
+
+# Vercel Deployment - Neff Paving
+
+## Overview
+
+This guide covers deploying the Neff Paving documentation site using Vercel's static site hosting platform. Vercel provides automatic deployments, global CDN distribution, and seamless integration with Git repositories.
+
+## Prerequisites
+
+Before deploying to Vercel, ensure you have:
+
+- A Vercel account (sign up at [vercel.com](https://vercel.com))
+- The Vercel CLI installed (optional but recommended)
+- Your documentation repository pushed to GitHub, GitLab, or Bitbucket
+- Node.js 18+ installed locally for testing
+
+## Deployment Methods
+
+### Method 1: Git Integration (Recommended)
+
+**1. Import Project**
+1. Log into your Vercel dashboard
+2. Click "New Project"
+3. Import your Git repository containing the docs
+4. Select the `docs` folder as the root directory if applicable
+
+**2. Configure Build Settings**
+- **Framework Preset:** Next.js
+- **Build Command:** `npm run build`
+- **Output Directory:** `.next` (auto-detected)
+- **Install Command:** `npm install`
+
+**3. Environment Variables**
+No environment variables are required for the basic documentation deployment.
+
+**4. Deploy**
+Click "Deploy" and Vercel will automatically build and deploy your site.
+
+### Method 2: Vercel CLI
+
+**1. Install Vercel CLI**
+```bash
+npm install -g vercel
+```
+
+**2. Login to Vercel**
+```bash
+vercel login
+```
+
+**3. Deploy from Project Directory**
+```bash
+cd docs
+vercel
+```
+
+**4. Follow CLI Prompts**
+- Set up and deploy? `Y`
+- Which scope? Choose your team/personal account
+- Link to existing project? `N` (for first deployment)
+- What's your project's name? `neff-paving-docs`
+- In which directory is your code located? `./`
+
+## Build Configuration
+
+### Next.js Configuration
+
+The project uses a standard Next.js configuration with Fumadocs integration:
+
+```javascript
+// next.config.mjs
+import { createMDX } from 'fumadocs-mdx/next';
+
+const withMDX = createMDX();
+
+/** @type {import('next').NextConfig} */
+const config = {
+  reactStrictMode: true,
+};
+
+export default withMDX(config);
+```
+
+### Package.json Scripts
+
+Ensure your `package.json` includes the proper build scripts:
+
+```json
+{
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --turbo",
+    "start": "next start",
+    "postinstall": "fumadocs-mdx"
+  }
+}
+```
+
+## Deployment Settings
+
+### Vercel Configuration
+
+Create a `vercel.json` file in your docs directory (optional):
+
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "devCommand": "npm run dev",
+  "functions": {
+    "app/**": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
+```
+
+### Build Optimization
+
+The following optimizations are automatically applied:
+
+- **Static Generation**: Documentation pages are statically generated at build time
+- **Image Optimization**: Next.js optimizes images automatically
+- **Bundle Splitting**: Code is automatically split for optimal loading
+- **Compression**: Assets are compressed using gzip/brotli
+
+## Domain Configuration
+
+### Custom Domain Setup
+
+**1. Add Domain in Vercel Dashboard**
+1. Go to your project settings
+2. Navigate to "Domains"
+3. Add your custom domain (e.g., `docs.neffpaving.com`)
+
+**2. Configure DNS**
+- For apex domains: Add A record pointing to `76.76.19.61`
+- For subdomains: Add CNAME record pointing to `cname.vercel-dns.com`
+
+**3. SSL Certificate**
+Vercel automatically provides SSL certificates for all domains.
+
+## Branch Deployments
+
+### Production Branch
+- **Branch:** `main` or `master`
+- **URL:** Your primary domain
+- **Auto-deploy:** Enabled
+
+### Development Branch
+- **Branch:** `development`
+- **URL:** Auto-generated preview URL
+- **Auto-deploy:** Enabled for testing
+
+### Preview Deployments
+Every pull request automatically gets a unique preview URL for testing changes.
+
+## Performance Optimizations
+
+### Build Performance
+- **Caching:** Vercel caches dependencies and build outputs
+- **Incremental Builds:** Only changed files are rebuilt
+- **Parallel Processing:** Multiple build tasks run simultaneously
+
+### Runtime Performance
+- **Global CDN:** Content served from edge locations worldwide
+- **Static Assets:** Optimized caching headers
+- **Preloading:** Critical resources are preloaded
+- **Compression:** Automatic gzip/brotli compression
+
+## Monitoring and Analytics
+
+### Vercel Analytics
+Enable Vercel Analytics for visitor insights:
+
+```javascript
+// Add to your main layout or _app.js
+import { Analytics } from '@vercel/analytics/react';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <Analytics />
+      </body>
+    </html>
+  );
+}
+```
+
+### Speed Insights
+Monitor Core Web Vitals with Speed Insights:
+
+```javascript
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
+```
+
+## Troubleshooting
+
+### Common Build Issues
+
+**1. MDX Processing Errors**
+- Ensure all MDX files have proper frontmatter
+- Check for syntax errors in code blocks
+- Verify component imports are correct
+
+**2. Memory Issues**
+- Increase Node.js memory: `NODE_OPTIONS='--max_old_space_size=4096'`
+- Optimize large images before including in docs
+
+**3. Missing Dependencies**
+```bash
+npm install --save-dev @types/node @types/react @types/react-dom
+```
+
+### Build Command Issues
+
+If the build fails, check:
+- Node.js version compatibility (18+)
+- All dependencies are properly installed
+- No TypeScript errors in the codebase
+
+### Deployment Logs
+
+Access detailed logs in the Vercel dashboard:
+1. Go to your project
+2. Click on a deployment
+3. View "Build Logs" and "Function Logs"
+
+## Environment-Specific Configurations
+
+### Production Environment
+- Build optimization enabled
+- Source maps disabled
+- Error boundaries active
+- Analytics enabled
+
+### Preview Environment
+- Development mode enabled
+- Source maps available
+- Debugging tools active
+- Test data populated
+
+## Security Considerations
+
+### Content Security Policy
+Configure CSP headers in `vercel.json`:
+
+```json
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Environment Variables
+- Never commit sensitive data to repository
+- Use Vercel's environment variable system
+- Configure different values for development/production
+
+## Maintenance
+
+### Regular Updates
+- Update dependencies monthly
+- Monitor Vercel changelog for new features
+- Review performance metrics regularly
+
+### Backup Strategy
+- Git repository serves as primary backup
+- Vercel maintains deployment history
+- Export static files if needed for migration
+
+## Cost Optimization
+
+### Vercel Pricing
+- **Hobby Plan**: Free for personal projects
+- **Pro Plan**: $20/month for commercial use
+- **Enterprise**: Custom pricing for large organizations
+
+### Bandwidth Optimization
+- Optimize images (WebP format recommended)
+- Enable compression for text assets
+- Use proper caching headers
+- Minimize bundle sizes
+
+This deployment guide ensures your Neff Paving documentation is properly hosted on Vercel with optimal performance, security, and maintainability.

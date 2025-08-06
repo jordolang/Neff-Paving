@@ -1,74 +1,60 @@
-# Neff Paving - Complete System Documentation
+# Neff Paving Documentation
 
-This directory contains comprehensive documentation for the Neff Paving website and system infrastructure.
+This is the official documentation site for the Neff Paving system, built with Next.js and Fumadocs.
 
-## 📚 Documentation Index
+## Getting Started
 
-### System Architecture
-- [**System Overview**](system-overview.md) - Complete system architecture and components
-- [**API Documentation**](api-documentation.md) - Server endpoints and API specifications
-- [**Database Schema**](database-schema.md) - Complete database structure and relationships
+Run the development server:
 
-### Deployment & Configuration
-- [**Vercel Deployment Guide**](deployment/vercel-deployment.md) - Complete Vercel deployment instructions
-- [**Environment Configuration**](deployment/environment-configuration.md) - Environment variables and configuration management
-- [**Key Generation Procedures**](deployment/key-generation.md) - API keys and security credentials setup
+```bash
+npm run dev
+# or
+pnpm dev
+# or
+yarn dev
+```
 
-### Security & Best Practices
-- [**Security Guide**](security/security-best-practices.md) - Comprehensive security guidelines
-- [**Performance Optimization**](performance/performance-guide.md) - Performance optimization strategies
+Open http://localhost:3000 with your browser to see the result.
 
-### Development & Maintenance
-- [**Development Setup**](development/development-setup.md) - Local development environment setup
-- [**Build & Deploy Process**](development/build-deploy-process.md) - Complete build and deployment workflow
-- [**Troubleshooting Guide**](troubleshooting/troubleshooting-guide.md) - Common issues and solutions
-- [**Maintenance Guide**](maintenance/maintenance-guide.md) - Ongoing maintenance procedures
+## Project Structure
 
-### Services & Integration
-- [**Service Documentation**](services/services-overview.md) - All service components and integrations
-- [**Sync Services**](services/sync-services.md) - Data synchronization services
-- [**External Integrations**](integrations/external-integrations.md) - Third-party service integrations
+- `content/docs/` - All documentation content in MDX format
+- `lib/source.ts` - Content source adapter using Fumadocs loader
+- `app/` - Next.js app directory with pages and layouts
 
-### User Guides
-- [**Admin Panel Guide**](user-guides/admin-panel.md) - Administrative interface documentation
-- [**Content Management**](user-guides/content-management.md) - Managing website content
-- [**Job Scheduling**](user-guides/job-scheduling.md) - Job scheduling and management
+| Route                 | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| `app/`                | Landing page                                      |
+| `app/docs/`           | Documentation layout and dynamic pages           |
+| `content/docs/`       | MDX documentation files                          |
 
-## 🚀 Quick Start
+## Documentation Sections
 
-For immediate deployment:
-1. Read [System Overview](system-overview.md) for architecture understanding
-2. Follow [Vercel Deployment Guide](deployment/vercel-deployment.md) for deployment
-3. Configure [Environment Variables](deployment/environment-configuration.md)
-4. Set up [API Keys](deployment/key-generation.md)
-5. Review [Security Best Practices](security/security-best-practices.md)
+- **System Overview** - Architecture and components
+- **API Documentation** - REST API endpoints and examples
+- **Deployment** - Vercel deployment guide
+- **Security** - Best practices and guidelines
 
-## 📋 Prerequisites
+## Building for Production
 
-- Node.js 18+ 
-- npm 9+
-- Vercel CLI (for deployment)
-- PostgreSQL database (for full system)
-- Valid API keys for integrated services
+```bash
+npm run build
+```
 
-## 🔗 External Resources
+## Deployment
 
-- [Vercel Documentation](https://vercel.com/docs)
-- [Vite Documentation](https://vitejs.dev/)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [Google Maps API](https://developers.google.com/maps)
-- [Calendly API](https://developer.calendly.com/)
-- [Stripe API](https://stripe.com/docs/api)
+The documentation is designed to be deployed on Vercel. See the deployment guide in the documentation for detailed instructions.
 
-## 📞 Support
+## Contributing
 
-For technical support:
-- Review the [Troubleshooting Guide](troubleshooting/troubleshooting-guide.md)
-- Check the [FAQ](troubleshooting/faq.md)
-- Contact system administrator
+To add or update documentation:
 
----
+1. Edit MDX files in `content/docs/`
+2. Update `meta.json` files to adjust navigation
+3. Run `npm run dev` to preview changes
+4. Build and test before deploying
 
-**Last Updated:** {{ BUILD_TIMESTAMP }}  
-**Version:** 1.0.0  
-**System Status:** Production Ready
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Fumadocs](https://fumadocs.vercel.app)
