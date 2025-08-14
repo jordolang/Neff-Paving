@@ -767,57 +767,153 @@ export class EnhancedAreaFinder extends AreaFinder {
      * Setup location access handling
      */
     async setupLocationAccess() {
-        if (navigator.geolocation) {
-            try {
-                const permission = await navigator.permissions.query({ name: 'geolocation' });
-                
-                if (permission.state === 'prompt') {
-                    const allowLocation = await this.confirmationDialog.showLocationAccessConfirmation();
-                    if (allowLocation) {
-                        this.requestLocation();
-                    }
-                } else if (permission.state === 'granted') {
+        // Always ensure map has default coordinates (Muskingum County Courthouse)
+        this.defaultCoordinates = { lat: 39.94041, lng: -82.00734 };
+        
+        if (!navigator.geolocation) {
+            console.warn('Geolocation is not supported by this browser');
+            this.setDefaultMapLocation();
+            return;
+        }
+
+        try {
+            const permission = await navigator.permissions.query({ name: 'geolocation' });
+            
+            if (permission.state === 'prompt') {
+                const allowLocation = await this.confirmationDialog.showLocationAccessConfirmation();
+                if (allowLocation) {
                     this.requestLocation();
+                } else {
+                    this.setDefaultMapLocation();
                 }
-            } catch (error) {
-                console.warn('Geolocation permission check failed:', error);
+            } else if (permission.state === 'granted') {
+                this.requestLocation();
+            } else if (permission.state === 'denied') {
+                console.info('Geolocation access denied by user');
+                this.setDefaultMapLocation();
             }
+        } catch (error) {
+            console.warn('Geolocation permission check failed:', error);
+            this.setDefaultMapLocation();
         }
     }
 
     /**
-     * Request user location
+     * Set default map location to Muskingum County Courthouse
+     */
+    setDefaultMapLocation() {
+        if (this.map && this.defaultCoordinates) {
+            this.map.setCenter(this.defaultCoordinates);
+            this.map.setZoom(15);
+            
+            // Add default location marker
+            new google.maps.Marker({
+                position: this.defaultCoordinates,
+                map: this.map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: '#dc2626',
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 2,
+                    scale: 8
+                },
+                title: 'Default Location - Muskingum County Courthouse'
+            });
+        }
+    }
+
+    /**
+     * Request user location with comprehensive error handling
      */
     requestLocation() {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                
-                this.map.setCenter(userLocation);
-                this.map.setZoom(16);
-                
-                // Add user location marker
-                new google.maps.Marker({
-                    position: userLocation,
-                    map: this.map,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        fillColor: '#4285f4',
-                        fillOpacity: 1,
-                        strokeColor: '#ffffff',
-                        strokeWeight: 2,
-                        scale: 8
-                    },
-                    title: 'Your Location'
-                });
-            },
-            (error) => {
-                this.errorHandler.handleError('permission', 'GEOLOCATION_DENIED', { error });
+        // Set a timeout for geolocation request
+        const timeout = 10000; // 10 seconds
+        
+        try {
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                (position) => {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    
+                    this.map.setCenter(userLocation);
+                    this.map.setZoom(16);
+                    
+                    // Add user location marker
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: this.map,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            fillColor: '#4285f4',
+                            fillOpacity: 1,
+                            strokeColor: '#ffffff',
+                            strokeWeight: 2,
+                            scale: 8
+                        },
+                        title: 'Your Location'
+                    });
+                    
+                    // Show success message without blocking UI
+                    if (this.errorHandler) {
+                        this.errorHandler.showToast('Location found successfully', 'success');
+                    }
+                },
+                // Error callback with detailed error handling
+                (error) => {
+                    let errorMessage = 'Unable to get your location';
+                    let userFriendlyMessage = '';
+                    
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Location access denied by user';
+                            userFriendlyMessage = 'Location access was denied. Using default location instead.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information unavailable';
+                            userFriendlyMessage = 'Your location could not be determined. Using default location instead.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Location request timed out';
+                            userFriendlyMessage = 'Location request took too long. Using default location instead.';
+                            break;
+                        default:
+                            errorMessage = 'Unknown geolocation error';
+                            userFriendlyMessage = 'Could not get your location. Using default location instead.';
+                            break;
+                    }
+                    
+                    console.warn(`Geolocation error: ${errorMessage}`, error);
+                    
+                    // Set default location and show user-friendly message
+                    this.setDefaultMapLocation();
+                    
+                    // Show non-blocking toast message
+                    if (this.errorHandler) {
+                        this.errorHandler.showToast(userFriendlyMessage, 'info');
+                    }
+                },
+                // Options for geolocation request
+                {
+                    enableHighAccuracy: true,
+                    timeout: timeout,
+                    maximumAge: 300000 // 5 minutes cache
+                }
+            );
+        } catch (error) {
+            console.error('Error requesting geolocation:', error);
+            
+            // Fallback to default location
+            this.setDefaultMapLocation();
+            
+            // Show user-friendly error message
+            if (this.errorHandler) {
+                this.errorHandler.showToast('Using default location - geolocation unavailable', 'info');
             }
-        );
+        }
     }
 
     /**

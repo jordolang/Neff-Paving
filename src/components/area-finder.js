@@ -360,8 +360,7 @@ export class AreaFinder {
         const mapElement = document.getElementById(`${this.containerId}-map`);
         
         this.map = new google.maps.Map(mapElement, {
-            ...DEFAULT_MAP_OPTIONS,
-            center: { lat: 39.9612, lng: -82.9988 } // Columbus, Ohio
+            ...DEFAULT_MAP_OPTIONS
         });
 
         this.geocoder = new google.maps.Geocoder();

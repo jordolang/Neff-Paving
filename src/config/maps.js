@@ -9,34 +9,40 @@ export const GOOGLE_MAPS_CONFIG = {
 
 // Default map options - only initialize if Google Maps is available
 export const DEFAULT_MAP_OPTIONS = typeof google !== 'undefined' && google.maps ? {
-    zoom: 15,
-    center: { lat: 39.9612, lng: -82.9988 }, // Columbus, Ohio
-    mapTypeId: 'hybrid',
-    mapTypeControl: true,
-    mapTypeControlOptions: {
-        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-        position: google.maps.ControlPosition.TOP_CENTER
-    },
-    zoomControl: true,
-    zoomControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_CENTER
-    },
-    scaleControl: true,
-    streetViewControl: true,
-    streetViewControlOptions: {
-        position: google.maps.ControlPosition.RIGHT_TOP
-    },
-    fullscreenControl: true
+  zoom: 18,
+  center: { lat: 39.94041, lng: -82.00734 }, // Muskingum County Courthouse
+  mapTypeId: 'satellite',
+  tilt: 0, // Explicitly set tilt to 0 to avoid 45° imagery
+  mapTypeControl: true,
+  mapTypeControlOptions: {
+    mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain'],
+    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+    position: google.maps.ControlPosition.TOP_CENTER
+  },
+  zoomControl: true,
+  zoomControlOptions: {
+    position: google.maps.ControlPosition.RIGHT_CENTER
+  },
+  scaleControl: true,
+  streetViewControl: true,
+  streetViewControlOptions: {
+    position: google.maps.ControlPosition.RIGHT_TOP
+  },
+  fullscreenControl: true
 } : {
-    // Fallback options when Google Maps is not available
-    zoom: 15,
-    center: { lat: 39.9612, lng: -82.9988 },
-    mapTypeId: 'hybrid',
-    mapTypeControl: true,
-    zoomControl: true,
-    scaleControl: true,
-    streetViewControl: true,
-    fullscreenControl: true
+  // Fallback options when Google Maps is not available
+  zoom: 18,
+  center: { lat: 39.94041, lng: -82.00734 },
+  mapTypeId: 'satellite',
+  tilt: 0, // Explicitly set tilt to 0 to avoid 45° imagery
+  mapTypeControl: true,
+  mapTypeControlOptions: {
+    mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
+  },
+  zoomControl: true,
+  scaleControl: true,
+  streetViewControl: true,
+  fullscreenControl: true
 };
 
 // Drawing manager options - only initialize if Google Maps is available

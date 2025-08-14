@@ -727,44 +727,118 @@ export class VisualAccuracyControls {
     }
 
     /**
-     * Use current location
+     * Use current location with comprehensive error handling
      */
     useCurrentLocation() {
+        // Default coordinates for fallback (Muskingum County Courthouse)
+        const defaultCoordinates = { lat: 39.94041, lng: -82.00734 };
+        
         if (!navigator.geolocation) {
-            this.showError('Geolocation not supported');
+            console.warn('Geolocation is not supported by this browser');
+            this.setFallbackLocation(defaultCoordinates, 'Geolocation not supported by this browser');
             return;
         }
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const location = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                
-                this.map.setCenter(location);
-                this.map.setZoom(18);
-                
-                // Add marker
-                new google.maps.Marker({
-                    position: location,
-                    map: this.map,
-                    title: 'Your Location',
-                    icon: {
-                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4">
-                                <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="2"/>
-                                <circle cx="12" cy="12" r="3" fill="white"/>
-                            </svg>
-                        `),
-                        scaledSize: new google.maps.Size(24, 24)
+        // Set timeout for geolocation request
+        const timeout = 10000; // 10 seconds
+        
+        try {
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                (position) => {
+                    const location = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    
+                    this.map.setCenter(location);
+                    this.map.setZoom(18);
+                    
+                    // Add user location marker
+                    new google.maps.Marker({
+                        position: location,
+                        map: this.map,
+                        title: 'Your Location',
+                        icon: {
+                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4">
+                                    <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" fill="white"/>
+                                </svg>
+                            `),
+                            scaledSize: new google.maps.Size(24, 24)
+                        }
+                    });
+                    
+                    // Show success message
+                    this.showSuccess('Location found successfully');
+                },
+                // Error callback with detailed error handling
+                (error) => {
+                    let errorMessage = 'Unable to get your location';
+                    let userFriendlyMessage = '';
+                    
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Location access denied by user';
+                            userFriendlyMessage = 'Location access was denied. Using default location (Muskingum County Courthouse).';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information unavailable';
+                            userFriendlyMessage = 'Your location could not be determined. Using default location (Muskingum County Courthouse).';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Location request timed out';
+                            userFriendlyMessage = 'Location request took too long. Using default location (Muskingum County Courthouse).';
+                            break;
+                        default:
+                            errorMessage = 'Unknown geolocation error';
+                            userFriendlyMessage = 'Could not get your location. Using default location (Muskingum County Courthouse).';
+                            break;
                     }
-                });
-            },
-            (error) => {
-                this.showError('Failed to get location');
+                    
+                    console.warn(`Geolocation error: ${errorMessage}`, error);
+                    
+                    // Set fallback location and show user-friendly message
+                    this.setFallbackLocation(defaultCoordinates, userFriendlyMessage);
+                },
+                // Geolocation options
+                {
+                    enableHighAccuracy: true,
+                    timeout: timeout,
+                    maximumAge: 300000 // 5 minutes cache
+                }
+            );
+        } catch (error) {
+            console.error('Error requesting geolocation:', error);
+            this.setFallbackLocation(defaultCoordinates, 'Using default location - geolocation unavailable');
+        }
+    }
+    
+    /**
+     * Set fallback location when geolocation fails
+     */
+    setFallbackLocation(coordinates, message) {
+        this.map.setCenter(coordinates);
+        this.map.setZoom(15);
+        
+        // Add fallback location marker
+        new google.maps.Marker({
+            position: coordinates,
+            map: this.map,
+            title: 'Default Location - Muskingum County Courthouse',
+            icon: {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#dc2626">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                `),
+                scaledSize: new google.maps.Size(24, 24)
             }
-        );
+        });
+        
+        // Show informational message without blocking functionality
+        this.showInfo(message);
     }
 
     /**
@@ -985,25 +1059,48 @@ export class VisualAccuracyControls {
      * Show error message
      */
     showError(message) {
-        // Create error notification
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-notification';
-        errorDiv.innerHTML = `
-            <div class="error-content">
-                <span class="error-icon">⚠️</span>
-                <span class="error-message">${message}</span>
-                <button class="error-close" onclick="this.parentElement.parentElement.remove()">×</button>
+        this.showNotification(message, 'error', '⚠️', '#f44336');
+    }
+
+    /**
+     * Show success message
+     */
+    showSuccess(message) {
+        this.showNotification(message, 'success', '✅', '#4caf50');
+    }
+
+    /**
+     * Show info message
+     */
+    showInfo(message) {
+        this.showNotification(message, 'info', 'ℹ️', '#2196f3');
+    }
+
+    /**
+     * Show notification with custom styling
+     */
+    showNotification(message, type, icon, color) {
+        // Create notification
+        const notificationDiv = document.createElement('div');
+        notificationDiv.className = `${type}-notification notification`;
+        notificationDiv.style.backgroundColor = color;
+        notificationDiv.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-icon">${icon}</span>
+                <span class="notification-message">${message}</span>
+                <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
             </div>
         `;
 
-        document.body.appendChild(errorDiv);
+        document.body.appendChild(notificationDiv);
 
-        // Auto-remove after 5 seconds
+        // Auto-remove based on message type
+        const timeout = type === 'error' ? 5000 : type === 'success' ? 3000 : 4000;
         setTimeout(() => {
-            if (errorDiv.parentElement) {
-                errorDiv.remove();
+            if (notificationDiv.parentElement) {
+                notificationDiv.remove();
             }
-        }, 5000);
+        }, timeout);
     }
 
     /**
