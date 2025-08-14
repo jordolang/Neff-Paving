@@ -541,11 +541,12 @@
     border-radius: 50%;
 }
 
-/* Responsive Design */
+/* Responsive Design - Step 7 Container and Spacing Updates */
 @media (max-width: 768px) {
     .estimate-form-container {
         padding: 1rem;
-        margin: 1rem;
+        margin: 0;
+        border-radius: 0;
     }
     
     .form-header h2 {

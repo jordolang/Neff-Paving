@@ -83,31 +83,17 @@ class GalleryFilter {
         card.setAttribute('data-category', category);
         card.setAttribute('data-display-category', displayCategory);
         
-        // SIMPLIFIED VERSION - minimal implementation for testing
+        // Generate image path
+        const resolvedPath = getAssetPath(`/assets/gallery/${category}/${image.filename}`, { addCacheBusting: true });
         
-        // Generate all possible image paths for debugging
-        const originalPath = `/assets/gallery/${category}/${image.filename}`;
-        const hardcodedPath = `/Neff-Paving/assets/gallery/${category}/${image.filename}`;
-        const resolvedPath = getAssetPath(originalPath, { addCacheBusting: true });
-        const simplePath = `assets/gallery/${category}/${image.filename}`;
-        const relativePath = `./assets/gallery/${category}/${image.filename}`;
-        
-        // Log ALL image paths to console for debugging
-        console.group(`🖼️ SIMPLIFIED Gallery Card: ${image.filename}`);
-        console.log('Original path:', originalPath);
-        console.log('Hardcoded GitHub path:', hardcodedPath);
-        console.log('Resolved path:', resolvedPath);
-        console.log('Simple path:', simplePath);
-        console.log('Relative path:', relativePath);
-        console.log('Category:', category);
-        console.log('Display category:', displayCategory);
-        console.log('Image data:', image);
-        console.groupEnd();
-        
-        // Use minimal HTML structure - no loading attributes or placeholders
+        // Create HTML structure with lazy loading
         card.innerHTML = `
             <div class="card-image">
-                <img src="${resolvedPath}" alt="${image.alt}" width="630" height="400">
+                <div class="image-loading-placeholder">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #999;">📷</div>
+                    <div style="font-size: 0.875rem; color: #666;">Loading...</div>
+                </div>
+                <img data-src="${resolvedPath}" alt="${image.alt}" width="630" height="400" loading="lazy" style="opacity: 0; transition: opacity 0.3s ease;">
             </div>
             <div class="card-overlay">
                 <div class="card-title">${image.title}</div>
@@ -115,26 +101,59 @@ class GalleryFilter {
             </div>
         `;
         
-        // Display images immediately - no opacity transitions or placeholders
+        // Implement lazy loading with Intersection Observer and mobile optimization
         const img = card.querySelector('img');
+        const placeholder = card.querySelector('.image-loading-placeholder');
         
-        // Simple error handling - just log and show error message
-        img.onerror = () => {
-            console.error(`❌ SIMPLIFIED: Failed to load image:`, resolvedPath);
-            img.style.display = 'none';
-            card.querySelector('.card-image').innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; background: #f5f5f5; color: #666;">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📷</div>
-                    <div style="font-size: 0.875rem;">Image not available</div>
-                    <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">${image.filename}</div>
-                </div>
-            `;
+        // Apply mobile optimizations to the image
+        // mobileOptimizer.optimizeImage(img, resolvedPath);
+        
+        // Create intersection observer for lazy loading with mobile-aware settings
+        const observerOptions = {
+            rootMargin: '50px 0px', // Load earlier
+            threshold: 0.1 // threshold for loading
         };
         
-        // Log when image loads successfully
-        img.onload = () => {
-            console.log(`✅ SIMPLIFIED: Successfully loaded image:`, resolvedPath);
-        };
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const image = entry.target;
+                    const src = image.getAttribute('data-src');
+                    
+                    // Start loading the image
+                    image.src = src;
+                    image.removeAttribute('data-src');
+                    
+                    // Handle successful load with mobile optimization
+                    image.onload = () => {
+                        image.style.opacity = '1';
+                        placeholder.style.opacity = '0';
+                        
+                        // Longer transition on slow connections to mask loading
+                        const transitionDelay = 300;
+                        setTimeout(() => {
+                            if (placeholder.parentNode) {
+                                placeholder.remove();
+                            }
+                        }, transitionDelay);
+                        
+                        console.log(`✅ Lazy loaded image: ${src}`);
+                    };
+                    
+                    // Enhanced error handling for mobile
+                    image.onerror = () => {
+                        console.error(`❌ Failed to load image: ${src}`);
+                        // mobileOptimizer.showImagePlaceholder(image);
+                    };
+                    
+                    // Stop observing this image
+                    observer.unobserve(image);
+                }
+            });
+        }, observerOptions);
+        
+        // Start observing the image
+        imageObserver.observe(img);
         
         return card;
     }

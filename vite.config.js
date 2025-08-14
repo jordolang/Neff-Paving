@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
     },
   // Performance optimizations
   optimizeDeps: {
-    include: ['gsap', 'aos'],
+    include: ['aos'],
     exclude: ['@vite/client', '@vite/env']
   },
   // Handle Node.js built-ins
@@ -158,7 +158,7 @@ export default defineConfig(({ mode }) => {
         // Manual chunks for better code splitting - simplified
         manualChunks: {
           // Vendor chunks
-          'vendor': ['gsap', 'aos']
+          'vendor': ['aos']
         }
       },
     },

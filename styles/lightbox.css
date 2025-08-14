@@ -143,4 +143,90 @@
     font-size: 0.9rem;
 }
 
+/* Mobile Responsive - Step 7 Container and Spacing Updates */
+@media (max-width: 768px) {
+    .lightbox-content {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+        max-height: calc(100vh - 2rem);
+    }
+    
+    .lightbox-header {
+        padding: 1rem;
+    }
+    
+    .lightbox-main {
+        padding: 0.5rem;
+    }
+    
+    .lightbox-nav {
+        margin: 0 0.5rem;
+        width: 36px;
+        height: 36px;
+    }
+    
+    .lightbox-nav svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .lightbox-footer {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .lightbox-title {
+        font-size: 1.1rem;
+    }
+    
+    .lightbox-description {
+        font-size: 0.9rem;
+    }
+    
+    .lightbox-counter {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .lightbox-content {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+        max-height: calc(100vh - 1rem);
+        border-radius: 4px;
+    }
+    
+    .lightbox-header {
+        padding: 0.75rem;
+    }
+    
+    .lightbox-main {
+        padding: 0.25rem;
+    }
+    
+    .lightbox-nav {
+        width: 32px;
+        height: 32px;
+        margin: 0 0.25rem;
+    }
+    
+    .lightbox-nav svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .lightbox-footer {
+        padding: 0.75rem;
+    }
+    
+    .lightbox-title {
+        font-size: 1rem;
+    }
+    
+    .lightbox-close {
+        font-size: 1.5rem;
+    }
+}
 
