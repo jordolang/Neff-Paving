@@ -9,11 +9,13 @@ export const GOOGLE_MAPS_CONFIG = {
 
 // Default map options - only initialize if Google Maps is available
 export const DEFAULT_MAP_OPTIONS = typeof google !== 'undefined' && google.maps ? {
-  zoom: 15,
-  center: { lat: 39.9612, lng: -82.9988 }, // Columbus, Ohio
-  mapTypeId: 'hybrid',
+  zoom: 18,
+  center: { lat: 39.94041, lng: -82.00734 },
+  mapTypeId: 'satellite',
+  tilt: 0, // Explicitly set tilt to 0 to avoid 45° imagery
   mapTypeControl: true,
   mapTypeControlOptions: {
+    mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain'],
     style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
     position: google.maps.ControlPosition.TOP_CENTER
   },
@@ -29,10 +31,14 @@ export const DEFAULT_MAP_OPTIONS = typeof google !== 'undefined' && google.maps 
   fullscreenControl: true
 } : {
   // Fallback options when Google Maps is not available
-  zoom: 15,
-  center: { lat: 39.9612, lng: -82.9988 },
-  mapTypeId: 'hybrid',
+  zoom: 18,
+  center: { lat: 39.94041, lng: -82.00734 },
+  mapTypeId: 'satellite',
+  tilt: 0, // Explicitly set tilt to 0 to avoid 45° imagery
   mapTypeControl: true,
+  mapTypeControlOptions: {
+    mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
+  },
   zoomControl: true,
   scaleControl: true,
   streetViewControl: true,
