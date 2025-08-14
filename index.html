@@ -81,7 +81,8 @@
     </style>
 
     <!-- Main Stylesheet - Load first for proper rendering -->
-    <!-- CSS is now loaded through Vite via src/main.js import -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- CSS is also loaded through Vite via src/main.js import -->
 
     <!-- Critical CSS for immediate rendering -->
     <style>
@@ -429,7 +430,9 @@
         <header>
             <div class="header-container">
                 <h1>Neff Paving</h1>
-                <nav>
+                
+                <!-- Desktop Navigation -->
+                <nav class="desktop-nav">
                     <ul>
                         <li><a href="#home">Home</a></li>
                         <li><a href="#services">Services</a></li>
@@ -439,7 +442,15 @@
                         <li><a href="#contact">Contact</a></li>
                     </ul>
                 </nav>
-                <div class="social-links">
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                
+                <div class="social-links desktop-social">
                     <a href="https://www.facebook.com/neffpaving" target="_blank" rel="noopener" aria-label="Facebook">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -463,6 +474,64 @@
                 </div>
             </div>
         </header>
+        
+        <!-- Mobile Navigation Menu -->
+        <nav class="mobile-nav" id="mobile-nav">
+            <div class="mobile-nav-header">
+                <h2>Menu</h2>
+                <button class="mobile-nav-close" aria-label="Close mobile menu">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <ul class="mobile-nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#locations">Locations</a></li>
+                <li><a href="estimate-form.html">Estimates</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            
+            <div class="mobile-nav-contact">
+                <h3>Get In Touch</h3>
+                <div class="mobile-contact-item">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                    <a href="tel:7404533063">(740) 453-3063</a>
+                </div>
+                <div class="mobile-contact-item">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    <a href="mailto:info@neffpaving.com">info@neffpaving.com</a>
+                </div>
+            </div>
+            
+            <div class="mobile-nav-social">
+                <a href="https://www.facebook.com/neffpaving" target="_blank" rel="noopener" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                </a>
+                <a href="mailto:sales@neffpaving.com" aria-label="Email">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                </a>
+                <a href="https://twitter.com/neffpaving" target="_blank" rel="noopener" aria-label="X (Twitter)">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Mobile Navigation Overlay -->
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
 
         <main>
             <section id="hero">
@@ -1336,7 +1405,7 @@
 
                     <div class="office-map">
                         <div id="reynoldsburg-google-map" class="map-placeholder">
-                            <iframe src="https://www.google.com/maps/embed?pb=!4v1754170970574!6m8!1m7!1sVhgnLhU_1Uhb4FK2Tpg5yA!2m2!1d39.94923565518629!2d-82.82906717866778!3f160.59849809262906!4f-0.8928208963017852!5f0.7820865974627469" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!4v1754170970574!6m8!1m7!1sVhgnLhU_1Uhb4FK2Tpg5yA!2m2!1d39.94923565518629!2d-82.82906717866778!3f160.59849809262906!4f-0.8928208963017852!5f0.7820865974627469" width="600" height="450" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
                 </div>
@@ -1397,7 +1466,7 @@
 
                     <div class="office-map">
                         <div id="zanesville-google-map" class="map-placeholder">
-							<iframe src="https://www.google.com/maps/embed?pb=!4v1754170774870!6m8!1m7!1sxo-oqdyYOYPPzjxYOa5HYg!2m2!1d39.95002201798545!2d-82.11626426465124!3f36.74!4f-0.7399999999999949!5f0.7820865974627469" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+							<iframe src="https://www.google.com/maps/embed?pb=!4v1754170774870!6m8!1m7!1sxo-oqdyYOYPPzjxYOa5HYg!2m2!1d39.95002201798545!2d-82.11626426465124!3f36.74!4f-0.7399999999999949!5f0.7820865974627469" width="600" height="450" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
                 </div>
@@ -1407,10 +1476,10 @@
 
     <!---Locations Map-->
     <section id="locations-map">
-        <div style="text-align: center; margin: 20px 0;">
+        <div class="locations-map-container">
             <h3>Our 2 Locations in Ohio</h3>
-            <div style="display: inline-block; width: 80%; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);">
-                <iframe src="https://storage.googleapis.com/maps-solutions-ccm7qzpost/locator-plus/mjlp/locator-plus.html" width="100%" height="500px" style="border:0;" loading="lazy"></iframe>
+            <div class="locations-map-wrapper">
+                <iframe src="https://storage.googleapis.com/maps-solutions-ccm7qzpost/locator-plus/mjlp/locator-plus.html" width="100%" height="500" loading="lazy"></iframe>
             </div>
         </div>
     </section>
@@ -1811,31 +1880,6 @@
         });
     </script>
 
-    <!-- Initialize EstimateForm component -->
-    <script type="module">
-        import EstimateForm from './src/components/estimate-form.js';
-        
-        // Initialize the form after DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            const estimateFormContainer = document.getElementById('estimate-form-container');
-            if (estimateFormContainer) {
-                try {
-                    const estimateForm = new EstimateForm('estimate-form-container');
-                    console.log('EstimateForm initialized successfully');
-                } catch (error) {
-                    console.error('Failed to initialize EstimateForm:', error);
-                    // Show error message in the container
-                    estimateFormContainer.innerHTML = `
-                        <div style="text-align: center; padding: 3rem; color: #e74c3c; background: #fdf2f2; border: 2px solid #e74c3c; border-radius: 8px;">
-                            <h3>Unable to Load Form</h3>
-                            <p>Please refresh the page to try again.</p>
-                            <p style="font-size: 0.9rem; margin-top: 1rem; color: #666;">Error: ${error.message}</p>
-                        </div>
-                    `;
-                }
-            }
-        });
-    </script>
 
     <script>
         window.si = window.si || function() {
@@ -1843,6 +1887,8 @@
         };
     </script>
 
+    <!-- Load mobile navigation JavaScript -->
+    <script src="js/mobile-nav.js"></script>
 </body>
 
 </html>

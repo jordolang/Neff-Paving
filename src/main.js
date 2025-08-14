@@ -2,16 +2,11 @@
 import '../styles/main.css'
 
 // Import animation libraries
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
 // Import gallery component (CRITICAL for gallery functionality)
 import GalleryFilter from './components/gallery-filter.js';
-
-// Register GSAP plugins
-gsap.registerPlugin(ScrollTrigger)
 
 // Simple application class
 class NeffPavingApp {
