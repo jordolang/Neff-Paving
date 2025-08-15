@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps API Diagnostic</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: #e0e0e0;
+        }
+        .diagnostic-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .diagnostic-info h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .test-button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Google Maps API Diagnostic Tool</h1>
+        
+        <div id="status-container">
+            <div class="status info">Running diagnostics...</div>
+        </div>
+        
+        <div class="diagnostic-info">
+            <h3>API Key Information:</h3>
+            <p>Key: AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk</p>
+            <p>Libraries requested: drawing, geometry</p>
+        </div>
+        
+        <div id="map"></div>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="testBasicMap()">Test Basic Map</button>
+            <button class="test-button" onclick="testDrawing()">Test Drawing</button>
+            <button class="test-button" onclick="testGeometry()">Test Geometry</button>
+            <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+        </div>
+        
+        <div id="test-results" class="diagnostic-info">
+            <h3>Test Results:</h3>
+            <ul id="results-list">
+                <li>Waiting for tests...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let map;
+        let drawingManager;
+        let testResults = [];
+        
+        // Monitor for authentication failure
+        window.gm_authFailure = function() {
+            addStatus('Google Maps Authentication Failed - Check API Key', 'error');
+            addResult('Authentication', 'Failed - API key may be invalid or restricted', false);
+        };
+        
+        function addStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            container.appendChild(div);
+        }
+        
+        function addResult(test, result, success) {
+            testResults.push({ test, result, success });
+            updateResults();
+        }
+        
+        function updateResults() {
+            const list = document.getElementById('results-list');
+            list.innerHTML = '';
+            testResults.forEach(result => {
+                const li = document.createElement('li');
+                const icon = result.success ? '✅' : '❌';
+                li.innerHTML = `${icon} <strong>${result.test}:</strong> ${result.result}`;
+                li.style.color = result.success ? '#28a745' : '#dc3545';
+                list.appendChild(li);
+            });
+        }
+        
+        function initMap() {
+            addStatus('Google Maps API loaded successfully', 'success');
+            addResult('API Loading', 'Success', true);
+            
+            // Check if libraries loaded
+            if (google.maps.drawing) {
+                addResult('Drawing Library', 'Loaded successfully', true);
+            } else {
+                addResult('Drawing Library', 'Not loaded', false);
+            }
+            
+            if (google.maps.geometry) {
+                addResult('Geometry Library', 'Loaded successfully', true);
+            } else {
+                addResult('Geometry Library', 'Not loaded', false);
+            }
+            
+            // Initialize basic map
+            try {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: 39.94041, lng: -82.00734 },
+                    zoom: 18,
+                    mapTypeId: 'satellite'
+                });
+                addStatus('Map initialized successfully', 'success');
+                addResult('Map Initialization', 'Success', true);
+            } catch (error) {
+                addStatus('Map initialization failed: ' + error.message, 'error');
+                addResult('Map Initialization', 'Failed: ' + error.message, false);
+            }
+        }
+        
+        function testBasicMap() {
+            if (!map) {
+                addStatus('Map not initialized', 'error');
+                return;
+            }
+            
+            try {
+                // Test changing map type
+                map.setMapTypeId('roadmap');
+                setTimeout(() => map.setMapTypeId('satellite'), 1000);
+                
+                // Test adding a marker
+                new google.maps.Marker({
+                    position: map.getCenter(),
+                    map: map,
+                    title: 'Test Marker'
+                });
+                
+                addStatus('Basic map functions working', 'success');
+                addResult('Basic Map Test', 'All functions working', true);
+            } catch (error) {
+                addStatus('Basic map test failed: ' + error.message, 'error');
+                addResult('Basic Map Test', 'Failed: ' + error.message, false);
+            }
+        }
+        
+        function testDrawing() {
+            if (!map) {
+                addStatus('Map not initialized', 'error');
+                return;
+            }
+            
+            try {
+                if (!google.maps.drawing) {
+                    throw new Error('Drawing library not loaded');
+                }
+                
+                drawingManager = new google.maps.drawing.DrawingManager({
+                    drawingMode: google.maps.drawing.OverlayType.POLYGON,
+                    drawingControl: true,
+                    drawingControlOptions: {
+                        position: google.maps.ControlPosition.TOP_CENTER,
+                        drawingModes: ['polygon', 'rectangle', 'circle']
+                    },
+                    polygonOptions: {
+                        fillColor: '#FFD700',
+                        fillOpacity: 0.3,
+                        strokeWeight: 2,
+                        strokeColor: '#FFD700',
+                        editable: true
+                    }
+                });
+                
+                drawingManager.setMap(map);
+                addStatus('Drawing tools activated', 'success');
+                addResult('Drawing Test', 'Drawing manager working', true);
+            } catch (error) {
+                addStatus('Drawing test failed: ' + error.message, 'error');
+                addResult('Drawing Test', 'Failed: ' + error.message, false);
+            }
+        }
+        
+        function testGeometry() {
+            if (!google.maps.geometry) {
+                addStatus('Geometry library not loaded', 'error');
+                addResult('Geometry Test', 'Library not loaded', false);
+                return;
+            }
+            
+            try {
+                // Test area calculation
+                const testPath = [
+                    new google.maps.LatLng(39.94041, -82.00734),
+                    new google.maps.LatLng(39.94141, -82.00734),
+                    new google.maps.LatLng(39.94141, -82.00634),
+                    new google.maps.LatLng(39.94041, -82.00634)
+                ];
+                
+                const area = google.maps.geometry.spherical.computeArea(testPath);
+                const areaInSqFt = area * 10.764;
+                
+                addStatus(`Geometry calculation test: ${areaInSqFt.toFixed(2)} sq ft`, 'success');
+                addResult('Geometry Test', `Area calculation working (${areaInSqFt.toFixed(2)} sq ft)`, true);
+            } catch (error) {
+                addStatus('Geometry test failed: ' + error.message, 'error');
+                addResult('Geometry Test', 'Failed: ' + error.message, false);
+            }
+        }
+        
+        function runAllTests() {
+            testResults = [];
+            addStatus('Running all tests...', 'info');
+            
+            setTimeout(() => {
+                testBasicMap();
+                setTimeout(() => {
+                    testDrawing();
+                    setTimeout(() => {
+                        testGeometry();
+                    }, 1000);
+                }, 1000);
+            }, 500);
+        }
+        
+        // Error handler for script loading
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'SCRIPT' && e.target.src.includes('maps.googleapis.com')) {
+                addStatus('Failed to load Google Maps script', 'error');
+                addResult('Script Loading', 'Failed - Check internet connection or CORS policy', false);
+            }
+        });
+        
+        // Check if API loads within timeout
+        setTimeout(function() {
+            if (typeof google === 'undefined' || !google.maps) {
+                addStatus('Google Maps API failed to load within 5 seconds', 'warning');
+                addResult('Load Timeout', 'API did not load in time', false);
+                
+                // Provide troubleshooting steps
+                const container = document.getElementById('status-container');
+                const troubleshooting = document.createElement('div');
+                troubleshooting.className = 'diagnostic-info';
+                troubleshooting.innerHTML = `
+                    <h3>Troubleshooting Steps:</h3>
+                    <ol>
+                        <li>Check browser console for specific error messages</li>
+                        <li>Verify API key is valid and has proper permissions</li>
+                        <li>Ensure Maps JavaScript API is enabled in Google Cloud Console</li>
+                        <li>Check if your domain is in the API key restrictions</li>
+                        <li>Try opening in incognito/private mode to rule out extensions</li>
+                        <li>Check if your network blocks Google services</li>
+                    </ol>
+                `;
+                container.appendChild(troubleshooting);
+            }
+        }, 5000);
+    </script>
+    
+    <script async defer 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk&libraries=drawing,geometry&callback=initMap">
+    </script>
+</body>
+</html>

@@ -202,6 +202,8 @@
             width: 100%;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #e0e0e0;
+            position: relative;
         }
         
         .map-controls {
@@ -617,54 +619,72 @@
             stone: 20
         };
 
+        // Error handling for Google Maps API
+        window.gm_authFailure = function() {
+            console.error('Google Maps authentication failed!');
+            const mapDiv = document.getElementById('map');
+            mapDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #e74c3c;"><h3>Map Loading Error</h3><p>Unable to authenticate with Google Maps. Please check your API key and permissions.</p></div>';
+        };
+
         // Initialize Google Maps
         function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 18,
-                center: {
-                    lat: 39.94041,
-                    lng: -82.00734
-                }, // Default to Muskingum County Courthouse
-                mapTypeId: 'satellite',
-                tilt: 0, // Explicitly set tilt to 0 to avoid 45° imagery
-                mapTypeControl: true,
-                mapTypeControlOptions: {
-                    mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain'],
-                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-                    position: google.maps.ControlPosition.TOP_CENTER
+            console.log('Initializing Google Maps...');
+            
+            try {
+                // Check if Google Maps API is loaded
+                if (typeof google === 'undefined' || !google.maps) {
+                    throw new Error('Google Maps API not loaded');
                 }
-            });
 
-            drawingManager = new google.maps.drawing.DrawingManager({
-                drawingMode: null,
-                drawingControl: false,
-                polygonOptions: {
-                    fillColor: '#FFD700',
-                    fillOpacity: 0.3,
-                    strokeColor: '#FFD700',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    clickable: true,
-                    editable: true
-                }
-            });
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 18,
+                    center: {
+                        lat: 39.94041,
+                        lng: -82.00734
+                    }, // Default to Muskingum County Courthouse
+                    mapTypeId: 'satellite',
+                    tilt: 0, // Explicitly set tilt to 0 to avoid 45° imagery
+                    mapTypeControl: true,
+                    mapTypeControlOptions: {
+                        mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain'],
+                        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                        position: google.maps.ControlPosition.TOP_CENTER
+                    }
+                });
 
-            drawingManager.setMap(map);
+                console.log('Map initialized successfully');
 
-            // Listen for polygon completion
-            drawingManager.addListener('polygoncomplete', function(polygon) {
-                if (currentPolygon) {
-                    currentPolygon.setMap(null);
-                }
-                currentPolygon = polygon;
-                calculateArea();
-                drawingManager.setDrawingMode(null);
+                drawingManager = new google.maps.drawing.DrawingManager({
+                    drawingMode: null,
+                    drawingControl: false,
+                    polygonOptions: {
+                        fillColor: '#FFD700',
+                        fillOpacity: 0.3,
+                        strokeColor: '#FFD700',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        clickable: true,
+                        editable: true
+                    }
+                });
 
-                // Add listener for polygon changes
-                polygon.getPath().addListener('set_at', calculateArea);
-                polygon.getPath().addListener('insert_at', calculateArea);
-                polygon.getPath().addListener('remove_at', calculateArea);
-            });
+                drawingManager.setMap(map);
+                console.log('Drawing manager initialized');
+
+                // Listen for polygon completion
+                drawingManager.addListener('polygoncomplete', function(polygon) {
+                    if (currentPolygon) {
+                        currentPolygon.setMap(null);
+                    }
+                    currentPolygon = polygon;
+                    calculateArea();
+                    drawingManager.setDrawingMode(null);
+
+                    // Add listener for polygon changes
+                    polygon.getPath().addListener('set_at', calculateArea);
+                    polygon.getPath().addListener('insert_at', calculateArea);
+                    polygon.getPath().addListener('remove_at', calculateArea);
+                });
 
             // Try to get user's location with improved error handling
             if (navigator.geolocation) {
@@ -739,16 +759,22 @@
                 });
             }
             
-            // Add default location marker for reference
-            new google.maps.Marker({
-                position: {lat: 39.94041, lng: -82.00734},
-                map: map,
-                title: 'Muskingum County Courthouse (Default Location)',
-                icon: {
-                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'),
-                    scaledSize: new google.maps.Size(24, 24)
-                }
-            });
+                // Add default location marker for reference
+                new google.maps.Marker({
+                    position: {lat: 39.94041, lng: -82.00734},
+                    map: map,
+                    title: 'Muskingum County Courthouse (Default Location)',
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'),
+                        scaledSize: new google.maps.Size(24, 24)
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                const mapDiv = document.getElementById('map');
+                mapDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #e74c3c;"><h3>Map Loading Error</h3><p>' + error.message + '</p><p>Please refresh the page or contact support.</p></div>';
+            }
         }
 
         function startDrawing() {
@@ -863,21 +889,59 @@
 
             console.log('Form data:', formData);
 
-            // In a real application, you would send this data to your server
-            fetch('/submit-estimate', {
+            // Submit to local Neff Paving server
+            fetch('http://localhost:3001/submit-estimate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('✅ Server response:', data);
+                    alert(`🎉 SUCCESS! Your estimate request has been submitted!\n\n📋 Reference Number: ${data.referenceNumber}\n⏰ Submitted: ${data.submissionTime}\n📅 Date: ${data.submissionDate}\n\n✅ A Neff Paving representative will contact you within 24 hours!\n📞 Questions? Call us at (740) 453-3063`);
+                } else {
+                    console.error('❌ Server error:', data);
+                    alert('⚠️ There was an issue submitting your request. Please try again or call us directly at (740) 453-3063.');
+                }
+            })
+            .catch(error => {
+                console.error('❌ Network error:', error);
+                alert('⚠️ Unable to connect to the estimate server. Your data has been saved locally. Please call us at (740) 453-3063 to submit your estimate request.');
             });
         });
 
         // Map will be initialized by the Google Maps callback
+        
+        // Fallback check if map doesn't load
+        setTimeout(function() {
+            if (typeof google === 'undefined' || !google.maps) {
+                console.error('Google Maps failed to load after 10 seconds');
+                const mapDiv = document.getElementById('map');
+                mapDiv.innerHTML = `
+                    <div style="padding: 40px; text-align: center; background: #f8f9fa; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <h3 style="color: #e74c3c; margin-bottom: 20px;">⚠️ Map Loading Issue</h3>
+                        <p style="color: #666; margin-bottom: 20px;">The map is temporarily unavailable. This could be due to:</p>
+                        <ul style="text-align: left; color: #666; margin-bottom: 20px;">
+                            <li>Internet connectivity issues</li>
+                            <li>Browser blocking the Google Maps script</li>
+                            <li>API key restrictions</li>
+                        </ul>
+                        <p style="color: #666;">You can still submit the form with manual area entry, or try refreshing the page.</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px; background: #FFD700; color: #2C2C2C; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Refresh Page</button>
+                    </div>
+                `;
+            }
+        }, 10000);
     </script>
 
     <!-- Google Maps API with Drawing and Geometry libraries -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk&libraries=drawing,geometry&callback=initMap&loading=async"></script>
+    <script 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk&libraries=drawing,geometry&callback=initMap"
+        onerror="console.error('Failed to load Google Maps script'); document.getElementById('map').innerHTML = '<div style=\'padding: 40px; text-align: center; color: #e74c3c;\'>Failed to load Google Maps. Please check your internet connection and try again.</div>';">
+    </script>
 </body>
 
 </html>

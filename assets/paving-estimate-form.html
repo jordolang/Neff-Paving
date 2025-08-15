@@ -199,6 +199,21 @@
             width: 100%;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .map-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            font-family: var(--font-primary);
+            color: var(--asphalt-dark);
+            font-size: 1.1rem;
         }
         
         .map-controls {
@@ -660,6 +675,13 @@
         let drawingManager;
         let currentPolygon = null;
         let selectedArea = 0;
+        let mapInitialized = false;
+
+        // Default coordinates for Muskingum County Courthouse
+        const DEFAULT_COORDINATES = {
+            lat: 39.94041,
+            lng: -82.00734
+        };
 
         // Material prices per square foot
         const materialPrices = {
@@ -669,58 +691,144 @@
             stone: 20
         };
 
-        // Initialize Google Maps
+        // Error handling for map initialization
+        function handleMapError(error) {
+            console.error('Google Maps Error:', error);
+            const mapElement = document.getElementById('map');
+            mapElement.innerHTML = `
+                <div class="map-loading">
+                    <div style="text-align: center;">
+                        <p>🗺️ Map temporarily unavailable</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px; color: #7f8c8d;">Please refresh the page or try again later</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize Google Maps with comprehensive error handling
         function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 18,
-                center: {
-                    lat: 39.94041,
-                    lng: -82.00734
-                }, // Default to Muskingum County Courthouse
-                mapTypeId: 'satellite'
-            });
-
-            drawingManager = new google.maps.drawing.DrawingManager({
-                drawingMode: null,
-                drawingControl: false,
-                polygonOptions: {
-                    fillColor: '#FFD700',
-                    fillOpacity: 0.3,
-                    strokeColor: '#FFD700',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    clickable: true,
-                    editable: true
+            try {
+                // Check if Google Maps API is available
+                if (typeof google === 'undefined' || !google.maps) {
+                    throw new Error('Google Maps API not loaded');
                 }
-            });
 
-            drawingManager.setMap(map);
+                // Enhanced map options with explicit tilt setting
+                const mapOptions = {
+                    zoom: 18,
+                    center: DEFAULT_COORDINATES,
+                    mapTypeId: 'satellite',
+                    tilt: 0, // Explicitly set to 0 to avoid 45° imagery deprecation warning
+                    gestureHandling: 'cooperative',
+                    zoomControl: true,
+                    mapTypeControl: true,
+                    mapTypeControlOptions: {
+                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+                        position: google.maps.ControlPosition.TOP_RIGHT,
+                        mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
+                    },
+                    scaleControl: true,
+                    streetViewControl: true,
+                    fullscreenControl: true
+                };
 
-            // Listen for polygon completion
-            drawingManager.addListener('polygoncomplete', function(polygon) {
-                if (currentPolygon) {
-                    currentPolygon.setMap(null);
-                }
-                currentPolygon = polygon;
-                calculateArea();
-                drawingManager.setDrawingMode(null);
+                map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-                // Add listener for polygon changes
-                polygon.getPath().addListener('set_at', calculateArea);
-                polygon.getPath().addListener('insert_at', calculateArea);
-                polygon.getPath().addListener('remove_at', calculateArea);
-            });
-
-            // Try to get user's location
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const userLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    map.setCenter(userLocation);
+                // Wait for map to be fully loaded before initializing drawing manager
+                google.maps.event.addListenerOnce(map, 'idle', function() {
+                    initializeDrawingManager();
+                    setupGeolocation();
+                    mapInitialized = true;
+                    console.log('Google Maps initialized successfully');
                 });
+
+                // Handle map errors
+                google.maps.event.addListener(map, 'tilesloaded', function() {
+                    // Map tiles loaded successfully
+                });
+
+            } catch (error) {
+                handleMapError(error);
             }
+        }
+
+        // Initialize drawing manager separately
+        function initializeDrawingManager() {
+            try {
+                drawingManager = new google.maps.drawing.DrawingManager({
+                    drawingMode: null,
+                    drawingControl: false,
+                    polygonOptions: {
+                        fillColor: '#FFD700',
+                        fillOpacity: 0.3,
+                        strokeColor: '#FFD700',
+                        strokeOpacity: 0.8,
+                        strokeWeight: 2,
+                        clickable: true,
+                        editable: true
+                    }
+                });
+
+                drawingManager.setMap(map);
+
+                // Listen for polygon completion
+                drawingManager.addListener('polygoncomplete', function(polygon) {
+                    if (currentPolygon) {
+                        currentPolygon.setMap(null);
+                    }
+                    currentPolygon = polygon;
+                    calculateArea();
+                    drawingManager.setDrawingMode(null);
+
+                    // Add listener for polygon changes
+                    polygon.getPath().addListener('set_at', calculateArea);
+                    polygon.getPath().addListener('insert_at', calculateArea);
+                    polygon.getPath().addListener('remove_at', calculateArea);
+                });
+            } catch (error) {
+                console.error('Drawing Manager initialization failed:', error);
+            }
+        }
+
+        // Setup geolocation with proper error handling
+        function setupGeolocation() {
+            // Check if geolocation is supported and if we're in a secure context
+            if (!navigator.geolocation) {
+                console.info('Geolocation not supported by browser, using default location');
+                return;
+            }
+
+            if (!window.isSecureContext) {
+                console.warn('Geolocation requires secure context (HTTPS), using default location');
+                return;
+            }
+
+            // Set a timeout for geolocation request
+            const geolocationOptions = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 300000 // 5 minutes
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    try {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        map.setCenter(userLocation);
+                        console.log('User location set successfully');
+                    } catch (error) {
+                        console.warn('Error setting user location:', error);
+                    }
+                },
+                function(error) {
+                    console.warn('Geolocation failed:', error.message, '- Using default location');
+                    // Silently continue with default location - no user-facing error
+                },
+                geolocationOptions
+            );
         }
 
         function startDrawing() {
@@ -849,8 +957,8 @@
         };
     </script>
 
-    <!-- Google Maps API with Drawing and Geometry libraries -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk&libraries=drawing,geometry&callback=initMap"></script>
+    <!-- Google Maps API with comprehensive libraries and new API key -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBhKHAeb-pc9jdLfrnZoveOuq_3lF2GfA&libraries=drawing,geometry,places,visualization&callback=initMap" async defer></script>
 </body>
 
 </html>

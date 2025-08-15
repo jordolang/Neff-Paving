@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neff Paving Server Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2C2C2C 0%, #FFD700 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2C2C2C;
+            color: #FFD700;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #2C2C2C;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .status-running {
+            background: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+
+        .status-offline {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #2C2C2C;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            background: #FFD700;
+            color: #2C2C2C;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin: 8px 8px 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: #e6c200;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .alert-preview {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .alert-preview h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .alert-preview .alert-content {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #FFD700;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .logs-container {
+            grid-column: 1 / -1;
+            background: #2C2C2C;
+            color: #FFD700;
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .logs-container h2 {
+            color: #FFD700;
+            border-bottom: 2px solid #FFD700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #444;
+            opacity: 0.9;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .timestamp {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Neff Paving Server</h1>
+            <p>Control Panel - Estimate Submission Monitoring System</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>📊 Server Status</h2>
+                <div id="server-status" class="status-indicator status-offline">
+                    Checking...
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Server URL</span>
+                    <span class="stat-value">localhost:3001</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Uptime</span>
+                    <span class="stat-value" id="uptime">--</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Total Submissions</span>
+                    <span class="stat-value" id="total-submissions">--</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Last Check</span>
+                    <span class="stat-value" id="last-check">--</span>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="checkServerStatus()">🔄 Refresh Status</button>
+                    <button class="btn btn-secondary" onclick="openCSV()">📊 View CSV</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔔 Alert System</h2>
+                <p style="margin-bottom: 20px;">Test the alert notification system that triggers when new estimates are submitted.</p>
+                
+                <button class="btn" onclick="testAlert()">🔔 Test Alert</button>
+                <button class="btn btn-secondary" onclick="openScreenshots()">📸 Screenshots</button>
+                <button class="btn btn-danger" onclick="restartServer()">🔄 Restart Server</button>
+
+                <div class="alert-preview">
+                    <h3>🚨 Sample Alert Preview:</h3>
+                    <div class="alert-content">
+                        🚨 ALERT! New Estimate Submission Live!<br>
+                        ⏰ Time: 02:30:45 PM<br>
+                        📅 Date: 08/14/2024<br><br>
+                        👤 Customer: John Smith<br>
+                        📧 Email: john@example.com<br>
+                        📞 Phone: (740) 453-3063<br>
+                        📍 Address: 123 Main St, Zanesville<br>
+                        🏗️ Project: driveway<br>
+                        📏 Area: 1,200.00 sq ft<br>
+                        💰 Estimate: $15,600.00
+                    </div>
+                </div>
+            </div>
+
+            <div class="logs-container">
+                <h2>📝 Recent Server Activity</h2>
+                <div id="logs">
+                    <div class="log-entry">
+                        <span class="timestamp">[08/14/2024 02:28:06]</span> Server started successfully on port 3001
+                    </div>
+                    <div class="log-entry">
+                        <span class="timestamp">[08/14/2024 02:28:07]</span> CSV file initialized with headers
+                    </div>
+                    <div class="log-entry">
+                        <span class="timestamp">[08/14/2024 02:28:08]</span> Screenshots directory created
+                    </div>
+                    <div class="log-entry">
+                        <span class="timestamp">[08/14/2024 02:28:09]</span> Server ready to receive estimate submissions
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Neff Paving | Windows Service v1.0.0 | Built with Node.js & Electron</p>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer, shell } = require('electron');
+
+        async function checkServerStatus() {
+            const statusEl = document.getElementById('server-status');
+            const uptimeEl = document.getElementById('uptime');
+            const submissionsEl = document.getElementById('total-submissions');
+            const lastCheckEl = document.getElementById('last-check');
+
+            statusEl.textContent = 'Checking...';
+            statusEl.className = 'status-indicator status-offline';
+
+            try {
+                const stats = await ipcRenderer.invoke('get-server-stats');
+                
+                if (stats.error) {
+                    throw new Error(stats.error);
+                }
+
+                statusEl.textContent = '✅ Server Running';
+                statusEl.className = 'status-indicator status-running';
+                uptimeEl.textContent = Math.floor(stats.uptime / 60) + ' minutes';
+                submissionsEl.textContent = stats.totalSubmissions || 0;
+                lastCheckEl.textContent = new Date().toLocaleTimeString();
+
+                addLogEntry('Server status check: ONLINE ✅');
+            } catch (error) {
+                statusEl.textContent = '❌ Server Offline';
+                statusEl.className = 'status-indicator status-offline';
+                uptimeEl.textContent = '--';
+                submissionsEl.textContent = '--';
+                lastCheckEl.textContent = new Date().toLocaleTimeString();
+
+                addLogEntry('Server status check: OFFLINE ❌');
+                console.error('Server check failed:', error);
+            }
+        }
+
+        function addLogEntry(message) {
+            const logsEl = document.getElementById('logs');
+            const timestamp = new Date().toLocaleString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span> ${message}`;
+            logsEl.insertBefore(logEntry, logsEl.firstChild);
+
+            // Keep only last 10 entries
+            while (logsEl.children.length > 10) {
+                logsEl.removeChild(logsEl.lastChild);
+            }
+        }
+
+        function testAlert() {
+            addLogEntry('Test alert triggered 🔔');
+            
+            // Create test popup
+            const testWindow = window.open('', 'testAlert', 'width=500,height=400,scrollbars=no,resizable=no');
+            testWindow.document.write(`
+                <html>
+                <head>
+                    <title>🚨 TEST ALERT - Neff Paving</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            background: #dc3545; 
+                            color: white; 
+                            padding: 20px; 
+                            text-align: center;
+                            margin: 0;
+                        }
+                        h1 { color: #FFD700; margin-bottom: 20px; }
+                        .content { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; }
+                        button { 
+                            background: #FFD700; 
+                            color: #2C2C2C; 
+                            border: none; 
+                            padding: 10px 20px; 
+                            margin: 10px; 
+                            border-radius: 5px; 
+                            cursor: pointer; 
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>🚨 TEST ALERT!</h1>
+                    <div class="content">
+                        <p><strong>New Estimate Submission Test</strong></p>
+                        <p>👤 Customer: Test Customer</p>
+                        <p>📧 Email: test@example.com</p>
+                        <p>📞 Phone: (740) 555-0123</p>
+                        <p>🏗️ Project: Driveway Test</p>
+                        <p>📏 Area: 500.00 sq ft</p>
+                        <p>💰 Estimate: $6,500.00</p>
+                        <br>
+                        <button onclick="window.close()">Close</button>
+                        <button onclick="alert('Print functionality would trigger here')">Print</button>
+                        <button onclick="navigator.clipboard.writeText('Test Customer\\ntest@example.com\\n(740) 555-0123'); alert('Contact info copied!')">Copy Contact</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            // Play alert sound (would be handled by main process in real implementation)
+            console.log('🔊 Alert sound would play here');
+        }
+
+        function openCSV() {
+            addLogEntry('Opening submissions CSV file 📊');
+            shell.openPath('../estimate-form-data-requests.csv');
+        }
+
+        function openScreenshots() {
+            addLogEntry('Opening screenshots folder 📸');
+            shell.openPath('../screenshots');
+        }
+
+        function restartServer() {
+            if (confirm('Are you sure you want to restart the server? This will briefly interrupt the estimate service.')) {
+                addLogEntry('Server restart initiated 🔄');
+                alert('Server restart functionality would be triggered here in full implementation');
+            }
+        }
+
+        // Check server status on load and every 30 seconds
+        checkServerStatus();
+        setInterval(checkServerStatus, 30000);
+
+        // Add some sample log entries for demo
+        setTimeout(() => {
+            addLogEntry('GUI interface loaded successfully 🖥️');
+        }, 1000);
+    </script>
+</body>
+</html>
