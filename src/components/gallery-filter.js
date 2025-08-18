@@ -42,26 +42,57 @@ class GalleryFilter {
             });
         });
         
-        // Get 8 random images per category
+        // Get 10 random images per category for filtering
         const categories = Object.keys(galleryImages);
         categories.forEach(category => {
             const categoryImages = galleryImages[category].map(img => ({ ...img, category }));
             const shuffled = this.shuffleArray([...categoryImages]);
-            this.displayedImages[category] = shuffled.slice(0, 8);
+            this.displayedImages[category] = shuffled.slice(0, 10);
         });
         
-        // Also create a mixed "all" category with 8 random images from all categories
+        // Also create a mixed "all" category with 10 random images from all categories
         const allShuffled = this.shuffleArray([...this.allImagesData]);
-        this.displayedImages['all'] = allShuffled.slice(0, 8);
+        this.displayedImages['all'] = allShuffled.slice(0, 10);
         
-        // Create gallery cards for all displayed images (initially hidden)
-        Object.entries(this.displayedImages).forEach(([category, images]) => {
+        // Create a unique set of images to avoid duplicates
+        const uniqueImages = new Set();
+        const uniqueImagesArray = [];
+        
+        // Collect all unique images from all display categories
+        Object.entries(this.displayedImages).forEach(([displayCategory, images]) => {
             images.forEach(image => {
-                const galleryCard = this.createGalleryCard(image, image.category, category);
-                this.galleryContainer.appendChild(galleryCard);
-                this.galleryItems.push(galleryCard);
+                const imageKey = `${image.category}-${image.filename}`;
+                if (!uniqueImages.has(imageKey)) {
+                    uniqueImages.add(imageKey);
+                    uniqueImagesArray.push({
+                        ...image,
+                        displayCategories: [displayCategory] // Track which display categories this image belongs to
+                    });
+                } else {
+                    // Add this display category to existing image
+                    const existingImage = uniqueImagesArray.find(img => 
+                        img.category === image.category && img.filename === image.filename
+                    );
+                    if (existingImage) {
+                        existingImage.displayCategories.push(displayCategory);
+                    }
+                }
             });
         });
+        
+        // Create gallery cards only for unique images
+        uniqueImagesArray.forEach(image => {
+            const galleryCard = this.createGalleryCard(image, image.category, image.displayCategories);
+            this.galleryContainer.appendChild(galleryCard);
+            this.galleryItems.push(galleryCard);
+        });
+        
+        // Debug logging to track image counts
+        console.log(`🔄 Gallery Debug Info:`);
+        Object.entries(this.displayedImages).forEach(([category, images]) => {
+            console.log(`  - ${category}: ${images.length} images selected`);
+        });
+        console.log(`  - Total unique cards created: ${uniqueImagesArray.length}`);
         
         // Show initial filter (all)
         this.filterItems('all');
@@ -77,11 +108,11 @@ class GalleryFilter {
         return shuffled;
     }
 
-    createGalleryCard(image, category, displayCategory) {
+    createGalleryCard(image, category, displayCategories) {
         const card = document.createElement('div');
         card.className = 'gallery-card';
         card.setAttribute('data-category', category);
-        card.setAttribute('data-display-category', displayCategory);
+        card.setAttribute('data-display-categories', displayCategories.join(','));
         
         // Generate image path
         const resolvedPath = getAssetPath(`/assets/gallery/${category}/${image.filename}`, { addCacheBusting: true });
@@ -225,12 +256,15 @@ class GalleryFilter {
 
     filterItems(filter) {
         this.currentFilter = filter;
+        let visibleCount = 0;
+        
         this.galleryItems.forEach(item => {
-            const displayCategory = item.dataset.displayCategory;
-            const shouldShow = displayCategory === filter;
+            const displayCategories = item.dataset.displayCategories.split(',');
+            const shouldShow = displayCategories.includes(filter) && visibleCount < 10;
 
             if (shouldShow) {
                 item.style.display = 'block';
+                visibleCount++;
             } else {
                 item.style.display = 'none';
             }
@@ -241,7 +275,7 @@ class GalleryFilter {
             item && item.style.display === 'block'
         );
         
-        console.log(`🔄 SIMPLIFIED: Showing ${visibleItems.length} items for filter '${filter}'`);
+        console.log(`🔄 Gallery Filter '${filter}': Showing ${visibleItems.length} items (limit: 10)`);
         
         // No GSAP animations - images display immediately without transitions
     }
