@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Browser Compatibility Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .browser-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .support-test {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .status.supported { background: #d4edda; color: #155724; }
+        .status.not-supported { background: #f8d7da; color: #721c24; }
+        .status.unknown { background: #fff3cd; color: #856404; }
+        
+        .image-test {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .image-test img {
+            max-width: 200px;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+        }
+        
+        h1 { color: #2c2c2c; }
+        h2 { color: #555; border-bottom: 2px solid #ffd700; padding-bottom: 5px; }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌐 WebP Browser Compatibility Test</h1>
+
+    <div class="test-section">
+        <h2>🔍 Browser Information</h2>
+        <div class="browser-info" id="browser-info">Loading browser information...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 WebP Format Support Tests</h2>
+        
+        <div class="support-test">
+            <strong>JavaScript Detection:</strong>
+            <span id="js-webp-support" class="status unknown">Testing...</span>
+        </div>
+        
+        <div class="support-test">
+            <strong>Canvas Support:</strong>
+            <span id="canvas-webp-support" class="status unknown">Testing...</span>
+        </div>
+        
+        <div class="support-test">
+            <strong>CSS Background Support:</strong>
+            <span id="css-webp-support" class="status unknown">Testing...</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🖼️ Image Loading Tests</h2>
+        
+        <div class="image-test">
+            <h3>Test 1: Commercial Image</h3>
+            <p>Path: <code>/assets/gallery/commercial/advance-auto-parking-lot.webp</code></p>
+            <img id="test-img-1" src="/assets/gallery/commercial/advance-auto-parking-lot.webp" alt="Test commercial image">
+            <div id="test-1-status" class="status unknown">Loading...</div>
+        </div>
+        
+        <div class="image-test">
+            <h3>Test 2: Residential Image</h3>
+            <p>Path: <code>/assets/gallery/residential/custom-mansion-driveway.webp</code></p>
+            <img id="test-img-2" src="/assets/gallery/residential/custom-mansion-driveway.webp" alt="Test residential image">
+            <div id="test-2-status" class="status unknown">Loading...</div>
+        </div>
+        
+        <div class="image-test">
+            <h3>Test 3: Equipment Image</h3>
+            <p>Path: <code>/assets/gallery/equipment/leeboy-closeup.webp</code></p>
+            <img id="test-img-3" src="/assets/gallery/equipment/leeboy-closeup.webp" alt="Test equipment image">
+            <div id="test-3-status" class="status unknown">Loading...</div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📱 Network Information</h2>
+        <div id="network-info">Loading network information...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Test Results</h2>
+        <div class="results" id="test-results">
+            <p>Running tests...</p>
+        </div>
+    </div>
+
+    <script>
+        // Browser information
+        function updateBrowserInfo() {
+            const info = document.getElementById('browser-info');
+            const nav = navigator;
+            
+            info.innerHTML = `
+                <strong>Browser:</strong> ${nav.userAgent}<br>
+                <strong>Platform:</strong> ${nav.platform}<br>
+                <strong>Language:</strong> ${nav.language}<br>
+                <strong>Viewport:</strong> ${window.innerWidth}x${window.innerHeight}<br>
+                <strong>Screen:</strong> ${screen.width}x${screen.height}<br>
+                <strong>Color Depth:</strong> ${screen.colorDepth} bits<br>
+                <strong>Pixel Ratio:</strong> ${window.devicePixelRatio || 1}
+            `;
+        }
+
+        // Test WebP support using different methods
+        function testWebPSupport() {
+            // Method 1: JavaScript detection
+            const webp = new Image();
+            webp.onload = webp.onerror = function () {
+                const jsSupport = document.getElementById('js-webp-support');
+                if (webp.height == 2) {
+                    jsSupport.textContent = '✅ Supported';
+                    jsSupport.className = 'status supported';
+                } else {
+                    jsSupport.textContent = '❌ Not Supported';
+                    jsSupport.className = 'status not-supported';
+                }
+                updateResults();
+            };
+            webp.src = 'data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA';
+
+            // Method 2: Canvas support
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const canvasSupport = document.getElementById('canvas-webp-support');
+                
+                if (canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0) {
+                    canvasSupport.textContent = '✅ Supported';
+                    canvasSupport.className = 'status supported';
+                } else {
+                    canvasSupport.textContent = '❌ Not Supported';
+                    canvasSupport.className = 'status not-supported';
+                }
+            } catch (e) {
+                document.getElementById('canvas-webp-support').textContent = '❌ Error';
+                document.getElementById('canvas-webp-support').className = 'status not-supported';
+            }
+
+            // Method 3: CSS background test
+            const cssTest = document.createElement('div');
+            cssTest.style.backgroundImage = 'url("data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA")';
+            
+            setTimeout(() => {
+                const cssSupport = document.getElementById('css-webp-support');
+                if (cssTest.style.backgroundImage.indexOf('webp') !== -1) {
+                    cssSupport.textContent = '✅ Supported';
+                    cssSupport.className = 'status supported';
+                } else {
+                    cssSupport.textContent = '❌ Not Supported';
+                    cssSupport.className = 'status not-supported';
+                }
+                updateResults();
+            }, 100);
+        }
+
+        // Test image loading
+        function testImageLoading() {
+            const images = [
+                { id: 'test-img-1', statusId: 'test-1-status' },
+                { id: 'test-img-2', statusId: 'test-2-status' },
+                { id: 'test-img-3', statusId: 'test-3-status' }
+            ];
+
+            images.forEach(test => {
+                const img = document.getElementById(test.id);
+                const status = document.getElementById(test.statusId);
+
+                img.onload = function() {
+                    status.textContent = `✅ Loaded (${img.naturalWidth}x${img.naturalHeight})`;
+                    status.className = 'status supported';
+                    updateResults();
+                };
+
+                img.onerror = function() {
+                    status.textContent = '❌ Failed to load';
+                    status.className = 'status not-supported';
+                    updateResults();
+                };
+            });
+        }
+
+        // Network information
+        function updateNetworkInfo() {
+            const info = document.getElementById('network-info');
+            let networkInfo = '<strong>Connection Type:</strong> ';
+            
+            if ('connection' in navigator) {
+                const conn = navigator.connection;
+                networkInfo += `${conn.effectiveType || 'Unknown'}<br>`;
+                networkInfo += `<strong>Downlink:</strong> ${conn.downlink || 'Unknown'} Mbps<br>`;
+                networkInfo += `<strong>RTT:</strong> ${conn.rtt || 'Unknown'} ms<br>`;
+                networkInfo += `<strong>Save Data:</strong> ${conn.saveData ? 'Yes' : 'No'}`;
+            } else {
+                networkInfo += 'Not available';
+            }
+            
+            info.innerHTML = networkInfo;
+        }
+
+        // Update test results
+        let testResults = {
+            webpSupport: false,
+            imagesLoaded: 0,
+            imagesFailed: 0
+        };
+
+        function updateResults() {
+            const results = document.getElementById('test-results');
+            const total = 3; // Number of test images
+            const loaded = testResults.imagesLoaded;
+            const failed = testResults.imagesFailed;
+            
+            // Count successful tests
+            const webpSupportElements = document.querySelectorAll('#js-webp-support, #canvas-webp-support, #css-webp-support');
+            const supportedCount = Array.from(webpSupportElements).filter(el => 
+                el.textContent.includes('✅')).length;
+            
+            const imageStatusElements = document.querySelectorAll('[id$="-status"]');
+            const loadedImages = Array.from(imageStatusElements).filter(el => 
+                el.textContent.includes('✅')).length;
+            
+            results.innerHTML = `
+                <h3>📊 Summary</h3>
+                <p><strong>WebP Format Support:</strong> ${supportedCount}/3 tests passed</p>
+                <p><strong>Images Loaded Successfully:</strong> ${loadedImages}/3 images</p>
+                <p><strong>Overall Status:</strong> ${supportedCount > 0 && loadedImages > 0 ? 
+                    '✅ WebP images should work in this browser' : 
+                    '⚠️ WebP support may be limited'}</p>
+                
+                <h3>🔧 Troubleshooting</h3>
+                ${supportedCount === 0 ? 
+                    '<p>❌ <strong>WebP not supported:</strong> Consider providing JPEG/PNG fallbacks</p>' : 
+                    '<p>✅ WebP format is supported</p>'}
+                ${loadedImages === 0 ? 
+                    '<p>❌ <strong>Images not loading:</strong> Check server configuration and file paths</p>' : 
+                    '<p>✅ Images are loading correctly</p>'}
+                
+                <h3>💡 Recommendations</h3>
+                <ul>
+                    <li>WebP is supported by Chrome 32+, Firefox 65+, Safari 14+, Edge 18+</li>
+                    <li>Always provide fallback formats (JPEG/PNG) for older browsers</li>
+                    <li>Use the &lt;picture&gt; element for better compatibility</li>
+                    <li>Consider lazy loading for better performance</li>
+                </ul>
+            `;
+        }
+
+        // Initialize tests
+        updateBrowserInfo();
+        testWebPSupport();
+        testImageLoading();
+        updateNetworkInfo();
+        
+        // Log network requests
+        if ('PerformanceObserver' in window) {
+            const observer = new PerformanceObserver((list) => {
+                list.getEntries().forEach((entry) => {
+                    if (entry.name.includes('gallery')) {
+                        console.log(`🌐 Network request: ${entry.name}`);
+                        console.log(`⏱️ Duration: ${entry.duration.toFixed(2)}ms`);
+                        console.log(`📏 Transfer size: ${entry.transferSize || 'Unknown'} bytes`);
+                    }
+                });
+            });
+            observer.observe({ entryTypes: ['resource'] });
+        }
+
+        console.log('🔍 WebP Browser Compatibility Test initialized');
+        console.log('📊 Open Network tab to monitor HTTP requests');
+    </script>
+</body>
+</html>
