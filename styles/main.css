@@ -2191,12 +2191,14 @@ h6 {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     gap: var(--spacing-xl);
     margin-bottom: var(--spacing-3xl);
-    max-width: 1400px;
+    max-width: 90vw;
+    width: 80%;
     margin-left: auto;
     margin-right: auto;
+    padding: 0 var(--spacing-lg);
 }
 
 .gallery-item {
@@ -2219,7 +2221,7 @@ h6 {
 
 .gallery-image img {
     width: 100%;
-    height: 250px;
+    height: 320px;
     object-fit: cover;
     transition: var(--transition);
 }
@@ -5068,6 +5070,11 @@ img[src]:not([src=""]) ~ *::before {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xxl);
     align-items: start;
+    max-width: 90vw;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 var(--spacing-lg);
 }
 
 .gallery.hidden {
@@ -5076,8 +5083,8 @@ img[src]:not([src=""]) ~ *::before {
 
 .gallery .image {
     flex: 0 0 calc(50% - var(--spacing-lg));
-    max-width: 525px;
-    height: 375px;
+    max-width: none;
+    height: 420px;
     border-radius: var(--border-radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -5162,6 +5169,8 @@ img[src]:not([src=""]) ~ *::before {
         grid-template-columns: 1fr;
         gap: var(--spacing-lg);
         padding: 0 var(--spacing-sm);
+        width: 95%;
+        max-width: 95vw;
     }
     
     /* Gallery items - better mobile spacing */
@@ -5172,14 +5181,14 @@ img[src]:not([src=""]) ~ *::before {
     
     /* Mobile-optimized gallery images */
     .gallery-image img {
-        height: 220px;
+        height: 280px;
         object-fit: cover;
     }
     
     .gallery .image {
         flex: 0 0 calc(100% - var(--spacing-md));
         max-width: none;
-        height: 220px;
+        height: 280px;
         margin-bottom: var(--spacing-lg);
     }
     
