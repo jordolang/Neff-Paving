@@ -4,7 +4,7 @@ import { copyFileSync, mkdirSync, readdirSync, statSync, existsSync } from 'fs'
 import { join } from 'path'
 
 export default defineConfig(({ mode }) => {
-    // Dynamic base URL configuration
+    // Dynamic base URL configuration for Birkhimer Asphalt
     const getBaseUrl = () => {
         // Detect Vercel environment more reliably
         if (mode === 'vercel' || process.env.VERCEL === '1' || process.env.VERCEL_ENV || process.env.VERCEL_URL) {

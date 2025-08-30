@@ -4,7 +4,8 @@ import { writeFile, mkdir } from 'fs/promises'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
+const __filename = fileURLToPath(
+    import.meta.url)
 const __dirname = dirname(__filename)
 
 const projectRoot = join(__dirname, '..')
@@ -12,57 +13,56 @@ const publicDir = join(projectRoot, 'dist') // Output directory
 
 // Site configuration
 const siteConfig = {
-  baseUrl: 'https://neff-paving.com', // Replace with actual domain
-  defaultChangeFreq: 'monthly',
-  defaultPriority: '0.7'
+    baseUrl: 'https://birkhimer-asphalt.com', // Replace with actual domain
+    defaultChangeFreq: 'monthly',
+    defaultPriority: '0.7'
 }
 
 // Pages configuration
-const pages = [
-  {
-    url: '/',
-    changeFreq: 'weekly',
-    priority: '1.0',
-    lastMod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/#services',
-    changeFreq: 'monthly',
-    priority: '0.9',
-    lastMod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/#gallery',
-    changeFreq: 'weekly',
-    priority: '0.8',
-    lastMod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/#about',
-    changeFreq: 'monthly',
-    priority: '0.6',
-    lastMod: new Date().toISOString().split('T')[0]
-  },
-  {
-    url: '/#contact',
-    changeFreq: 'monthly',
-    priority: '0.8',
-    lastMod: new Date().toISOString().split('T')[0]
-  }
+const pages = [{
+        url: '/',
+        changeFreq: 'weekly',
+        priority: '1.0',
+        lastMod: new Date().toISOString().split('T')[0]
+    },
+    {
+        url: '/#services',
+        changeFreq: 'monthly',
+        priority: '0.9',
+        lastMod: new Date().toISOString().split('T')[0]
+    },
+    {
+        url: '/#gallery',
+        changeFreq: 'weekly',
+        priority: '0.8',
+        lastMod: new Date().toISOString().split('T')[0]
+    },
+    {
+        url: '/#about',
+        changeFreq: 'monthly',
+        priority: '0.6',
+        lastMod: new Date().toISOString().split('T')[0]
+    },
+    {
+        url: '/#contact',
+        changeFreq: 'monthly',
+        priority: '0.8',
+        lastMod: new Date().toISOString().split('T')[0]
+    }
 ]
 
 async function ensureDir(dirPath) {
-  try {
-    await mkdir(dirPath, { recursive: true })
-  } catch (error) {
-    if (error.code !== 'EEXIST') {
-      throw error
+    try {
+        await mkdir(dirPath, { recursive: true })
+    } catch (error) {
+        if (error.code !== 'EEXIST') {
+            throw error
+        }
     }
-  }
 }
 
 function generateXMLSitemap(pages) {
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
@@ -176,7 +176,7 @@ function generateStructuredData() {
         "description": "Professional paving contractor specializing in residential driveways, commercial parking lots, and maintenance services.",
         "priceRange": "$$",
         "telephone": "+1-555-123-7283",
-        "email": "info@neff-paving.com",
+        "email": "info@birkhimer-asphalt.com",
         "url": siteConfig.baseUrl,
         "address": {
           "@type": "PostalAddress", 
@@ -389,7 +389,7 @@ function generateMetaTags() {
 <meta name="business:contact_data:postal_code" content="12345">
 <meta name="business:contact_data:country_name" content="United States">
 <meta name="business:contact_data:phone_number" content="+1-555-123-7283">
-<meta name="business:contact_data:email" content="info@neff-paving.com">
+<meta name="business:contact_data:email" content="info@birkhimer-asphalt.com">
 
 <!-- Theme Color -->
 <meta name="theme-color" content="#2C2C2C">
