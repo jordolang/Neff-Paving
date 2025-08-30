@@ -169,4 +169,3 @@ This project is licensed under the ISC License.
 ## Support
 
 For support and questions, please open an issue in the repository.
-# Birkhimer-Asphalt
