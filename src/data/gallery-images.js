@@ -1,133 +1,43 @@
-// Gallery images data - Auto-generated from actual image files
+// Gallery images data - Updated to use projects folder
 export const galleryImages = {
-  commercial: [
-    { filename: 'advance-auto-parking-lot-2.webp', title: 'Advance Auto Parking Lot 2', alt: 'Commercial parking lot paving for Advance Auto Parts' },
-    { filename: 'advance-auto-parking-lot-3.webp', title: 'Advance Auto Parking Lot 3', alt: 'Commercial parking lot paving for Advance Auto Parts' },
-    { filename: 'advance-auto-parking-lot.webp', title: 'Advance Auto Parking Lot', alt: 'Commercial parking lot paving for Advance Auto Parts' },
-    { filename: 'amg.webp', title: 'AMG Commercial Project', alt: 'Commercial paving project for AMG facility' },
-    { filename: 'apartment-complex-2.webp', title: 'Apartment Complex 2', alt: 'Apartment complex parking lot paving project' },
-    { filename: 'apartment-complex-3.webp', title: 'Apartment Complex 3', alt: 'Apartment complex parking lot paving project' },
-    { filename: 'apartment-complex-4.webp', title: 'Apartment Complex 4', alt: 'Apartment complex parking lot paving project' },
-    { filename: 'apartment-complex.webp', title: 'Apartment Complex', alt: 'Apartment complex parking lot paving project' },
-    { filename: 'apartments-garages-parking-lot-2.webp', title: 'Apartments Garages Parking Lot 2', alt: 'Parking lot paving for apartments with garages' },
-    { filename: 'apartments-garages-parking-lot-3-leeboy.webp', title: 'Apartments Garages Parking Lot with Leeboy', alt: 'Apartment parking lot paving with Leeboy equipment' },
-    { filename: 'apartments-garages-parking-lot.webp', title: 'Apartments Garages Parking Lot', alt: 'Parking lot paving for apartments with garages' },
-    { filename: 'asphalt-around-garage.webp', title: 'Asphalt Around Garage', alt: 'Asphalt paving work around commercial garage' },
-    { filename: 'before-after-riesebecks.webp', title: 'Before After Riesbecks', alt: 'Before and after comparison of Riesbecks parking lot' },
-    { filename: 'before-apartment-wreck.webp', title: 'Before Apartment Reconstruction', alt: 'Apartment parking lot before reconstruction work' },
-    { filename: 'behind-overhang-parking-lot.webp', title: 'Behind Overhang Parking Lot', alt: 'Parking lot paving behind building overhang' },
-    { filename: 'church-parking-lot-2.webp', title: 'Church Parking Lot 2', alt: 'Church parking lot paving project' },
-    { filename: 'church-parking-lot.webp', title: 'Church Parking Lot', alt: 'Church parking lot paving project' },
-    { filename: 'cinemark-colony-square.webp', title: 'Cinemark Colony Square', alt: 'Parking lot paving for Cinemark Colony Square theater' },
-    { filename: 'commercial-parking-lot-apartments-church.webp', title: 'Commercial Parking Lot Apartments Church', alt: 'Combined commercial parking lot for apartments and church' },
-    { filename: 'downtown-st-james-2.webp', title: 'Downtown St James 2', alt: 'Downtown St. James street paving project' },
-    { filename: 'downtown-st-james-stripped.webp', title: 'Downtown St James Stripped', alt: 'Downtown St. James with fresh line striping' },
-    { filename: 'downtown-st-james.webp', title: 'Downtown St James', alt: 'Downtown St. James street paving project' },
-    { filename: 'east-pike-shopping-center.webp', title: 'East Pike Shopping Center', alt: 'East Pike Shopping Center parking lot paving' },
-    { filename: 'five-below-2.webp', title: 'Five Below 2', alt: 'Five Below store parking lot paving project' },
-    { filename: 'five-below.webp', title: 'Five Below', alt: 'Five Below store parking lot paving project' },
-    { filename: 'florist.webp', title: 'Florist', alt: 'Florist shop parking lot paving project' },
-    { filename: 'formal-affairs.webp', title: 'Formal Affairs', alt: 'Formal Affairs business parking lot paving' },
-    { filename: 'garage-apartments-parking-lot.webp', title: 'Garage Apartments Parking Lot', alt: 'Parking lot for apartment garages' },
-    { filename: 'hamilton-waltman-melsheimer-2.webp', title: 'Hamilton Waltman Melsheimer 2', alt: 'Hamilton Waltman Melsheimer commercial paving project' },
-    { filename: 'hamilton-waltman-melsheimer-3.webp', title: 'Hamilton Waltman Melsheimer 3', alt: 'Hamilton Waltman Melsheimer commercial paving project' },
-    { filename: 'hamilton-waltman-melsheimer-4.webp', title: 'Hamilton Waltman Melsheimer 4', alt: 'Hamilton Waltman Melsheimer commercial paving project' },
-    { filename: 'hamilton-waltman-melsheimer-5.webp', title: 'Hamilton Waltman Melsheimer 5', alt: 'Hamilton Waltman Melsheimer commercial paving project' },
-    { filename: 'hamilton-waltman-melsheimer.webp', title: 'Hamilton Waltman Melsheimer', alt: 'Hamilton Waltman Melsheimer commercial paving project' },
-    { filename: 'holiday-inn-express-2.webp', title: 'Holiday Inn Express 2', alt: 'Holiday Inn Express parking lot paving project' },
-    { filename: 'holiday-inn-express.webp', title: 'Holiday Inn Express', alt: 'Holiday Inn Express parking lot paving project' },
-    { filename: 'large-open-parking-lot.webp', title: 'Large Open Parking Lot', alt: 'Large open commercial parking lot paving' },
-    { filename: 'leeboy-colony-square-mall.webp', title: 'Leeboy Colony Square Mall', alt: 'Colony Square Mall paving with Leeboy equipment' },
-    { filename: 'leeboy-condos.webp', title: 'Leeboy Condos', alt: 'Condominium parking lot paving with Leeboy equipment' },
-    { filename: 'leeboy-overhang.webp', title: 'Leeboy Overhang', alt: 'Paving work under overhang with Leeboy equipment' },
-    { filename: 'leeboy-riesbecks.webp', title: 'Leeboy Riesbecks', alt: 'Riesbecks parking lot paving with Leeboy equipment' },
-    { filename: 'leeboy-trailer-park.webp', title: 'Leeboy Trailer Park', alt: 'Trailer park paving with Leeboy equipment' },
-    { filename: 'lined-parking-lot.webp', title: 'Lined Parking Lot', alt: 'Commercial parking lot with fresh line striping' },
-    { filename: 'military-apartments-parking-lot.webp', title: 'Military Apartments Parking Lot', alt: 'Military apartments parking lot paving project' },
-    { filename: 'open-parking-area-behind-apartments.webp', title: 'Open Parking Area Behind Apartments', alt: 'Open parking area behind apartment complex' },
-    { filename: 'open-parking-lot-2.webp', title: 'Open Parking Lot 2', alt: 'Open commercial parking lot paving project' },
-    { filename: 'open-parking-lot-3.webp', title: 'Open Parking Lot 3', alt: 'Open commercial parking lot paving project' },
-    { filename: 'open-parking-lot-4.webp', title: 'Open Parking Lot 4', alt: 'Open commercial parking lot paving project' },
-    { filename: 'open-parking-lot.webp', title: 'Open Parking Lot', alt: 'Open commercial parking lot paving project' },
-    { filename: 'parking-lot-paved-wooded-area.webp', title: 'Parking Lot Paved Wooded Area', alt: 'Parking lot paving in wooded area' },
-    { filename: 'parking-lot.webp', title: 'Parking Lot', alt: 'Commercial parking lot paving project' },
-    { filename: 'paved-strip-mall.webp', title: 'Paved Strip Mall', alt: 'Strip mall parking lot paving project' },
-    { filename: 'paver-parking-lot.webp', title: 'Paver Parking Lot', alt: 'Commercial parking lot with paver work' },
-    { filename: 'private-road-apartments.webp', title: 'Private Road Apartments', alt: 'Private road paving for apartment complex' },
-    { filename: 'reisbecks-parking-lot-5.webp', title: 'Riesbecks Parking Lot 5', alt: 'Riesbecks store parking lot paving project' },
-    { filename: 'reisebecks-parking-lot-2.webp', title: 'Riesbecks Parking Lot 2', alt: 'Riesbecks store parking lot paving project' },
-    { filename: 'reisebecks-parking-lot-3.webp', title: 'Riesbecks Parking Lot 3', alt: 'Riesbecks store parking lot paving project' },
-    { filename: 'reisebecks-parking-lot-4.webp', title: 'Riesbecks Parking Lot 4', alt: 'Riesbecks store parking lot paving project' },
-    { filename: 'reisebecks-parking-lot.webp', title: 'Riesbecks Parking Lot', alt: 'Riesbecks store parking lot paving project' },
-    { filename: 'roller-dump-workers-working.webp', title: 'Roller Dump Workers Working', alt: 'Workers operating roller and dump equipment' },
-    { filename: 'roller-open-parking-lot.webp', title: 'Roller Open Parking Lot', alt: 'Open parking lot paving with roller equipment' },
-    { filename: 'roller-parking-lot.webp', title: 'Roller Parking Lot', alt: 'Parking lot paving with roller equipment' },
-    { filename: 'rolller-private-road.webp', title: 'Roller Private Road', alt: 'Private road paving with roller equipment' },
-    { filename: 'roseville-drive-thru-parking-lot-2.webp', title: 'Roseville Drive Thru Parking Lot 2', alt: 'Roseville drive-thru parking lot paving' },
-    { filename: 'roseville-drive-thru-parking-lot-e.webp', title: 'Roseville Drive Thru Parking Lot E', alt: 'Roseville drive-thru parking lot paving' },
-    { filename: 'roseville-drive-thru-parking-lot.webp', title: 'Roseville Drive Thru Parking Lot', alt: 'Roseville drive-thru parking lot paving' },
-    { filename: 'school-0-ring.webp', title: 'School O Ring', alt: 'School property paving with circular design' },
-    { filename: 'school-entryway.webp', title: 'School Entryway', alt: 'School entryway paving project' },
-    { filename: 'steamy-parking-lot.webp', title: 'Steamy Parking Lot', alt: 'Parking lot with steam from fresh asphalt' },
-    { filename: 'the-barn-after.webp', title: 'The Barn After', alt: 'The Barn parking lot after paving completion' },
-    { filename: 'the-barn-before.webp', title: 'The Barn Before', alt: 'The Barn parking lot before paving work' },
-    { filename: 'the-barn-parking-lot.webp', title: 'The Barn Parking Lot', alt: 'The Barn parking lot paving project' },
-    { filename: 'wilsons.webp', title: 'Wilsons', alt: 'Wilsons business parking lot paving project' },
-    { filename: 'workers-not-working-more.webp', title: 'Workers Not Working More', alt: 'Construction workers taking a break' },
-    { filename: 'workers-not-working.webp', title: 'Workers Not Working', alt: 'Construction workers taking a break' },
-    { filename: 'workers-working-overhang.webp', title: 'Workers Working Overhang', alt: 'Workers paving under building overhang' }
-  ],
-  residential: [
-    { filename: 'asphalt-driveway-barn.webp', title: 'Asphalt Driveway Barn', alt: 'Residential driveway leading to barn' },
-    { filename: 'asphalt-driveway-turnaround-2.webp', title: 'Asphalt Driveway Turnaround 2', alt: 'Residential driveway with turnaround area' },
-    { filename: 'asphalt-driveway-turnaround.webp', title: 'Asphalt Driveway Turnaround', alt: 'Residential driveway with turnaround area' },
-    { filename: 'austins-truck-college.webp', title: 'Austins Truck College', alt: 'Driveway for Austins Truck College' },
-    { filename: 'bungalow-driveway.webp', title: 'Bungalow Driveway', alt: 'Charming bungalow house driveway' },
-    { filename: 'cart-path-to-landing.webp', title: 'Cart Path To Landing', alt: 'Cart path leading to landing area' },
-    { filename: 'clearing-driveway.webp', title: 'Clearing Driveway', alt: 'Driveway through cleared wooded area' },
-    { filename: 'custom-mansion-driveway-2.webp', title: 'Custom Mansion Driveway 2', alt: 'Luxury mansion custom driveway design' },
-    { filename: 'custom-mansion-driveway-3.webp', title: 'Custom Mansion Driveway 3', alt: 'Luxury mansion custom driveway design' },
-    { filename: 'custom-mansion-driveway-4.webp', title: 'Custom Mansion Driveway 4', alt: 'Luxury mansion custom driveway design' },
-    { filename: 'custom-mansion-driveway.webp', title: 'Custom Mansion Driveway', alt: 'Luxury mansion custom driveway design' },
-    { filename: 'driveway-garage-door.webp', title: 'Driveway Garage Door', alt: 'Residential driveway leading to garage' },
-    { filename: 'driveway-turnaround-area-2.webp', title: 'Driveway Turnaround Area 2', alt: 'Residential driveway turnaround area' },
-    { filename: 'driveway-turnaround-area.webp', title: 'Driveway Turnaround Area', alt: 'Residential driveway turnaround area' },
-    { filename: 'flagpole-driveway-country-2.webp', title: 'Flagpole Driveway Country 2', alt: 'Country driveway with flagpole' },
-    { filename: 'flagpole-driveway-country.webp', title: 'Flagpole Driveway Country', alt: 'Country driveway with flagpole' },
-    { filename: 'long-driveway-bridge.webp', title: 'Long Driveway Bridge', alt: 'Long residential driveway with bridge' },
-    { filename: 'long-driveway-to-road.webp', title: 'Long Driveway To Road', alt: 'Long residential driveway connecting to road' },
-    { filename: 'open-basketball-court.webp', title: 'Open Basketball Court', alt: 'Residential basketball court paving' },
-    { filename: 'pond-asphalt-driveway.webp', title: 'Pond Asphalt Driveway', alt: 'Asphalt driveway near pond' },
-    { filename: 'roller-residential-driveway.webp', title: 'Roller Residential Driveway', alt: 'Residential driveway with roller equipment' },
-    { filename: 'stone-lined-paved-driveway-2.webp', title: 'Stone Lined Paved Driveway 2', alt: 'Paved driveway with decorative stone lining' },
-    { filename: 'stone-lined-paved-driveway.webp', title: 'Stone Lined Paved Driveway', alt: 'Paved driveway with decorative stone lining' }
-  ],
-  equipment: [
-    { filename: 'leeboy-closeup.webp', title: 'Leeboy Closeup', alt: 'Close-up view of Leeboy paving equipment' },
-    { filename: 'leeboy-dropping-tar.webp', title: 'Leeboy Dropping Tar', alt: 'Leeboy equipment applying tar/asphalt' },
-    { filename: 'leeboy-top-down.webp', title: 'Leeboy Top Down', alt: 'Top-down view of Leeboy paving equipment' },
-    { filename: 'loading-leeboy-2.webp', title: 'Loading Leeboy 2', alt: 'Loading Leeboy paving equipment' },
-    { filename: 'loading-leeboy.webp', title: 'Loading Leeboy', alt: 'Loading Leeboy paving equipment' }
-  ],
-  concrete: [
-    { filename: 'concrete-pad.webp', title: 'Concrete Pad', alt: 'Concrete pad installation project' },
-    { filename: 'convenience-store.webp', title: 'Convenience Store', alt: 'Concrete work at convenience store' },
-    { filename: 'manhole-cover.webp', title: 'Manhole Cover', alt: 'Concrete manhole cover installation' },
-    { filename: 'square-drain-cover.webp', title: 'Square Drain Cover', alt: 'Square concrete drain cover installation' }
-  ]
+    commercial: [
+        { filename: 'commercial-project-1.jpg', title: 'Commercial Project 1', alt: 'Commercial paving project showcasing quality workmanship' },
+        { filename: 'commercial-project-2.jpg', title: 'Commercial Project 2', alt: 'Commercial paving project with professional finish' },
+        { filename: 'commercial-project-3.jpg', title: 'Commercial Project 3', alt: 'Commercial paving project demonstrating expertise' },
+        { filename: 'commercial-project-4.jpg', title: 'Commercial Project 4', alt: 'Commercial paving project with attention to detail' }
+    ],
+    residential: [
+        { filename: 'residential-driveway-1.jpg', title: 'Residential Driveway 1', alt: 'Beautiful residential driveway installation' },
+        { filename: 'residential-driveway-2.jpg', title: 'Residential Driveway 2', alt: 'Quality residential driveway paving' },
+        { filename: 'residential-driveway-3.jpg', title: 'Residential Driveway 3', alt: 'Professional residential driveway work' },
+        { filename: 'residential-driveway-3.webp', title: 'Residential Driveway 3 WebP', alt: 'Professional residential driveway work (WebP format)' },
+        { filename: 'residential-driveway-4.jpg', title: 'Residential Driveway 4', alt: 'Custom residential driveway design' },
+        { filename: 'residential-driveway-5.jpg', title: 'Residential Driveway 5', alt: 'Premium residential driveway installation' },
+        { filename: 'residential-driveway-6.jpg', title: 'Residential Driveway 6', alt: 'Expert residential driveway paving' },
+        { filename: 'residential-driveway-7.jpg', title: 'Residential Driveway 7', alt: 'High-quality residential driveway work' },
+        { filename: 'residential-driveway-8.webp', title: 'Residential Driveway 8 WebP', alt: 'High-quality residential driveway work (WebP format)' },
+        { filename: 'residential-driveway-9.jpg', title: 'Residential Driveway 9', alt: 'Outstanding residential driveway project' }
+    ],
+    equipment: [
+        { filename: 'leeboy-1.jpg', title: 'Leeboy Equipment', alt: 'Professional Leeboy paving equipment in action' }
+    ],
+    concrete: [
+        // Note: No concrete images in projects folder currently
+        // This category will be empty until concrete project images are added
+    ]
 };
 
 // Helper function to get all images as a flat array
 export function getAllGalleryImages() {
-  const allImages = [];
-  Object.entries(galleryImages).forEach(([category, images]) => {
-    images.forEach(image => {
-      allImages.push({
-        ...image,
-        category,
-        path: `/assets/gallery/${category}/${image.filename}`
-      });
+    const allImages = [];
+    Object.entries(galleryImages).forEach(([category, images]) => {
+        images.forEach(image => {
+            allImages.push({
+                ...image,
+                category,
+                path: `/assets/images/projects/${image.filename}`
+            });
+        });
     });
-  });
-  return allImages;
+    return allImages;
 }
