@@ -9,24 +9,24 @@ import 'aos/dist/aos.css'
 import GalleryFilter from './components/gallery-filter.js';
 
 // Simple application class
-class BirkhimerAsphaltApp {
+class NeffPavingApp {
     constructor() {
         this.galleryFilter = null;
         this.init();
     }
 
     init() {
-        console.log('Initializing Birkhimer Asphalt App...');
-
+        console.log('Initializing Neff Paving App...');
+        
         // Initialize hero video
         this.initHeroVideo()
-
+        
         // Initialize animations
         this.initAnimations()
-
+        
         // Initialize navigation
         this.initNavigation()
-
+        
         // Initialize gallery (CRITICAL for gallery functionality)
         try {
             this.initGalleryFilters()
@@ -34,8 +34,8 @@ class BirkhimerAsphaltApp {
         } catch (error) {
             console.error('Gallery initialization failed:', error)
         }
-
-        console.log('Birkhimer Asphalt app initialized successfully')
+        
+        console.log('Neff Paving app initialized successfully')
     }
 
     initHeroVideo() {
@@ -69,11 +69,11 @@ class BirkhimerAsphaltApp {
             once: true,
             offset: 100
         });
-
+        
         // Remove any loading states immediately
         this.removeLoadingStates();
     }
-
+    
     removeLoadingStates() {
         // Force immediate display of all content - no loading screens or spinners
         const style = document.createElement('style');
@@ -126,14 +126,14 @@ class BirkhimerAsphaltApp {
             }
         `;
         document.head.appendChild(style);
-
+        
         console.log('✅ Loading states removed - content displays immediately');
     }
 
     initNavigation() {
         // Smooth scrolling for navigation links
         document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+            anchor.addEventListener('click', function (e) {
                 e.preventDefault()
                 const target = document.querySelector(this.getAttribute('href'))
                 if (target) {
@@ -145,7 +145,7 @@ class BirkhimerAsphaltApp {
             })
         })
     }
-
+    
     initGalleryFilters() {
         const galleryElement = document.getElementById('gallery');
         if (galleryElement) {
@@ -157,11 +157,11 @@ class BirkhimerAsphaltApp {
 // Initialize the app when DOM is loaded
 function initializeApp() {
     try {
-        console.log('Starting BirkhimerAsphaltApp initialization...');
-        new BirkhimerAsphaltApp();
-        console.log('BirkhimerAsphaltApp initialized successfully');
+        console.log('Starting NeffPavingApp initialization...');
+        new NeffPavingApp();
+        console.log('NeffPavingApp initialized successfully');
     } catch (error) {
-        console.error('Failed to initialize BirkhimerAsphaltApp:', error);
+        console.error('Failed to initialize NeffPavingApp:', error);
     }
 }
 
