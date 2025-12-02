@@ -1580,12 +1580,13 @@
         <div class="chat-bubble">Connect via Facebook Messenger!</div>
     </div>
 
+    <!-- Load Configuration (API keys, etc.) -->
+    <script src="config-loader.js"></script>
+
     <!-- Google Maps API Script -->
     <script>
-        // Google Maps initialization - DISABLED to prevent blocking main app
+        // Google Maps initialization
         function initGoogleMap() {
-            // This function is commented out to prevent Google Maps errors from blocking the gallery
-            /*
             const mapElement = document.getElementById('office-google-map');
             if (!mapElement) return;
 
@@ -1680,10 +1681,6 @@
 
             // Remove loading state
             mapElement.classList.remove('loading');
-            */
-            
-            // Use fallback immediately instead of trying to load Google Maps
-            createMapFallback();
         }
 
         // Facebook chat integration
@@ -1716,12 +1713,21 @@
                 return;
             }
 
+            // Get the API URL from config (with API key from environment)
+            const apiUrl = window.NeffPavingConfig.getGoogleMapsUrl([], 'initGoogleMap');
+
+            if (!apiUrl) {
+                console.log('Google Maps API key not configured. Using fallback.');
+                createMapFallback();
+                return;
+            }
+
             const script = document.createElement('script');
-            script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk&callback=initGoogleMap';
+            script.src = apiUrl;
             script.async = true;
             script.defer = true;
 
-            // For demo purposes, we'll create a fallback if no API key
+            // Create a fallback if API fails to load
             script.onerror = function() {
                 console.log('Google Maps API failed to load. Using fallback.');
                 createMapFallback();
@@ -1754,11 +1760,13 @@
 
         // Initialize map when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // For demo purposes, use fallback immediately
-            createMapFallback();
-
-            // Uncomment the line below and add your Google Maps API key to enable real maps
-            // loadGoogleMapsAPI();
+            // Try to load Google Maps if API key is configured
+            if (window.NeffPavingConfig && window.NeffPavingConfig.hasGoogleMapsApiKey()) {
+                loadGoogleMapsAPI();
+            } else {
+                // Use fallback if no API key
+                createMapFallback();
+            }
         });
     </script>
 

@@ -10,6 +10,7 @@
     // The build process will inject the actual value here
 
     // Default configuration
+    // This placeholder will be replaced during the build process
     const config = {
         googleMapsApiKey: '%VITE_GOOGLE_MAPS_API_KEY%',
 
