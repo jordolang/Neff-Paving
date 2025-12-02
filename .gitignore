@@ -95,3 +95,9 @@ temp/
 .vercel
 
 .vercel
+
+# Environment files
+.env
+.env.*
+.nvmrc
+.nvmrc
