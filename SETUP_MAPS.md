@@ -105,11 +105,29 @@ The server also uses a Google Maps API key for screenshot generation. Update `se
 3. Restart the development server after creating `.env.local`
 4. Check that the API key has the necessary permissions in Google Cloud Console
 
+### Billing Account Errors
+
+**Error: "UserProjectAccountProblem - The project to be billed is associated with a closed billing account"**
+
+This means your Google Cloud billing account is closed or disabled. See `GOOGLE_MAPS_BILLING_FIX.md` for detailed instructions on:
+- Reactivating your billing account
+- Creating a new API key with active billing
+- Setting up a new Google Cloud project
+
+Quick fix: Create a new API key from a Google Cloud project with active billing, then update both `.env.local` and `dist/config-loader.js`
+
 ### Build Issues
 
 1. Ensure the build process replaces `%VITE_GOOGLE_MAPS_API_KEY%` placeholder
 2. Verify environment variables are set in your deployment platform
 3. Check that `config-loader.js` is being served correctly
+
+### Common Errors
+
+- **"RefererNotAllowedMapError"** - Add your domain to API key restrictions
+- **"ApiNotActivatedMapError"** - Enable Maps JavaScript API in Google Cloud Console
+- **"InvalidKeyMapError"** - Check that your API key is correct
+- **Fallback map displays** - API key not configured or not loaded properly
 
 ## Security Best Practices
 
