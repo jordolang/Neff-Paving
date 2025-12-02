@@ -4,6 +4,8 @@
     <title>Google Maps API Diagnostic</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Load Configuration -->
+    <script src="../config-loader.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -326,9 +328,22 @@
             }
         }, 5000);
     </script>
-    
-    <script async defer 
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk&libraries=drawing,geometry&callback=initMap">
+
+    <script>
+        // Load Google Maps API dynamically with API key from config
+        (function() {
+            const apiUrl = window.NeffPavingConfig.getGoogleMapsUrl(['drawing', 'geometry'], 'initMap');
+            if (apiUrl) {
+                const script = document.createElement('script');
+                script.src = apiUrl;
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            } else {
+                console.error('Google Maps API key not configured.');
+                addStatus('Google Maps API key not configured. Please set VITE_GOOGLE_MAPS_API_KEY in .env.local', 'error');
+            }
+        })();
     </script>
 </body>
 </html>
