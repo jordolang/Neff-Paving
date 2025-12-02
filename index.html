@@ -1407,10 +1407,102 @@
         <div class="locations-map-container">
             <h3>Our 2 Locations in Ohio</h3>
             <div class="locations-map-wrapper">
-                <iframe src="https://storage.googleapis.com/maps-solutions-ccm7qzpost/locator-plus/mjlp/locator-plus.html" width="100%" height="500" loading="lazy"></iframe>
+                <div id="locations-google-map" style="width: 100%; height: 500px;"></div>
             </div>
         </div>
     </section>
+
+    <script>
+        // Initialize locations map when Google Maps is loaded
+        function initLocationsMap() {
+            const locationsMapElement = document.getElementById('locations-google-map');
+            if (!locationsMapElement || typeof google === 'undefined' || !google.maps) return;
+
+            // Center point between the two locations
+            const map = new google.maps.Map(locationsMapElement, {
+                center: { lat: 39.953, lng: -82.465 }, // Midpoint between locations
+                zoom: 9,
+                mapTypeControl: true,
+                streetViewControl: true,
+                fullscreenControl: true
+            });
+
+            // Reynoldsburg Location
+            const reynoldsburgMarker = new google.maps.Marker({
+                position: { lat: 39.9568, lng: -82.8122 },
+                map: map,
+                title: 'Neff Paving - Reynoldsburg',
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="#FFD700">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    `),
+                    scaledSize: new google.maps.Size(40, 40)
+                }
+            });
+
+            const reynoldsburgInfo = new google.maps.InfoWindow({
+                content: `
+                    <div style="padding: 10px; font-family: Arial, sans-serif;">
+                        <h3 style="margin: 0 0 10px; color: #2C2C2C;">Neff Paving - Reynoldsburg</h3>
+                        <p style="margin: 5px 0; color: #6B6B6B;">📍 1847 Brice Road<br>Reynoldsburg, OH 43068</p>
+                        <p style="margin: 5px 0; color: #6B6B6B;">📞 (740) 453-3063</p>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=1847+Brice+Road,Reynoldsburg,OH+43068" target="_blank" style="color: #FFD700; text-decoration: none; font-weight: bold;">Get Directions</a>
+                    </div>
+                `
+            });
+
+            // Zanesville Location
+            const zanesvilleMarker = new google.maps.Marker({
+                position: { lat: 39.9400, lng: -82.0130 },
+                map: map,
+                title: 'Neff Paving - Zanesville',
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="#FFD700">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    `),
+                    scaledSize: new google.maps.Size(40, 40)
+                }
+            });
+
+            const zanesvilleInfo = new google.maps.InfoWindow({
+                content: `
+                    <div style="padding: 10px; font-family: Arial, sans-serif;">
+                        <h3 style="margin: 0 0 10px; color: #2C2C2C;">Neff Paving - Zanesville</h3>
+                        <p style="margin: 5px 0; color: #6B6B6B;">📍 Zanesville, OH</p>
+                        <p style="margin: 5px 0; color: #6B6B6B;">📞 (740) 453-3063</p>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=Zanesville,OH" target="_blank" style="color: #FFD700; text-decoration: none; font-weight: bold;">Get Directions</a>
+                    </div>
+                `
+            });
+
+            reynoldsburgMarker.addListener('click', () => {
+                zanesvilleInfo.close();
+                reynoldsburgInfo.open(map, reynoldsburgMarker);
+            });
+
+            zanesvilleMarker.addListener('click', () => {
+                reynoldsburgInfo.close();
+                zanesvilleInfo.open(map, zanesvilleMarker);
+            });
+
+            // Open Reynoldsburg info by default
+            reynoldsburgInfo.open(map, reynoldsburgMarker);
+        }
+
+        // Call initLocationsMap when Google Maps is ready
+        if (typeof google !== 'undefined' && google.maps) {
+            initLocationsMap();
+        } else {
+            // Wait for Google Maps to load
+            window.addEventListener('load', function() {
+                setTimeout(initLocationsMap, 1000);
+            });
+        }
+    </script>
 
     <!-- Contact Section -->
     <section id="contact">
