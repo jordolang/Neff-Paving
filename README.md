@@ -2,7 +2,7 @@
 <!-- Deployment trigger -->
 
 A modern, responsive website for a paving company featuring video showcases, smooth animations, and professional design.
-
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/jordolang/Neff-Paving?utm_source=oss&utm_medium=github&utm_campaign=jordolang%2FNeff-Paving&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 ## Features
 
 - 🎥 **Video Integration**: Advanced video players with HLS support
