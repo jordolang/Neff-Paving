@@ -1,6 +1,6 @@
 // Google Maps Configuration - DISABLED for production builds
 export const GOOGLE_MAPS_CONFIG = {
-    apiKey: 'AIzaSyA7VWDFVhPwWzWrkLxQQ1bktzQvikLoDXk', // Disabled for now
+    apiKey: 'AIzaSyBCYwtKcLHd3_MOjJPYN1hNU_2-KtZIyAE', // Disabled for now
     version: 'weekly',
     libraries: ['drawing', 'geometry', 'places'],
     region: 'US',
