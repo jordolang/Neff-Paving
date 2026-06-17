@@ -21,11 +21,18 @@ GitHub Action (daily, 09:00 UTC)  ──►  scripts/fetch-facebook-album.js
             │                              • write assets/gallery/facebook/
             │                              • regenerate src/data/facebook-images.js
             ▼
-Commit to main  ──►  Vercel auto-deploys + GitHub Pages re-deploys
+Auto-commit straight to main (admin PAT bypasses branch protection)
+            │
+            ▼
+Push → Vercel auto-deploys + GitHub Pages re-deploys
             │
             ▼
 Gallery shows a "Latest" filter populated from the album
 ```
+
+> **Fully automatic — no PR, no merge.** `main` is protected, so the job pushes
+> using an admin Personal Access Token (`GALLERY_SYNC_TOKEN`) that's allowed to
+> bypass the protection. New photos publish on their own within ~24h.
 
 | Piece | File |
 |---|---|
@@ -83,12 +90,19 @@ In the repo: **Settings → Secrets and variables → Actions → New repository
 | Secret | Value |
 |---|---|
 | `FB_PAGE_TOKEN` | the long-lived Page token from step 3 (**required**) |
+| `GALLERY_SYNC_TOKEN` | an admin PAT so the job can auto-push to protected `main` (**required**) |
 | `FB_ALBUM_ID` | only if the album ID differs from the default (optional) |
+
+**Creating `GALLERY_SYNC_TOKEN`:** <https://github.com/settings/tokens> →
+**Generate new token (classic)** → scope **`repo`** → generate → copy → save it as
+the secret above. (As a repo admin, this token is allowed to bypass branch
+protection, so the daily sync can commit straight to `main`.)
 
 ### 6. Test it
 - **Actions** tab → **Sync Facebook Album to Gallery** → **Run workflow**.
-- It should download the album's photo(s), commit them, and trigger a deploy.
-- Check the gallery — a **"Latest"** filter button appears once at least one photo syncs.
+- It downloads the album's photo(s), commits straight to `main`, and triggers a
+  deploy — no PR, no merge needed.
+- The **"Latest"** gallery filter appears once at least one photo is live.
 
 ---
 

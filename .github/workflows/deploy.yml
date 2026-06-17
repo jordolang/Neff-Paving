@@ -2,16 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]   # also fires when a Facebook-sync PR is merged → publishes new photos
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-  # Re-deploy after the daily Facebook album sync commits new photos.
-  # (Commits pushed by the sync job's token don't re-fire the push event,
-  #  so we chain the deploy off the sync workflow completing instead.)
-  workflow_run:
-    workflows: ["Sync Facebook Album to Gallery"]
-    types: [completed]
 
 jobs:
   build-and-deploy:

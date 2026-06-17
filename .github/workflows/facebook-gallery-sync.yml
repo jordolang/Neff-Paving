@@ -1,15 +1,17 @@
 name: Sync Facebook Album to Gallery
 
-# Pulls new photos from the "Website Feed" Facebook album into the site gallery.
-# Runs daily so the owner can post from his phone and have photos appear within 24h.
+# Pulls new photos from the "Website Feed" Facebook album into the site gallery,
+# then pushes straight to main so the change publishes automatically — no PR, no
+# manual merge. main is a protected branch, so this uses an admin Personal Access
+# Token (secret GALLERY_SYNC_TOKEN) which is allowed to bypass the protection.
 
 on:
   schedule:
     - cron: '0 9 * * *'   # 09:00 UTC daily (~4-5 AM Eastern)
-  workflow_dispatch:        # allow manual "Run workflow" from the Actions tab
+  workflow_dispatch:        # manual "Run workflow" from the Actions tab
 
 permissions:
-  contents: write           # needs to commit synced images + manifest
+  contents: write
 
 concurrency:
   group: facebook-gallery-sync
@@ -21,6 +23,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Admin PAT so the auto-commit can bypass branch protection on main.
+          token: ${{ secrets.GALLERY_SYNC_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,7 +42,7 @@ jobs:
           FB_ALBUM_ID: ${{ secrets.FB_ALBUM_ID }}   # optional override; defaults in script
         run: node scripts/fetch-facebook-album.js
 
-      - name: Commit gallery changes
+      - name: Commit & push gallery changes
         run: |
           git config user.name "neff-paving-bot"
           git config user.email "actions@github.com"
@@ -46,6 +51,6 @@ jobs:
             echo "No gallery changes to commit."
           else
             git commit -m "chore: sync Facebook album to gallery"
-            git push
-            echo "Pushed updated gallery."
+            git push origin HEAD:main
+            echo "Pushed updated gallery to main — deploy will publish it."
           fi
