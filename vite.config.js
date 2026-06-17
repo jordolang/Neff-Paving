@@ -87,7 +87,13 @@ export default defineConfig(({ mode }) => {
       input: {
         main: resolve(__dirname, 'index.html'),
         '404': resolve(__dirname, '404.html'),
-        'estimate-form': resolve(__dirname, 'estimate-form.html')
+        'estimate-form': resolve(__dirname, 'estimate-form.html'),
+        'terms': resolve(__dirname, 'terms.html'),
+        'privacy': resolve(__dirname, 'privacy.html'),
+        'data-protection': resolve(__dirname, 'data-protection.html'),
+        'returns': resolve(__dirname, 'returns.html'),
+        'delete-my-data': resolve(__dirname, 'delete-my-data.html'),
+        'developer': resolve(__dirname, 'developer.html')
       },
       output: {
         // Optimized asset file naming with cache-friendly hashes

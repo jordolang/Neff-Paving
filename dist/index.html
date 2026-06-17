@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="build-timestamp" content="2026-06-17T03:10:18.363Z">
+    <meta name="build-timestamp" content="2026-06-17T03:49:42.180Z">
 
     <!-- Cache Control Meta Tags -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -55,10 +55,10 @@
     <link rel="canonical" href="https://neffpaving.co/">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/Neff-Paving/assets/favicon-F7cuF2t6.ico?v=2026-06-17T03:10:18.363Z">
-    <link rel="apple-touch-icon" sizes="180x180" href="/Neff-Paving/assets/images/apple-touch-icon-CPE-rLNI.png?v=2026-06-17T03:10:18.363Z">
-    <link rel="icon" type="image/png" sizes="32x32" href="/Neff-Paving/assets/images/favicon-32x32-BMziwMnC.png?v=2026-06-17T03:10:18.363Z">
-    <link rel="icon" type="image/png" sizes="16x16" href="/Neff-Paving/assets/images/favicon-16x16-6rkYH3Jn.png?v=2026-06-17T03:10:18.363Z">
+    <link rel="icon" type="image/x-icon" href="/Neff-Paving/assets/favicon-F7cuF2t6.ico?v=2026-06-17T03:49:42.180Z">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Neff-Paving/assets/images/apple-touch-icon-CPE-rLNI.png?v=2026-06-17T03:49:42.180Z">
+    <link rel="icon" type="image/png" sizes="32x32" href="/Neff-Paving/assets/images/favicon-32x32-BMziwMnC.png?v=2026-06-17T03:49:42.180Z">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Neff-Paving/assets/images/favicon-16x16-6rkYH3Jn.png?v=2026-06-17T03:49:42.180Z">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,6 +67,12 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//www.google-analytics.com">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet (keyless interactive maps — Esri satellite imagery, no API key) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=2026-06-17T03:49:42.180Z"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js?v=2026-06-17T03:49:42.180Z"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <!-- Stylesheets -->
 
@@ -154,10 +160,10 @@
                     }]
             }
     </script>
-  <script type="module" crossorigin src="/Neff-Paving/entries/main-D4Bckj-B.js?v=2026-06-17T03:10:18.363Z"></script>
-  <link rel="modulepreload" crossorigin href="/Neff-Paving/chunks/chunk-CUKd2wZl.js?v=2026-06-17T03:10:18.363Z">
-  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/styles/main-sxdvubei.css?v=2026-06-17T03:10:18.363Z">
-  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/styles/redesign-Wk02IPt3.css?v=2026-06-17T03:10:18.363Z">
+  <script type="module" crossorigin src="/Neff-Paving/entries/main-5qD5Nrls.js?v=2026-06-17T03:49:42.180Z"></script>
+  <link rel="modulepreload" crossorigin href="/Neff-Paving/chunks/chunk-CUKd2wZl.js?v=2026-06-17T03:49:42.180Z">
+  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/styles/main-sxdvubei.css?v=2026-06-17T03:49:42.180Z">
+  <link rel="stylesheet" crossorigin href="/Neff-Paving/assets/styles/redesign-D-Ty_Fh-.css?v=2026-06-17T03:49:42.180Z">
 </head>
 
 <body>
@@ -255,7 +261,7 @@
             <!-- ============================== HERO ============================== -->
             <section id="hero">
                 <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="/Neff-Paving/assets/images/hero-poster-1920x1080-DlsN4HeG.jpg">
-                    <source src="/Neff-Paving/assets/videos/neff-paving-1080p-BpjyIQDW.mp4?v=2026-06-17T03:10:18.363Z" type="video/mp4">
+                    <source src="/Neff-Paving/assets/videos/neff-paving-1080p-BpjyIQDW.mp4?v=2026-06-17T03:49:42.180Z" type="video/mp4">
                 </video>
                 <div class="hero-overlay"></div>
                 <div class="container">
@@ -832,9 +838,7 @@
                                 </div>
                             </div>
                             <div class="office-map">
-                                <div class="map-placeholder">
-                                    <iframe src="https://www.google.com/maps/embed?pb=!4v1754170970574!6m8!1m7!1sVhgnLhU_1Uhb4FK2Tpg5yA!2m2!1d39.94923565518629!2d-82.82906717866778!3f160.59849809262906!4f-0.8928208963017852!5f0.7820865974627469" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Reynoldsburg office map"></iframe>
-                                </div>
+                                <div class="office-leaflet" id="map-reynoldsburg" data-lat="39.9492" data-lng="-82.8291" data-label="Reynoldsburg Office" data-addr="1847 Brice Road, Reynoldsburg, OH 43068" aria-label="Map showing the Reynoldsburg office location"></div>
                             </div>
                         </div>
 
@@ -866,9 +870,7 @@
                                 </div>
                             </div>
                             <div class="office-map">
-                                <div class="map-placeholder">
-                                    <iframe src="https://www.google.com/maps/embed?pb=!4v1754170774870!6m8!1m7!1sxo-oqdyYOYPPzjxYOa5HYg!2m2!1d39.95002201798545!2d-82.11626426465124!3f36.74!4f-0.7399999999999949!5f0.7820865974627469" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Zanesville office map"></iframe>
-                                </div>
+                                <div class="office-leaflet" id="map-zanesville" data-lat="39.9500" data-lng="-82.1163" data-label="Zanesville Office (Main)" data-addr="6575 W Pike, Zanesville, OH 43701" aria-label="Map showing the Zanesville office location"></div>
                             </div>
                         </div>
                     </div>
@@ -880,7 +882,7 @@
                 <div class="locations-map-container">
                     <h3>Our 2 Locations in Ohio</h3>
                     <div class="locations-map-wrapper">
-                        <iframe src="https://storage.googleapis.com/maps-solutions-ccm7qzpost/locator-plus/mjlp/locator-plus.html" width="100%" height="500" loading="lazy" title="Neff Paving locations map"></iframe>
+                        <div class="locations-overview-map" id="map-locations-overview" aria-label="Map showing both Neff Paving office locations in Ohio"></div>
                     </div>
                 </div>
             </section>
@@ -979,6 +981,32 @@
                                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                                 </a>
                             </div>
+
+                            <!-- Google Reviews widget. To enable a direct "write a review" deep link,
+                                 replace the review URLs below with:
+                                 https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID -->
+                            <div class="google-reviews">
+                                <div class="gr-head">
+                                    <svg class="gr-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path fill="#4285F4" d="M23.52 12.27c0-.79-.07-1.54-.2-2.27H12v4.51h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.87z"/>
+                                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.11-6.7-4.94H1.29v3.09A11.997 11.997 0 0 0 12 24z"/>
+                                        <path fill="#FBBC05" d="M5.3 14.31a7.2 7.2 0 0 1 0-4.62V6.6H1.29a12 12 0 0 0 0 10.8l4.01-3.09z"/>
+                                        <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.61 4.59 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.29 6.6l4.01 3.09C6.24 6.86 8.88 4.75 12 4.75z"/>
+                                    </svg>
+                                    <span class="gr-title">Google Reviews</span>
+                                </div>
+                                <div class="gr-rating">
+                                    <span class="gr-score">4.5</span>
+                                    <span class="gr-stars-wrap">
+                                        <span class="gr-stars" aria-hidden="true">★★★★★</span>
+                                        <span class="gr-count">Based on 41 verified reviews</span>
+                                    </span>
+                                </div>
+                                <div class="gr-actions">
+                                    <a href="https://www.google.com/maps/search/?api=1&amp;query=Neff%20Paving%20Zanesville%20OH" target="_blank" rel="noopener" class="btn btn-primary">Leave a Review</a>
+                                    <a href="https://www.google.com/maps/search/?api=1&amp;query=Neff%20Paving%20Zanesville%20OH" target="_blank" rel="noopener" class="btn btn-outline">Read Reviews</a>
+                                </div>
+                            </div>
                         </div>
                         <div class="footer-section">
                             <h4>Quick Links</h4>
@@ -988,8 +1016,20 @@
                                     <li><a href="#services">Services</a></li>
                                     <li><a href="#gallery">Gallery</a></li>
                                     <li><a href="#locations">Locations</a></li>
-                                    <li><a href="estimate-form.html">Estimate</a></li>
+                                    <li><a href="estimate-form.html">Free Estimate</a></li>
                                     <li><a href="#contact">Contact</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="footer-section">
+                            <h4>Legal &amp; Policies</h4>
+                            <nav class="footer-nav">
+                                <ul>
+                                    <li><a href="terms.html">Terms of Service</a></li>
+                                    <li><a href="privacy.html">Privacy Policy</a></li>
+                                    <li><a href="data-protection.html">Data Use &amp; Protection</a></li>
+                                    <li><a href="returns.html">Returns &amp; Refunds</a></li>
+                                    <li><a href="delete-my-data.html">Delete My Data</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -1004,10 +1044,10 @@
                     </div>
 
                     <div class="footer-bottom">
-                        <p>&copy; 2024 Neff Paving. All rights reserved.</p>
+                        <p>&copy; 2026 Neff Paving. All rights reserved.</p>
                         <div class="footer-developer-inline">
                             <span>Website by</span>
-                            <a href="https://jlang.dev" target="_blank" rel="noopener" class="developer-link-inline">Jordan Lang @ Jlang.dev</a>
+                            <a href="developer.html" class="developer-link-inline">JLang Development</a>
                             <span class="separator">|</span>
                             <span class="developer-tagline">Custom websites for SE Ohio businesses</span>
                         </div>
@@ -1062,7 +1102,62 @@
     </script>
 
     <!-- Mobile navigation -->
-    <script src="js/mobile-nav.js?v=2026-06-17T03:10:18.363Z"></script>
+    <script src="js/mobile-nav.js?v=2026-06-17T03:49:42.180Z"></script>
+
+    <!-- Keyless office maps (Leaflet + Esri satellite imagery — no Google Maps API key,
+         same provider as the estimate form so it never breaks on key/billing changes) -->
+    <script>
+        (function () {
+            if (typeof L === 'undefined') return;
+            var ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+            var LABELS = "https://stamen-tiles.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}.png";
+
+            function goldPin() {
+                return L.divIcon({
+                    className: '',
+                    html: '<div class="neff-map-pin"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>',
+                    iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -32]
+                });
+            }
+            function baseLayers(map) {
+                L.tileLayer(ESRI, { maxZoom: 21, attribution: "Imagery © Esri, Maxar, Earthstar Geographics" }).addTo(map);
+                L.tileLayer(LABELS, { maxZoom: 20, opacity: 0.9, attribution: "" }).addTo(map)
+                    .on('tileerror', function () { this.remove(); });
+            }
+            function popupHtml(label, addr) {
+                return '<b>' + label + '</b><br>' + addr +
+                    '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' +
+                    encodeURIComponent(addr) + '" target="_blank" rel="noopener">Get directions →</a>';
+            }
+
+            var offices = [];
+            document.querySelectorAll('.office-leaflet').forEach(function (el) {
+                var lat = parseFloat(el.dataset.lat), lng = parseFloat(el.dataset.lng);
+                if (isNaN(lat) || isNaN(lng)) return;
+                var map = L.map(el, { scrollWheelZoom: false, attributionControl: true }).setView([lat, lng], 16);
+                baseLayers(map);
+                L.marker([lat, lng], { icon: goldPin() }).addTo(map)
+                    .bindPopup(popupHtml(el.dataset.label, el.dataset.addr));
+                offices.push({ lat: lat, lng: lng, label: el.dataset.label, addr: el.dataset.addr });
+                setTimeout(function () { map.invalidateSize(); }, 200);
+            });
+
+            var ov = document.getElementById('map-locations-overview');
+            if (ov && offices.length) {
+                var omap = L.map(ov, { scrollWheelZoom: false }).setView([offices[0].lat, offices[0].lng], 9);
+                baseLayers(omap);
+                var group = [];
+                offices.forEach(function (o) {
+                    group.push(L.marker([o.lat, o.lng], { icon: goldPin() }).addTo(omap)
+                        .bindPopup(popupHtml(o.label, o.addr)));
+                });
+                if (group.length > 1) {
+                    omap.fitBounds(L.featureGroup(group).getBounds().pad(0.35));
+                }
+                setTimeout(function () { omap.invalidateSize(); }, 200);
+            }
+        })();
+    </script>
 </body>
 
 </html>
