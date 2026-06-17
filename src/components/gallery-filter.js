@@ -2,7 +2,14 @@
 // import { gsap } from 'gsap'; // Temporarily disabled for simplified version
 import Lightbox from './lightbox.js';
 import { galleryImages } from '../data/gallery-images.js';
+import { facebookImages } from '../data/facebook-images.js';
 import { getAssetPath } from '../utils/base-url.js';
+
+// Merge the curated gallery with the auto-synced Facebook "Website Feed" album.
+// The `facebook` category only appears once at least one photo has synced.
+const allGalleryImages = facebookImages.length > 0
+    ? { facebook: facebookImages, ...galleryImages }
+    : { ...galleryImages };
 
 class GalleryFilter {
     constructor(galleryElement) {
@@ -19,6 +26,7 @@ class GalleryFilter {
 
     init() {
         this.loadAllImageData();
+        this.syncFacebookFilterButton();
         this.initFilters();
         this.initLightbox();
         // Set first button as active
@@ -35,13 +43,22 @@ class GalleryFilter {
         this.allImagesData = [];
         
         // Collect all images and organize by category
-        Object.entries(galleryImages).forEach(([category, images]) => {
+        Object.entries(allGalleryImages).forEach(([category, images]) => {
             images.forEach(image => {
                 this.allImagesData.push({ ...image, category });
             });
         });
         
         console.log(`🔄 Gallery: Loaded ${this.allImagesData.length} total images from all categories`);
+    }
+
+    // Hide the "Latest" (Facebook) filter button until the album has synced at
+    // least one photo, so visitors never land on an empty panel.
+    syncFacebookFilterButton() {
+        const fbButton = document.querySelector('.button-group .button[data-filter="facebook"]');
+        if (fbButton) {
+            fbButton.hidden = facebookImages.length === 0;
+        }
     }
 
     // New method to load and display exactly 10 images based on the current filter
@@ -53,7 +70,12 @@ class GalleryFilter {
         // Select images based on filter
         let imagesToDisplay = [];
         
-        if (filter === 'all') {
+        if (filter === 'facebook') {
+            // Latest feed: show newest uploads first (manifest is pre-sorted), no shuffle.
+            imagesToDisplay = this.allImagesData
+                .filter(img => img.category === 'facebook')
+                .slice(0, 10);
+        } else if (filter === 'all') {
             // For 'all', select 10 random images from the entire collection
             imagesToDisplay = this.shuffleArray([...this.allImagesData]).slice(0, 10);
         } else {
