@@ -269,6 +269,15 @@ header {
     font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
     margin-bottom: 26px;
 }
+.hero-eyebrow {
+    font-family: var(--font-head);
+    color: var(--gold);
+    font-size: clamp(1rem, 2.2vw, 1.4rem);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+}
 .hero-title {
     font-size: clamp(2.8rem, 7vw, 5.4rem);
     margin: 0 0 20px;
@@ -277,6 +286,15 @@ header {
     font-weight: 700;
 }
 .hero-title .accent { color: var(--gold); }
+.hero-motto {
+    font-family: var(--font-head);
+    color: var(--gold-2);
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: .5px;
+    margin: -16px 0 34px;
+}
 .hero-subtitle {
     font-size: clamp(1.05rem, 2vw, 1.3rem);
     color: #c7cdd1;
