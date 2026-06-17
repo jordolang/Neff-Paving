@@ -109,6 +109,13 @@ class GalleryFilter {
         return shuffled;
     }
 
+    // Human-friendly label for a category. The Facebook feed shows as "Latest"
+    // to match its gallery filter button.
+    formatCategory(category) {
+        if (category === 'facebook') return 'Latest';
+        return category.charAt(0).toUpperCase() + category.slice(1);
+    }
+
     createGalleryCard(image) {
         const card = document.createElement('div');
         card.className = 'gallery-card';
@@ -128,7 +135,7 @@ class GalleryFilter {
             </div>
             <div class="card-overlay">
                 <div class="card-title">${image.title}</div>
-                <div class="card-category">${image.category.charAt(0).toUpperCase() + image.category.slice(1)}</div>
+                <div class="card-category">${this.formatCategory(image.category)}</div>
             </div>
         `;
         
@@ -227,7 +234,7 @@ class GalleryFilter {
                         addCacheBusting: true
                     }),
                     title: image.title,
-                    category: image.category.charAt(0).toUpperCase() + image.category.slice(1),
+                    category: this.formatCategory(image.category),
                     alt: image.alt
                 };
             });
