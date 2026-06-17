@@ -1,5 +1,6 @@
-// Import CSS
-import '../styles/main.css'
+// NOTE: legacy '../styles/main.css' is intentionally NOT imported here.
+// The redesigned homepage is styled entirely by styles/redesign.css (linked in index.html).
+// The old index.legacy.html links main.css directly, so it remains unaffected.
 
 // Import animation libraries
 import AOS from 'aos'
