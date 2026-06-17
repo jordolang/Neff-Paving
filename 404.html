@@ -59,11 +59,10 @@
         }
         .container { max-width: 600px; margin: 0 auto; }
         .mark {
-            width: 64px; height: 64px; margin: 0 auto 28px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--gold), var(--gold-deep));
-            display: grid; place-items: center; color: var(--on-gold);
+            width: 76px; height: 76px; margin: 0 auto 28px;
+            display: grid; place-items: center;
         }
+        .mark img { width: 100%; height: 100%; object-fit: contain; }
         .mark svg { width: 36px; height: 36px; }
         .code {
             font-family: var(--font-head); font-weight: 700;
@@ -130,7 +129,7 @@
 <body>
     <div class="container">
         <span class="mark">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <img src="/images/neff-logo.png" alt="Neff Paving">
         </span>
         <p class="code">404</p>
         <h1>Page Not Found</h1>

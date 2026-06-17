@@ -143,12 +143,10 @@ header {
 }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand .mark {
-    width: 42px; height: 42px; flex: none;
-    border-radius: 11px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    width: 46px; height: 46px; flex: none;
     display: grid; place-items: center;
-    color: var(--on-gold);
 }
+.brand .mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .brand .mark svg { width: 24px; height: 24px; }
 .brand h1 {
     font-size: 1.4rem; margin: 0; letter-spacing: 2px;

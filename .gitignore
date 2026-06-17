@@ -101,3 +101,6 @@ temp/
 .env.*
 .nvmrc
 .nvmrc
+
+# Dev reference screenshots / editable brand masters (not for deploy)
+public/images/new-ux/
