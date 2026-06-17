@@ -575,6 +575,18 @@ header {
 .leaflet-container a.leaflet-popup-close-button { color: var(--muted); }
 .leaflet-control-attribution { background: rgba(11,11,13,.7) !important; color: #8a99a3; }
 .leaflet-control-attribution a { color: #f5a524; }
+/* Permanent location labels on the overview map */
+.neff-map-label { background: var(--surface); color: var(--text); border: 1px solid var(--gold);
+    border-radius: 6px; font-family: var(--font-head); text-transform: uppercase; letter-spacing: .5px;
+    font-size: 11px; font-weight: 600; padding: 3px 9px; box-shadow: 0 4px 12px rgba(0,0,0,.5); white-space: nowrap; }
+.neff-map-label.leaflet-tooltip-top::before { border-top-color: var(--gold); }
+/* Rich popups on the overview map */
+.loc-popup .loc-tag { display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted-2); margin-bottom: 2px; }
+.loc-popup b { display: block; font-family: var(--font-head); font-size: 1.1rem; color: var(--gold); margin-bottom: 6px; }
+.loc-popup p { margin: 0 0 10px; color: var(--text); font-size: .9rem; }
+.loc-popup-actions { display: grid; gap: 6px; }
+.loc-popup-actions a { color: var(--gold); font-size: .9rem; font-weight: 500; }
+.loc-popup-actions a:hover { text-decoration: underline; }
 
 #locations-map { padding: 0 0 96px; }
 .locations-map-container { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
@@ -623,6 +635,7 @@ header {
    ===================================================================== */
 footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0 0; }
 .footer-grid { display: grid; grid-template-columns: 1.7fr 1fr 1.1fr 1.1fr; gap: 40px; padding-bottom: 48px; }
+.footer-logo { width: 56px; height: 56px; object-fit: contain; display: block; margin-bottom: 14px; }
 .footer-section h3 { color: var(--gold); font-size: 1.5rem; margin-bottom: 12px; }
 .footer-section h4 { font-size: 1rem; margin-bottom: 18px; color: var(--text); }
 .footer-tagline { color: var(--muted); margin-bottom: 20px; }
@@ -815,3 +828,50 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
     .dev-hero-grid { grid-template-columns: 1fr; gap: 40px; }
     .dev-cta { padding: 36px 24px; }
 }
+
+/* =====================================================================
+   Leave-a-review CTA card + modal
+   ===================================================================== */
+.review-cta-card {
+    background: linear-gradient(135deg, rgba(245,165,36,.14), rgba(245,165,36,.04));
+    border: 1px solid rgba(245,165,36,.4); border-radius: var(--radius);
+    padding: 32px 30px; display: flex; flex-direction: column; justify-content: center;
+}
+.review-cta-card .review-cta-icon { font-size: 1.5rem; color: var(--gold); letter-spacing: 3px; margin-bottom: 14px; }
+.review-cta-card h3 { font-size: 1.35rem; margin: 0 0 10px; }
+.review-cta-card p { font-size: .95rem; margin: 0 0 22px; }
+.review-cta-card .btn { align-self: flex-start; }
+
+.review-modal-overlay {
+    position: fixed; inset: 0; z-index: 2000; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+    background: rgba(0,0,0,.72); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.review-modal-overlay.open { display: flex; }
+.review-modal {
+    position: relative; width: 100%; max-width: 470px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 38px 32px 30px; box-shadow: var(--shadow);
+}
+.review-modal-close { position: absolute; top: 14px; right: 14px; background: none; border: 0; color: var(--muted); cursor: pointer; padding: 4px; line-height: 0; }
+.review-modal-close svg { width: 26px; height: 26px; }
+.review-modal-close:hover { color: var(--gold); }
+.review-modal-head { text-align: center; margin-bottom: 24px; }
+.review-modal-head .eyebrow { justify-content: center; }
+.review-modal-head h3 { font-size: 1.6rem; margin: 0 0 8px; }
+.review-modal-head p { font-size: .92rem; margin: 0; }
+.review-options { display: grid; gap: 14px; }
+.review-option { display: flex; align-items: center; gap: 16px; padding: 15px 18px;
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+.review-option:hover { border-color: var(--gold); transform: translateY(-2px); background: var(--surface-2); }
+.review-option-ic { width: 42px; height: 42px; flex: none; display: grid; place-items: center; background: #fff; border-radius: 10px; }
+.review-option-ic svg { width: 24px; height: 24px; }
+.review-option-ic.fb { background: #1877f2; color: #fff; }
+.review-option-txt { flex: 1; display: flex; flex-direction: column; }
+.review-option-txt b { font-family: var(--font-head); font-size: 1.04rem; color: var(--text); letter-spacing: .5px; }
+.review-option-txt small { font-size: .82rem; color: var(--muted); }
+.review-option-arrow { color: var(--gold); font-size: 1.25rem; transition: transform .2s ease; }
+.review-option:hover .review-option-arrow { transform: translateX(4px); }
+.review-modal-foot { text-align: center; margin: 22px 0 0; font-size: .82rem; color: var(--muted-2); }
+.review-modal-foot .stars { color: var(--gold); letter-spacing: 2px; }

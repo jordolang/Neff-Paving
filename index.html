@@ -776,6 +776,14 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Leave a Review CTA — completes the 3rd row, opens an on-site modal -->
+                        <div class="review-cta-card">
+                            <div class="review-cta-icon">★★★★★</div>
+                            <h3>Had a Great Experience?</h3>
+                            <p>Your review helps local homeowners find a paving contractor they can trust — it takes less than a minute.</p>
+                            <button type="button" class="btn btn-primary btn-large" id="open-review-modal">Leave a Review</button>
+                        </div>
                     </div>
 
                     <div class="testimonial-stats">
@@ -831,7 +839,9 @@
                                 </div>
                             </div>
                             <div class="office-map">
-                                <div class="office-leaflet" id="map-reynoldsburg" data-lat="39.9492" data-lng="-82.8291" data-label="Reynoldsburg Office" data-addr="1847 Brice Road, Reynoldsburg, OH 43068" aria-label="Map showing the Reynoldsburg office location"></div>
+                                <div class="map-placeholder">
+                                    <iframe src="https://www.google.com/maps/embed?pb=!4v1754170970574!6m8!1m7!1sVhgnLhU_1Uhb4FK2Tpg5yA!2m2!1d39.94923565518629!2d-82.82906717866778!3f160.59849809262906!4f-0.8928208963017852!5f0.7820865974627469" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Reynoldsburg office street view"></iframe>
+                                </div>
                             </div>
                         </div>
 
@@ -863,7 +873,9 @@
                                 </div>
                             </div>
                             <div class="office-map">
-                                <div class="office-leaflet" id="map-zanesville" data-lat="39.9500" data-lng="-82.1163" data-label="Zanesville Office (Main)" data-addr="6575 W Pike, Zanesville, OH 43701" aria-label="Map showing the Zanesville office location"></div>
+                                <div class="map-placeholder">
+                                    <iframe src="https://www.google.com/maps/embed?pb=!4v1754170774870!6m8!1m7!1sxo-oqdyYOYPPzjxYOa5HYg!2m2!1d39.95002201798545!2d-82.11626426465124!3f36.74!4f-0.7399999999999949!5f0.7820865974627469" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Zanesville office street view"></iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -958,6 +970,7 @@
                 <div class="container">
                     <div class="footer-grid">
                         <div class="footer-section">
+                            <img class="footer-logo" src="images/neff-logo.png" alt="Neff Paving" width="56" height="56">
                             <h3>Neff Paving</h3>
                             <p class="footer-tagline">Central Ohio's Premier Paving Contractor — asphalt, concrete &amp; excavation since 1999.</p>
                             <div class="footer-social">
@@ -1050,6 +1063,44 @@
         </footer>
     </div>
 
+    <!-- Leave-a-Review modal (on-site popup). To enable a direct Google "write a
+         review" deep link, replace the Google href with:
+         https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID -->
+    <div class="review-modal-overlay" id="review-modal" aria-hidden="true">
+        <div class="review-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+            <button class="review-modal-close" id="close-review-modal" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
+            <div class="review-modal-head">
+                <span class="eyebrow">Leave a Review</span>
+                <h3 id="review-modal-title">Share Your Experience</h3>
+                <p>Choose where to post your review — it opens in a new tab.</p>
+            </div>
+            <div class="review-options">
+                <a href="https://www.google.com/maps/search/?api=1&amp;query=Neff%20Paving%20Zanesville%20OH" target="_blank" rel="noopener" class="review-option">
+                    <span class="review-option-ic">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path fill="#4285F4" d="M23.52 12.27c0-.79-.07-1.54-.2-2.27H12v4.51h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.87z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.76-2.11-6.7-4.94H1.29v3.09A11.997 11.997 0 0 0 12 24z"/>
+                            <path fill="#FBBC05" d="M5.3 14.31a7.2 7.2 0 0 1 0-4.62V6.6H1.29a12 12 0 0 0 0 10.8l4.01-3.09z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.61 4.59 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.29 6.6l4.01 3.09C6.24 6.86 8.88 4.75 12 4.75z"/>
+                        </svg>
+                    </span>
+                    <span class="review-option-txt"><b>Review on Google</b><small>Post to our Google Business profile</small></span>
+                    <span class="review-option-arrow">→</span>
+                </a>
+                <a href="https://www.facebook.com/neffpaving/reviews" target="_blank" rel="noopener" class="review-option">
+                    <span class="review-option-ic fb">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </span>
+                    <span class="review-option-txt"><b>Recommend on Facebook</b><small>Leave a recommendation on our page</small></span>
+                    <span class="review-option-arrow">→</span>
+                </a>
+            </div>
+            <p class="review-modal-foot">Thank you for supporting a local family business. <span class="stars">★★★★★</span></p>
+        </div>
+    </div>
+
     <!-- Floating Facebook Chat Widget -->
     <div class="chat-widget" onclick="openFacebookChat()">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
@@ -1098,58 +1149,98 @@
     <!-- Mobile navigation -->
     <script src="js/mobile-nav.js"></script>
 
-    <!-- Keyless office maps (Leaflet + Esri satellite imagery — no Google Maps API key,
-         same provider as the estimate form so it never breaks on key/billing changes) -->
+    <!-- Keyless dark vector locations map (Leaflet + CARTO "dark matter" basemap).
+         Rendered street map (roads + labels) styled to match the UI — no satellite
+         imagery and no Google Maps API key. -->
     <script>
         (function () {
-            if (typeof L === 'undefined') return;
-            var ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
-            var LABELS = "https://stamen-tiles.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}.png";
+            var ov = document.getElementById('map-locations-overview');
+            if (typeof L === 'undefined' || !ov) return;
 
-            function goldPin() {
+            var FB = 'https://www.facebook.com/neffpaving';
+            var GMB = 'https://www.google.com/maps/search/?api=1&query=Neff%20Paving%20Zanesville%20OH';
+            var OFFICES = [
+                { name: 'Zanesville Office', tag: 'Main Location', lat: 39.9500, lng: -82.1163,
+                  addr: '6575 W Pike, Zanesville, OH 43701', phone: '(740) 453-3063', tel: '7404533063' },
+                { name: 'Reynoldsburg Office', tag: 'Columbus Area', lat: 39.9492, lng: -82.8291,
+                  addr: '1847 Brice Road, Reynoldsburg, OH 43068', phone: '(740) 548-7014', tel: '7405487014' }
+            ];
+
+            var map = L.map(ov, { scrollWheelZoom: false, attributionControl: true }).setView([39.95, -82.47], 9);
+
+            // CARTO "dark matter": a vector-rendered street basemap (roads + labels)
+            // in a dark palette that matches the site. Keyless.
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19, subdomains: 'abcd',
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            }).addTo(map);
+
+            function pin() {
                 return L.divIcon({
                     className: '',
                     html: '<div class="neff-map-pin"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>',
-                    iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -32]
+                    iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -34]
                 });
             }
-            function baseLayers(map) {
-                L.tileLayer(ESRI, { maxZoom: 21, attribution: "Imagery © Esri, Maxar, Earthstar Geographics" }).addTo(map);
-                L.tileLayer(LABELS, { maxZoom: 20, opacity: 0.9, attribution: "" }).addTo(map)
-                    .on('tileerror', function () { this.remove(); });
-            }
-            function popupHtml(label, addr) {
-                return '<b>' + label + '</b><br>' + addr +
-                    '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' +
-                    encodeURIComponent(addr) + '" target="_blank" rel="noopener">Get directions →</a>';
+            function popupHtml(o) {
+                return '<div class="loc-popup">' +
+                    '<span class="loc-tag">' + o.tag + '</span>' +
+                    '<b>' + o.name + '</b>' +
+                    '<p>' + o.addr + '</p>' +
+                    '<div class="loc-popup-actions">' +
+                        '<a href="tel:' + o.tel + '">Call ' + o.phone + '</a>' +
+                        '<a href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(o.addr) + '" target="_blank" rel="noopener">Get directions</a>' +
+                        '<a href="' + GMB + '" target="_blank" rel="noopener">View on Google</a>' +
+                        '<a href="' + FB + '" target="_blank" rel="noopener">Facebook page</a>' +
+                    '</div></div>';
             }
 
-            var offices = [];
-            document.querySelectorAll('.office-leaflet').forEach(function (el) {
-                var lat = parseFloat(el.dataset.lat), lng = parseFloat(el.dataset.lng);
-                if (isNaN(lat) || isNaN(lng)) return;
-                var map = L.map(el, { scrollWheelZoom: false, attributionControl: true }).setView([lat, lng], 16);
-                baseLayers(map);
-                L.marker([lat, lng], { icon: goldPin() }).addTo(map)
-                    .bindPopup(popupHtml(el.dataset.label, el.dataset.addr));
-                offices.push({ lat: lat, lng: lng, label: el.dataset.label, addr: el.dataset.addr });
-                setTimeout(function () { map.invalidateSize(); }, 200);
+            var markers = [];
+            OFFICES.forEach(function (o) {
+                markers.push(
+                    L.marker([o.lat, o.lng], { icon: pin(), title: o.name }).addTo(map)
+                        .bindTooltip(o.name, { permanent: true, direction: 'top', className: 'neff-map-label', offset: [0, -30] })
+                        .bindPopup(popupHtml(o))
+                );
             });
+            map.fitBounds(L.featureGroup(markers).getBounds().pad(0.45));
+            setTimeout(function () { map.invalidateSize(); }, 200);
+        })();
+    </script>
 
-            var ov = document.getElementById('map-locations-overview');
-            if (ov && offices.length) {
-                var omap = L.map(ov, { scrollWheelZoom: false }).setView([offices[0].lat, offices[0].lng], 9);
-                baseLayers(omap);
-                var group = [];
-                offices.forEach(function (o) {
-                    group.push(L.marker([o.lat, o.lng], { icon: goldPin() }).addTo(omap)
-                        .bindPopup(popupHtml(o.label, o.addr)));
-                });
-                if (group.length > 1) {
-                    omap.fitBounds(L.featureGroup(group).getBounds().pad(0.35));
-                }
-                setTimeout(function () { omap.invalidateSize(); }, 200);
+    <!-- Leave-a-Review modal behavior -->
+    <script>
+        (function () {
+            var modal = document.getElementById('review-modal');
+            var openBtn = document.getElementById('open-review-modal');
+            var closeBtn = document.getElementById('close-review-modal');
+            if (!modal || !openBtn) return;
+
+            function open() {
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                if (closeBtn) closeBtn.focus();
             }
+            function close() {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                openBtn.focus();
+            }
+
+            openBtn.addEventListener('click', open);
+            if (closeBtn) closeBtn.addEventListener('click', close);
+            // Close when clicking the dimmed backdrop (but not the dialog itself)
+            modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+            // Close on Escape
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('open')) close();
+            });
+            // Picking an option also closes the modal (link opens in a new tab)
+            modal.querySelectorAll('.review-option').forEach(function (a) {
+                a.addEventListener('click', function () { setTimeout(close, 100); });
+            });
         })();
     </script>
 </body>
