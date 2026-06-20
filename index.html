@@ -255,6 +255,39 @@
         <main>
             <!-- ============================== HERO ============================== -->
             <section id="hero">
+                <!-- Optimized hero poster with modern image formats for LCP -->
+                <picture class="hero-poster">
+                    <!-- AVIF for modern browsers (best compression) -->
+                    <source
+                        srcset="/assets/images/posters/optimized/hero-poster-mobile.avif 480w,
+                                /assets/images/posters/optimized/hero-poster-tablet.avif 768w,
+                                /assets/images/posters/optimized/hero-poster-desktop.avif 1200w,
+                                /assets/images/posters/optimized/hero-poster-large.avif 1920w"
+                        sizes="100vw"
+                        type="image/avif">
+
+                    <!-- WebP for wider browser support -->
+                    <source
+                        srcset="/assets/images/posters/optimized/hero-poster-mobile.webp 480w,
+                                /assets/images/posters/optimized/hero-poster-tablet.webp 768w,
+                                /assets/images/posters/optimized/hero-poster-desktop.webp 1200w,
+                                /assets/images/posters/optimized/hero-poster-large.webp 1920w"
+                        sizes="100vw"
+                        type="image/webp">
+
+                    <!-- JPEG fallback for older browsers -->
+                    <img
+                        src="/assets/images/posters/hero-poster-1920x1080.jpg"
+                        srcset="/assets/images/posters/optimized/hero-poster-mobile.jpg 480w,
+                                /assets/images/posters/optimized/hero-poster-tablet.jpg 768w,
+                                /assets/images/posters/optimized/hero-poster-desktop.jpg 1200w,
+                                /assets/images/posters/optimized/hero-poster-large.jpg 1920w"
+                        sizes="100vw"
+                        alt="Neff Paving professional asphalt paving and concrete services"
+                        loading="eager"
+                        fetchpriority="high">
+                </picture>
+
                 <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="/assets/images/posters/hero-poster-1920x1080.jpg">
                     <source src="/assets/videos/optimized/neff-paving-1080p.mp4" type="video/mp4">
                 </video>
