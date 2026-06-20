@@ -29,6 +29,9 @@ export class WebhookHandler {
 
     // Set up Calendly event handlers
     this.setupCalendlyHandlers();
+
+    // Set up nurture campaign event handlers
+    this.setupNurtureHandlers();
   }
 
   /**
@@ -38,6 +41,19 @@ export class WebhookHandler {
     this.addHandler('calendly.event_scheduled', this.handleEventScheduled.bind(this));
     this.addHandler('calendly.event_canceled', this.handleEventCanceled.bind(this));
     this.addHandler('calendly.event_rescheduled', this.handleEventRescheduled.bind(this));
+  }
+
+  /**
+   * Set up nurture campaign event handlers
+   */
+  setupNurtureHandlers() {
+    this.addHandler('nurture.email_sent', this.handleNurtureEmailSent.bind(this));
+    this.addHandler('nurture.email_opened', this.handleNurtureEmailOpened.bind(this));
+    this.addHandler('nurture.email_clicked', this.handleNurtureEmailClicked.bind(this));
+    this.addHandler('nurture.sms_sent', this.handleNurtureSMSSent.bind(this));
+    this.addHandler('nurture.sms_delivered', this.handleNurtureSMSDelivered.bind(this));
+    this.addHandler('nurture.unsubscribed', this.handleNurtureUnsubscribed.bind(this));
+    this.addHandler('nurture.converted', this.handleNurtureConverted.bind(this));
   }
 
   /**
@@ -100,6 +116,7 @@ export class WebhookHandler {
 
       // Analytics tracking
       this.trackEvent('payment_succeeded', {
+        event_category: 'payment',
         payment_intent_id: paymentIntent.id,
         amount: paymentIntent.amount,
         currency: paymentIntent.currency
@@ -133,6 +150,7 @@ export class WebhookHandler {
 
       // Analytics tracking
       this.trackEvent('payment_failed', {
+        event_category: 'payment',
         payment_intent_id: paymentIntent.id,
         error_code: error?.code,
         error_type: error?.type
@@ -154,8 +172,9 @@ export class WebhookHandler {
     
     try {
       await this.updatePaymentStatus(paymentIntent.id, 'canceled');
-      
+
       this.trackEvent('payment_canceled', {
+        event_category: 'payment',
         payment_intent_id: paymentIntent.id
       });
     } catch (error) {
@@ -396,14 +415,14 @@ export class WebhookHandler {
    * @param {string} eventName - Event name
    * @param {Object} properties - Event properties
    */
-  trackEvent(eventName, properties) {
+  trackEvent(eventName, properties = {}) {
     try {
       // Integration with analytics service (Google Analytics, Mixpanel, etc.)
       console.log(`Analytics Event: ${eventName}`, properties);
-      
+
       if (window.gtag) {
         window.gtag('event', eventName, {
-          event_category: 'payment',
+          event_category: properties.event_category || 'general',
           ...properties
         });
       }
@@ -493,6 +512,7 @@ export class WebhookHandler {
 
       // Track analytics
       this.trackEvent('calendly_event_scheduled', {
+        event_category: 'calendly',
         event_uri: eventData?.uri,
         event_type: eventData?.event_type?.name,
         invitee_email: eventData?.invitees?.[0]?.email,
@@ -525,6 +545,7 @@ export class WebhookHandler {
       
       // Track analytics
       this.trackEvent('calendly_event_canceled', {
+        event_category: 'calendly',
         event_uri: eventData?.uri,
         event_type: eventData?.event_type?.name,
         invitee_email: eventData?.invitees?.[0]?.email,
@@ -557,6 +578,7 @@ export class WebhookHandler {
       
       // Track analytics
       this.trackEvent('calendly_event_rescheduled', {
+        event_category: 'calendly',
         event_uri: eventData?.uri,
         event_type: eventData?.event_type?.name,
         invitee_email: eventData?.invitees?.[0]?.email,
@@ -1002,9 +1024,177 @@ export class WebhookHandler {
     try {
       // Update crew schedules based on appointment changes
       console.log(`Updating crew schedules for: ${eventData?.start_time}`);
-      
+
     } catch (error) {
       console.error('Error updating crew schedules:', error);
+    }
+  }
+
+  // =============================================================================
+  // NURTURE CAMPAIGN EVENT HANDLERS
+  // =============================================================================
+
+  /**
+   * Handle nurture email sent event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureEmailSent(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`📧 Nurture email sent: ${eventData?.campaign} to ${eventData?.email}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_email_sent', {
+        event_category: 'nurture',
+        campaign: eventData?.campaign,
+        lead_id: eventData?.lead_id,
+        email: eventData?.email,
+        template: eventData?.template
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture email sent:', error);
+    }
+  }
+
+  /**
+   * Handle nurture email opened event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureEmailOpened(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`👀 Nurture email opened: ${eventData?.campaign} by ${eventData?.email}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_email_opened', {
+        event_category: 'nurture',
+        campaign: eventData?.campaign,
+        lead_id: eventData?.lead_id,
+        email: eventData?.email
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture email opened:', error);
+    }
+  }
+
+  /**
+   * Handle nurture email clicked event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureEmailClicked(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`🖱️ Nurture email clicked: ${eventData?.campaign} by ${eventData?.email}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_email_clicked', {
+        event_category: 'nurture',
+        campaign: eventData?.campaign,
+        lead_id: eventData?.lead_id,
+        email: eventData?.email,
+        link_url: eventData?.link_url
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture email clicked:', error);
+    }
+  }
+
+  /**
+   * Handle nurture SMS sent event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureSMSSent(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`💬 Nurture SMS sent: ${eventData?.campaign} to ${eventData?.phone}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_sms_sent', {
+        event_category: 'nurture',
+        campaign: eventData?.campaign,
+        lead_id: eventData?.lead_id,
+        phone: eventData?.phone
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture SMS sent:', error);
+    }
+  }
+
+  /**
+   * Handle nurture SMS delivered event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureSMSDelivered(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`✅ Nurture SMS delivered: ${eventData?.campaign} to ${eventData?.phone}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_sms_delivered', {
+        event_category: 'nurture',
+        campaign: eventData?.campaign,
+        lead_id: eventData?.lead_id,
+        phone: eventData?.phone
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture SMS delivered:', error);
+    }
+  }
+
+  /**
+   * Handle nurture unsubscribed event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureUnsubscribed(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`🚫 Lead unsubscribed: ${eventData?.lead_id} from ${eventData?.channel}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_unsubscribed', {
+        event_category: 'nurture',
+        lead_id: eventData?.lead_id,
+        channel: eventData?.channel,
+        email: eventData?.email
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture unsubscribed:', error);
+    }
+  }
+
+  /**
+   * Handle nurture converted event
+   * @param {Object} event - Nurture event
+   */
+  async handleNurtureConverted(event) {
+    const eventData = event.data?.object || event.payload || event;
+
+    console.log(`🎉 Lead converted: ${eventData?.lead_id} via ${eventData?.campaign}`);
+
+    try {
+      // Track analytics
+      this.trackEvent('nurture_converted', {
+        event_category: 'nurture',
+        campaign: eventData?.campaign,
+        lead_id: eventData?.lead_id,
+        email: eventData?.email,
+        conversion_value: eventData?.conversion_value
+      });
+
+    } catch (error) {
+      console.error('Error handling nurture converted:', error);
     }
   }
 }
