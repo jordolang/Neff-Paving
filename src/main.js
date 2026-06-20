@@ -78,13 +78,24 @@ class NeffPavingApp {
     }
 
     initAnimations() {
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
-        
+        // Defer AOS initialization until after first paint to reduce main thread blocking
+        // This improves INP (Interaction to Next Paint) Core Web Vital metric
+        const initAOS = () => {
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100
+            });
+        };
+
+        // Use requestIdleCallback for optimal performance, with setTimeout fallback
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initAOS, { timeout: 2000 });
+        } else {
+            // Fallback for browsers without requestIdleCallback support
+            setTimeout(initAOS, 100);
+        }
+
         // Remove any loading states immediately
         this.removeLoadingStates();
     }
