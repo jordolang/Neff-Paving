@@ -52,15 +52,29 @@ class NeffPavingApp {
             }
         });
 
-        // Force video to play on load
-        video.addEventListener('loadeddata', () => {
-            video.play().catch(err => {
-                console.error('Video autoplay failed:', err);
+        // Lazy load video using Intersection Observer
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Video is in viewport, load and play it
+                    if (video.readyState === 0) {
+                        video.load();
+                    }
+                    video.play().catch(err => {
+                        console.error('Video autoplay failed:', err);
+                    });
+                    video.style.opacity = '1';
+
+                    // Stop observing once video is loaded
+                    videoObserver.unobserve(video);
+                }
             });
+        }, {
+            rootMargin: '50px' // Start loading slightly before video enters viewport
         });
 
-        // Ensure video is visible
-        video.style.opacity = '1';
+        // Start observing the video element
+        videoObserver.observe(video);
     }
 
     initAnimations() {
