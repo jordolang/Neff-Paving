@@ -20,6 +20,9 @@
 import fs from 'fs';
 import path from 'path';
 
+// Get temp directory (use TMPDIR for sandbox compatibility)
+const TEMP_DIR = process.env.TMPDIR || '/tmp';
+
 // Configuration
 const CONFIG = {
   API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000',
@@ -27,7 +30,7 @@ const CONFIG = {
   TEST_EMAIL: 'e2e-test@example.com',
   TEST_NAME: 'E2E Test User',
   DRY_RUN: process.env.DRY_RUN !== 'false', // Default to dry-run
-  LEAD_STORAGE_PATH: '/tmp/nurture_leads.json'
+  LEAD_STORAGE_PATH: path.join(TEMP_DIR, 'nurture_leads.json')
 };
 
 // Test state

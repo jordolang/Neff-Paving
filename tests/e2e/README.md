@@ -15,6 +15,16 @@ Tests the complete flow from estimate creation to automated follow-up:
 5. **Verify status update** - Confirms lead status updates from 'new' to 'contacted'
 6. **Verify analytics** - Confirms nurture events are tracked in analytics
 
+### Booking Confirmation Flow Test
+
+Tests the complete flow from Calendly booking webhook to confirmation delivery:
+
+1. **Simulate webhook** - Creates a Calendly booking webhook event
+2. **Verify booking storage** - Confirms booking is stored in calendly_bookings
+3. **Verify email sent** - Confirms booking confirmation email API called
+4. **Verify SMS sent** - Confirms SMS sent when phone consent exists
+5. **Verify analytics** - Confirms booking confirmation events are tracked
+
 ## Running the Tests
 
 ### Option 1: Browser-Based Interactive Test
@@ -25,8 +35,11 @@ Open the HTML test page in your browser:
 # Start the dev server
 npm run dev
 
-# Open in browser
+# Open Abandoned Estimate test in browser
 open http://localhost:3000/tests/e2e/abandoned-estimate.html
+
+# Open Booking Confirmation test in browser
+open http://localhost:3000/tests/e2e/booking-confirmation.html
 ```
 
 The interactive test page allows you to:
@@ -38,23 +51,26 @@ The interactive test page allows you to:
 
 ### Option 2: Command-Line Automated Test
 
-Run the Node.js test script:
+Run the Node.js test scripts:
 
 ```bash
 # Prerequisites: Start dev server in another terminal
 npm run dev
 
-# Run the test (in dry-run mode by default)
+# Run Abandoned Estimate test (in dry-run mode by default)
 node tests/e2e/abandoned-estimate.test.js
 
+# Run Booking Confirmation test
+node tests/e2e/booking-confirmation.test.js
+
 # Run in live mode (requires API keys)
-DRY_RUN=false node tests/e2e/abandoned-estimate.test.js
+DRY_RUN=false node tests/e2e/booking-confirmation.test.js
 
 # Run with custom API URL
-API_BASE_URL=https://your-app.vercel.app node tests/e2e/abandoned-estimate.test.js
+API_BASE_URL=https://your-app.vercel.app node tests/e2e/booking-confirmation.test.js
 
 # Keep test data for inspection
-SKIP_CLEANUP=true node tests/e2e/abandoned-estimate.test.js
+SKIP_CLEANUP=true node tests/e2e/booking-confirmation.test.js
 ```
 
 ## Prerequisites
@@ -206,9 +222,10 @@ After the E2E tests pass:
 
 ## Related Tests
 
-- `booking-confirmation.test.js` - Tests the booking confirmation flow
-- `review-request.test.js` - Tests the post-job review request flow
-- `consent-unsubscribe.test.js` - Tests consent management and unsubscribe
+- ✅ `abandoned-estimate.test.js` - Tests the abandoned estimate nurture flow (completed)
+- ✅ `booking-confirmation.test.js` - Tests the booking confirmation flow (completed)
+- ⏳ `review-request.test.js` - Tests the post-job review request flow (pending)
+- ⏳ `consent-unsubscribe.test.js` - Tests consent management and unsubscribe (pending)
 
 ## Documentation
 
