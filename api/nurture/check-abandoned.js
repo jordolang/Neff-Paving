@@ -178,6 +178,34 @@ function updateLeadStatus(leads, leadId, newStatus) {
 }
 
 /**
+ * Verify cron authentication
+ * @param {Object} req - Request object
+ * @returns {boolean} True if authenticated
+ */
+function verifyCronAuth(req) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return false;
+  }
+
+  // Extract token from "Bearer <token>" format
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : authHeader;
+
+  // Compare against CRON_SECRET environment variable
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (!cronSecret) {
+    console.error('CRON_SECRET environment variable not configured');
+    return false;
+  }
+
+  return token === cronSecret;
+}
+
+/**
  * Vercel Serverless Function Handler
  * GET /api/nurture/check-abandoned
  *
@@ -204,6 +232,14 @@ export default async function handler(req, res) {
     return res.status(405).json({
       error: 'Method not allowed',
       message: 'This endpoint only accepts GET requests'
+    });
+  }
+
+  // Verify cron authentication
+  if (!verifyCronAuth(req)) {
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Invalid or missing authorization token'
     });
   }
 
