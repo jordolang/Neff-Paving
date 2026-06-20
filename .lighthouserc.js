@@ -2,9 +2,10 @@ module.exports = {
   ci: {
     collect: {
       // URLs to audit - using localhost for local development
+      // Note: Dev server runs with /Neff-Paving/ base path by default
       url: [
-        'http://localhost:3000/',
-        'http://localhost:3000/estimate-form.html'
+        'http://localhost:3001/Neff-Paving/',
+        'http://localhost:3001/Neff-Paving/estimate-form.html'
       ],
       // Number of runs per URL to get more stable results
       numberOfRuns: 3,
