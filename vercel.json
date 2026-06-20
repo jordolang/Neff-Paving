@@ -9,6 +9,16 @@
   },
   "cleanUrls": true,
   "trailingSlash": false,
+  "crons": [
+    {
+      "path": "/api/nurture/check-abandoned",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/nurture/check-review-requests",
+      "schedule": "0 14 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/_vercel/speed-insights/script.js",
