@@ -60,6 +60,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
+    <!-- Preload Critical Assets for LCP Optimization -->
+    <link rel="preload" as="image" href="/assets/images/posters/optimized/hero-poster-large.avif" type="image/avif" imagesrcset="/assets/images/posters/optimized/hero-poster-mobile.avif 480w, /assets/images/posters/optimized/hero-poster-tablet.avif 768w, /assets/images/posters/optimized/hero-poster-desktop.avif 1200w, /assets/images/posters/optimized/hero-poster-large.avif 1920w" imagesizes="100vw" fetchpriority="high">
+    <link rel="preload" as="style" href="styles/redesign.css">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
