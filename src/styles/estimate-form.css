@@ -1360,3 +1360,114 @@
     padding: 20px;
     margin: 20px 0;
 }
+
+/* Consent/Communication Preferences Styles */
+.consent-group {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+.consent-description {
+    color: #2c2c2c;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.checkbox-group {
+    margin-bottom: 1rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.checkbox-label:hover {
+    background-color: #f8f9fa;
+}
+
+.form-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-top: 0.25rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #ffd700;
+}
+
+.checkbox-text {
+    color: #2c2c2c;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.checkbox-text strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #2c2c2c;
+    font-weight: 600;
+}
+
+.consent-note {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #ffd700;
+}
+
+.consent-note small {
+    color: #6b6b6b;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.consent-note a {
+    color: #2c2c2c;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.consent-note a:hover {
+    color: #ffd700;
+}
+
+/* Responsive adjustments for consent checkboxes */
+@media (max-width: 768px) {
+    .checkbox-label {
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .checkbox-text {
+        font-size: 0.9rem;
+    }
+
+    .consent-note {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .consent-group {
+        padding: 1rem;
+    }
+
+    .checkbox-label {
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .form-checkbox {
+        width: 18px;
+        height: 18px;
+    }
+}

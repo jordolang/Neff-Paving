@@ -301,6 +301,52 @@ export class EstimateForm {
                         <input type="hidden" id="measurementTimestamp" name="measurementTimestamp">
                     </div>
 
+                    <!-- Communication Preferences Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <span class="section-icon">📧</span>
+                            Communication Preferences
+                        </h3>
+
+                        <div class="consent-group">
+                            <p class="consent-description">Stay informed about your project and receive helpful updates from Neff Paving:</p>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        id="emailOptIn"
+                                        name="emailOptIn"
+                                        class="form-checkbox"
+                                        value="true"
+                                    >
+                                    <span class="checkbox-text">
+                                        <strong>Email Updates</strong> - I agree to receive email updates about my estimate, project status, and occasional promotional offers from Neff Paving.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        id="smsOptIn"
+                                        name="smsOptIn"
+                                        class="form-checkbox"
+                                        value="true"
+                                    >
+                                    <span class="checkbox-text">
+                                        <strong>SMS Notifications</strong> - I agree to receive text message updates about my estimate and project milestones. Standard message and data rates may apply.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <p class="consent-note">
+                                <small>You can opt out of these communications at any time. We respect your privacy and will never share your information with third parties. See our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for details.</small>
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Form Actions -->
                     <div class="form-actions">
                         <button type="button" class="btn btn-outline" id="reset-form">
