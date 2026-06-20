@@ -507,7 +507,11 @@
           "description": "End-to-end test: booking confirmation flow",
           "all_services": true,
           "files_to_modify": [],
-          "files_to_create": [],
+          "files_to_create": [
+            "tests/e2e/booking-confirmation.html",
+            "tests/e2e/booking-confirmation.test.js",
+            "tests/e2e/BOOKING_CONFIRMATION_VERIFICATION.md"
+          ],
           "patterns_from": [],
           "verification": {
             "type": "e2e",
@@ -519,15 +523,22 @@
               "Verify analytics tracked"
             ]
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Created comprehensive E2E test infrastructure: browser-based interactive test (HTML), command-line automated test (Node.js), and detailed verification guide. Tests validate entire flow from Calendly webhook to email/SMS delivery and analytics tracking. Supports dry-run and live modes. Updated abandoned-estimate test for sandbox compatibility using $TMPDIR."
         },
         {
           "id": "subtask-7-3",
           "description": "End-to-end test: consent and unsubscribe flow",
           "all_services": true,
           "files_to_modify": [],
-          "files_to_create": [],
-          "patterns_from": [],
+          "files_to_create": [
+            "tests/e2e/consent-unsubscribe.test.js",
+            "tests/e2e/consent-unsubscribe.html"
+          ],
+          "patterns_from": [
+            "tests/e2e/abandoned-estimate.test.js",
+            "tests/e2e/booking-confirmation.test.js"
+          ],
           "verification": {
             "type": "e2e",
             "steps": [
@@ -539,7 +550,8 @@
               "Verify unsubscribe analytics event tracked"
             ]
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Created comprehensive E2E test infrastructure: browser-based interactive test (HTML), command-line automated test (Node.js). Tests validate entire flow from consent grant to unsubscribe to verification that no emails are sent. Supports dry-run and live modes. Added npm script: test:e2e:consent. Updated README with new test documentation."
         }
       ]
     }
@@ -698,9 +710,10 @@
     }
   },
   "qa_signoff": null,
-  "status": "in_progress",
-  "planStatus": "in_progress",
-  "xstateState": "planning",
-  "executionPhase": "coding",
-  "updated_at": "2026-06-20T02:28:47.345Z"
+  "status": "human_review",
+  "planStatus": "review",
+  "xstateState": "human_review",
+  "executionPhase": "complete",
+  "updated_at": "2026-06-20T02:38:50.360Z",
+  "reviewReason": "completed"
 }

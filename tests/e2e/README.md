@@ -25,6 +25,17 @@ Tests the complete flow from Calendly booking webhook to confirmation delivery:
 4. **Verify SMS sent** - Confirms SMS sent when phone consent exists
 5. **Verify analytics** - Confirms booking confirmation events are tracked
 
+### Consent and Unsubscribe Flow Test
+
+Tests the complete consent and unsubscribe flow:
+
+1. **Create lead with consent** - Creates a lead with email consent granted
+2. **Click unsubscribe link** - Simulates clicking the unsubscribe link in an email
+3. **Verify consent revoked** - Confirms consent is revoked in storage
+4. **Trigger abandoned check** - Runs the abandoned estimate check
+5. **Verify no email sent** - Confirms NO email is sent to unsubscribed lead
+6. **Verify analytics tracking** - Confirms unsubscribe event is tracked in analytics
+
 ## Running the Tests
 
 ### Option 1: Browser-Based Interactive Test
@@ -40,6 +51,9 @@ open http://localhost:3000/tests/e2e/abandoned-estimate.html
 
 # Open Booking Confirmation test in browser
 open http://localhost:3000/tests/e2e/booking-confirmation.html
+
+# Open Consent and Unsubscribe test in browser
+open http://localhost:3000/tests/e2e/consent-unsubscribe.html
 ```
 
 The interactive test page allows you to:
@@ -62,6 +76,9 @@ node tests/e2e/abandoned-estimate.test.js
 
 # Run Booking Confirmation test
 node tests/e2e/booking-confirmation.test.js
+
+# Run Consent and Unsubscribe test
+node tests/e2e/consent-unsubscribe.test.js
 
 # Run in live mode (requires API keys)
 DRY_RUN=false node tests/e2e/booking-confirmation.test.js
@@ -224,8 +241,8 @@ After the E2E tests pass:
 
 - ✅ `abandoned-estimate.test.js` - Tests the abandoned estimate nurture flow (completed)
 - ✅ `booking-confirmation.test.js` - Tests the booking confirmation flow (completed)
+- ✅ `consent-unsubscribe.test.js` - Tests consent management and unsubscribe (completed)
 - ⏳ `review-request.test.js` - Tests the post-job review request flow (pending)
-- ⏳ `consent-unsubscribe.test.js` - Tests consent management and unsubscribe (pending)
 
 ## Documentation
 
