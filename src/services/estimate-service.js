@@ -51,6 +51,13 @@ export class EstimateService {
     };
   }
 
+  /**
+   * Calculate estimate and track lead if contact info provided
+   * @param {number} squareFeet - Square footage for the project
+   * @param {string} serviceType - Type of service (residential/commercial)
+   * @param {Object} options - Additional options including contact info
+   * @returns {Object} Estimate details
+   */
   calculateEstimate(squareFeet, serviceType, options = {}) {
     const estimate = {
       baseCost: 0,
@@ -112,7 +119,129 @@ export class EstimateService {
       laborHours: this.calculateLaborHours(squareFeet, serviceType, options)
     };
 
+    // Track lead if contact information is provided
+    if (options.contactInfo) {
+      try {
+        this.trackLead({
+          contactInfo: options.contactInfo,
+          estimateDetails: {
+            squareFeet,
+            serviceType,
+            totalCost: estimate.totalCost,
+            timeline: estimate.timeline
+          }
+        });
+      } catch (error) {
+        // Log error but don't fail the estimate calculation
+        if (typeof window !== 'undefined' && window.console) {
+          window.console.error('Failed to track lead:', error);
+        }
+      }
+    }
+
     return estimate;
+  }
+
+  /**
+   * Track a new lead in localStorage
+   * @param {Object} leadData - Lead information
+   * @param {Object} leadData.contactInfo - Contact information (name, email, phone)
+   * @param {Object} leadData.estimateDetails - Estimate details
+   * @returns {Object} The created lead record
+   */
+  trackLead(leadData) {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      throw new Error('localStorage is not available');
+    }
+
+    if (!leadData.contactInfo) {
+      throw new Error('Contact information is required to track a lead');
+    }
+
+    try {
+      // Get existing leads
+      const existingLeads = this.getLeads();
+
+      // Create new lead record
+      const lead = {
+        id: `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        contactInfo: leadData.contactInfo,
+        estimateDetails: leadData.estimateDetails || {},
+        status: 'new',
+        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+
+      // Add to leads array
+      existingLeads.push(lead);
+
+      // Save to localStorage
+      window.localStorage.setItem('nurture_leads', JSON.stringify(existingLeads));
+
+      return lead;
+    } catch (error) {
+      throw new Error(`Failed to track lead: ${error.message}`);
+    }
+  }
+
+  /**
+   * Retrieve all leads from localStorage
+   * @returns {Array} Array of lead records
+   */
+  getLeads() {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return [];
+    }
+
+    try {
+      const leadsData = window.localStorage.getItem('nurture_leads');
+      return leadsData ? JSON.parse(leadsData) : [];
+    } catch (error) {
+      if (typeof window !== 'undefined' && window.console) {
+        window.console.error('Failed to retrieve leads:', error);
+      }
+      return [];
+    }
+  }
+
+  /**
+   * Get a specific lead by ID
+   * @param {string} leadId - The lead ID
+   * @returns {Object|null} Lead record or null if not found
+   */
+  getLeadById(leadId) {
+    const leads = this.getLeads();
+    return leads.find(lead => lead.id === leadId) || null;
+  }
+
+  /**
+   * Update lead status
+   * @param {string} leadId - The lead ID
+   * @param {string} status - New status
+   * @returns {Object} Updated lead record
+   */
+  updateLeadStatus(leadId, status) {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      throw new Error('localStorage is not available');
+    }
+
+    try {
+      const leads = this.getLeads();
+      const leadIndex = leads.findIndex(lead => lead.id === leadId);
+
+      if (leadIndex === -1) {
+        throw new Error(`Lead ${leadId} not found`);
+      }
+
+      leads[leadIndex].status = status;
+      leads[leadIndex].updatedAt = new Date().toISOString();
+
+      window.localStorage.setItem('nurture_leads', JSON.stringify(leads));
+
+      return leads[leadIndex];
+    } catch (error) {
+      throw new Error(`Failed to update lead status: ${error.message}`);
+    }
   }
 
   calculateMaterialCost(squareFeet, materials) {

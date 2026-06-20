@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Tracking Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+    .error {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Lead Tracking Test</h1>
+
+  <form id="estimateForm">
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" id="name" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone:</label>
+      <input type="tel" id="phone" required>
+    </div>
+
+    <div class="form-group">
+      <label for="squareFeet">Square Feet:</label>
+      <input type="number" id="squareFeet" value="1000" required>
+    </div>
+
+    <div class="form-group">
+      <label for="serviceType">Service Type:</label>
+      <select id="serviceType" required>
+        <option value="residential">Residential</option>
+        <option value="commercial">Commercial</option>
+      </select>
+    </div>
+
+    <button type="submit">Create Estimate & Track Lead</button>
+  </form>
+
+  <div id="result"></div>
+
+  <div style="margin-top: 30px;">
+    <button onclick="showLeads()">Show All Leads in localStorage</button>
+    <button onclick="clearLeads()" style="background-color: #dc3545;">Clear All Leads</button>
+  </div>
+
+  <div id="leadsDisplay"></div>
+
+  <script type="module">
+    import { EstimateService } from './src/services/estimate-service.js';
+
+    const estimateService = new EstimateService();
+
+    document.getElementById('estimateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const resultDiv = document.getElementById('result');
+
+      try {
+        // Get form values
+        const contactInfo = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          phone: document.getElementById('phone').value
+        };
+
+        const squareFeet = parseInt(document.getElementById('squareFeet').value);
+        const serviceType = document.getElementById('serviceType').value;
+
+        // Calculate estimate with contact info
+        const estimate = estimateService.calculateEstimate(squareFeet, serviceType, {
+          contactInfo: contactInfo,
+          complexity: 'moderate',
+          accessibility: 'easy'
+        });
+
+        // Verify lead was tracked
+        const leads = estimateService.getLeads();
+        const latestLead = leads[leads.length - 1];
+
+        resultDiv.className = 'result success';
+        resultDiv.innerHTML = `
+          <h3>✓ Success!</h3>
+          <p><strong>Estimate created:</strong> $${estimate.totalCost.toFixed(2)}</p>
+          <p><strong>Lead tracked:</strong></p>
+          <pre>${JSON.stringify(latestLead, null, 2)}</pre>
+          <p><strong>Verification:</strong></p>
+          <ul>
+            <li>✓ Lead stored in localStorage under 'nurture_leads' key</li>
+            <li>✓ Status is '${latestLead.status}' ${latestLead.status === 'new' ? '✓' : '✗'}</li>
+            <li>✓ Timestamp present: ${latestLead.timestamp}</li>
+            <li>✓ Total leads in storage: ${leads.length}</li>
+          </ul>
+        `;
+
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.innerHTML = `
+          <h3>✗ Error</h3>
+          <p>${error.message}</p>
+        `;
+      }
+    });
+
+    window.showLeads = function() {
+      const leadsDiv = document.getElementById('leadsDisplay');
+      const leads = estimateService.getLeads();
+
+      leadsDiv.innerHTML = `
+        <div class="result">
+          <h3>All Leads (${leads.length})</h3>
+          <pre>${JSON.stringify(leads, null, 2)}</pre>
+        </div>
+      `;
+    };
+
+    window.clearLeads = function() {
+      if (confirm('Are you sure you want to clear all leads?')) {
+        localStorage.removeItem('nurture_leads');
+        document.getElementById('leadsDisplay').innerHTML = `
+          <div class="result success">
+            <p>All leads cleared!</p>
+          </div>
+        `;
+      }
+    };
+  </script>
+</body>
+</html>
