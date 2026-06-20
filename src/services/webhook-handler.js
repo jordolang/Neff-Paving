@@ -475,19 +475,22 @@ export class WebhookHandler {
    */
   async handleEventScheduled(event) {
     const eventData = event.data?.object || event.payload;
-    
+
     console.log(`📅 Calendly event scheduled: ${eventData?.uri}`);
-    
+
     try {
       // Process new booking
       await this.processNewBooking(eventData);
-      
+
+      // Send booking confirmation email to customer
+      await this.sendBookingConfirmation(eventData);
+
       // Update job schedule
       await this.updateJobSchedule(eventData);
-      
+
       // Generate alerts
       await this.generateSchedulingAlerts(eventData);
-      
+
       // Track analytics
       this.trackEvent('calendly_event_scheduled', {
         event_uri: eventData?.uri,
@@ -495,7 +498,7 @@ export class WebhookHandler {
         invitee_email: eventData?.invitees?.[0]?.email,
         start_time: eventData?.start_time
       });
-      
+
     } catch (error) {
       console.error('Error handling Calendly event scheduled:', error);
     }
@@ -571,6 +574,54 @@ export class WebhookHandler {
   // =============================================================================
 
   /**
+   * Send booking confirmation email to customer
+   * @param {Object} eventData - Calendly event data
+   */
+  async sendBookingConfirmation(eventData) {
+    try {
+      const invitee = eventData?.invitees?.[0];
+      const inviteeEmail = invitee?.email;
+
+      if (!inviteeEmail) {
+        console.error('No invitee email found for booking confirmation');
+        return;
+      }
+
+      console.log(`Sending booking confirmation email to: ${inviteeEmail}`);
+
+      // Format booking details
+      const startTime = new Date(eventData?.start_time);
+      const endTime = new Date(eventData?.end_time);
+
+      // Example email content
+      const emailData = {
+        to: inviteeEmail,
+        subject: 'Booking Confirmation - Neff Paving',
+        template: 'booking_confirmation',
+        data: {
+          customer_name: invitee?.name || 'Valued Customer',
+          event_type: eventData?.event_type?.name || 'Consultation',
+          start_time: startTime.toLocaleString(),
+          end_time: endTime.toLocaleString(),
+          duration: Math.round((endTime - startTime) / (1000 * 60)), // Duration in minutes
+          location: eventData?.location?.location || eventData?.location?.join_url || 'TBD',
+          event_uri: eventData?.uri,
+          cancel_url: eventData?.cancel_url,
+          reschedule_url: eventData?.reschedule_url
+        }
+      };
+
+      // Send email (implementation depends on your email service)
+      // await emailService.send(emailData);
+
+      console.log(`✅ Booking confirmation sent to ${inviteeEmail} for ${emailData.data.event_type}`);
+
+    } catch (error) {
+      console.error('Error sending booking confirmation:', error);
+    }
+  }
+
+  /**
    * Process new booking from Calendly
    * @param {Object} eventData - Calendly event data
    */
@@ -586,12 +637,12 @@ export class WebhookHandler {
         status: 'scheduled',
         created_at: new Date().toISOString()
       };
-      
+
       // Store booking in database
       await this.storeBooking(booking);
-      
+
       console.log(`New booking processed for: ${booking.invitee_email}`);
-      
+
     } catch (error) {
       console.error('Error processing new booking:', error);
     }
