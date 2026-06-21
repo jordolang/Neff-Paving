@@ -104,3 +104,9 @@ temp/
 
 # Dev reference screenshots / editable brand masters (not for deploy)
 public/images/new-ux/
+
+# Auto Claude data directory
+.auto-claude/
+.auto-claude-security.json
+.auto-claude-status
+.claude_settings.json
