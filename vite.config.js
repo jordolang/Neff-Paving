@@ -74,8 +74,10 @@ export default defineConfig(({ mode }) => {
     sourcemap: mode !== 'production',
     // Optimize asset inlining
     assetsInlineLimit: (filePath, content) => {
-      // Exclude gallery images from inlining to preserve paths
-      if (filePath && filePath.includes('gallery/')) {
+      // Exclude gallery and pre-optimized responsive images from inlining so the
+      // hero <picture> srcset and LCP <link rel="preload"> resolve to real file URLs
+      // (inlined data: URIs bloat the HTML and can't be preloaded).
+      if (filePath && (filePath.includes('gallery/') || filePath.includes('images/optimized/'))) {
         return false;
       }
       // For Vercel, use smaller inline limit to ensure proper asset handling
