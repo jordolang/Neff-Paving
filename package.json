@@ -21,7 +21,8 @@
     "deploy:github": "npm run build:github && gh-pages -d dist",
     "deploy:vercel": "npm run build:vercel",
     "test:sw": "node scripts/test-sw.js",
-    "verify:assets": "node verify-assets.js"
+    "verify:assets": "node verify-assets.js",
+    "audit:performance": "node scripts/run-lighthouse.js"
   },
   "keywords": [
     "paving",

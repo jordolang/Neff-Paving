@@ -60,16 +60,20 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-    <!-- Fonts -->
+    <!-- Preload Critical Assets for LCP Optimization -->
+    <link rel="preload" as="image" href="/assets/images/optimized/posters/hero-poster-1920x1080-large.avif" type="image/avif" imagesrcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.avif 480w, /assets/images/optimized/posters/hero-poster-1920x1080-tablet.avif 768w, /assets/images/optimized/posters/hero-poster-1920x1080-desktop.avif 1200w, /assets/images/optimized/posters/hero-poster-1920x1080-large.avif 1920w" imagesizes="100vw" fetchpriority="high">
+    <link rel="preload" as="style" href="styles/redesign.css">
+
+    <!-- Fonts - optimized with font-display=swap and latin subset -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap&subset=latin" rel="stylesheet">
 
     <!-- Leaflet (keyless interactive maps — Esri satellite imagery, no API key) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles/redesign.css">
@@ -168,7 +172,7 @@
         <header>
             <div class="header-container">
                 <a href="#hero" class="brand" aria-label="Neff Paving home">
-                    <span class="mark"><img src="images/neff-logo.png" alt="Neff Paving"></span>
+                    <span class="mark"><img src="images/neff-logo.png" alt="Neff Paving" width="56" height="56"></span>
                     <h1>NEFF<span>PAVING</span></h1>
                 </a>
 
@@ -255,7 +259,40 @@
         <main>
             <!-- ============================== HERO ============================== -->
             <section id="hero">
-                <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="/assets/images/posters/hero-poster-1920x1080.jpg">
+                <!-- Optimized hero poster with modern image formats for LCP -->
+                <picture class="hero-poster">
+                    <!-- AVIF for modern browsers (best compression) -->
+                    <source
+                        srcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.avif 480w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-tablet.avif 768w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-desktop.avif 1200w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-large.avif 1920w"
+                        sizes="100vw"
+                        type="image/avif">
+
+                    <!-- WebP for wider browser support -->
+                    <source
+                        srcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.webp 480w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-tablet.webp 768w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-desktop.webp 1200w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-large.webp 1920w"
+                        sizes="100vw"
+                        type="image/webp">
+
+                    <!-- JPEG fallback for older browsers -->
+                    <img
+                        src="/assets/images/posters/hero-poster-1920x1080.jpg"
+                        srcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.jpg 480w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-tablet.jpg 768w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-desktop.jpg 1200w,
+                                /assets/images/optimized/posters/hero-poster-1920x1080-large.jpg 1920w"
+                        sizes="100vw"
+                        alt="Neff Paving professional asphalt paving and concrete services"
+                        loading="eager"
+                        fetchpriority="high">
+                </picture>
+
+                <video id="hero-video" muted loop playsinline preload="none" poster="/assets/images/posters/hero-poster-1920x1080.jpg">
                     <source src="/assets/videos/optimized/neff-paving-1080p.mp4" type="video/mp4">
                 </video>
                 <div class="hero-overlay"></div>
@@ -975,7 +1012,7 @@
                 <div class="container">
                     <div class="footer-grid">
                         <div class="footer-section">
-                            <img class="footer-logo" src="images/neff-logo.png" alt="Neff Paving" width="56" height="56">
+                            <img class="footer-logo" src="images/neff-logo.png" alt="Neff Paving" width="56" height="56" loading="lazy" decoding="async">
                             <h3>Neff Paving</h3>
                             <p class="footer-tagline"><strong style="color:var(--gold);">Built on Quality. Driven by Pride.</strong><br>Central Ohio's premier asphalt, concrete &amp; excavation contractor since 1999.<br><em>Your Road. Our Reputation.</em></p>
                             <div class="footer-social">
@@ -1152,7 +1189,7 @@
     </script>
 
     <!-- Mobile navigation -->
-    <script src="js/mobile-nav.js"></script>
+    <script src="js/mobile-nav.js" defer></script>
 
     <!-- Keyless dark vector locations map (Leaflet + CARTO "dark matter" basemap).
          Rendered street map (roads + labels) styled to match the UI — no satellite

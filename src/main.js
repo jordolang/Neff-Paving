@@ -52,25 +52,50 @@ class NeffPavingApp {
             }
         });
 
-        // Force video to play on load
-        video.addEventListener('loadeddata', () => {
-            video.play().catch(err => {
-                console.error('Video autoplay failed:', err);
+        // Lazy load video using Intersection Observer
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Video is in viewport, load and play it
+                    if (video.readyState === 0) {
+                        video.load();
+                    }
+                    video.play().catch(err => {
+                        console.error('Video autoplay failed:', err);
+                    });
+                    video.style.opacity = '1';
+
+                    // Stop observing once video is loaded
+                    videoObserver.unobserve(video);
+                }
             });
+        }, {
+            rootMargin: '50px' // Start loading slightly before video enters viewport
         });
 
-        // Ensure video is visible
-        video.style.opacity = '1';
+        // Start observing the video element
+        videoObserver.observe(video);
     }
 
     initAnimations() {
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            once: true,
-            offset: 100
-        });
-        
+        // Defer AOS initialization until after first paint to reduce main thread blocking
+        // This improves INP (Interaction to Next Paint) Core Web Vital metric
+        const initAOS = () => {
+            AOS.init({
+                duration: 1000,
+                once: true,
+                offset: 100
+            });
+        };
+
+        // Use requestIdleCallback for optimal performance, with setTimeout fallback
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initAOS, { timeout: 2000 });
+        } else {
+            // Fallback for browsers without requestIdleCallback support
+            setTimeout(initAOS, 100);
+        }
+
         // Remove any loading states immediately
         this.removeLoadingStates();
     }
