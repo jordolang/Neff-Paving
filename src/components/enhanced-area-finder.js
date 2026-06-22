@@ -185,8 +185,6 @@ export class EnhancedAreaFinder extends AreaFinder {
 
             // Setup location access if needed
             this.setupLocationAccess();
-
-            console.log('UX enhancements initialized successfully');
         } catch (error) {
             console.error('Failed to initialize UX enhancements:', error);
             this.errorHandler?.handleError('initialization', 'UX enhancement initialization failed', { error });
@@ -511,8 +509,6 @@ export class EnhancedAreaFinder extends AreaFinder {
                 // Initially hide the controls
                 this.visualControlsVisible = false;
                 this.toggleVisualControlsVisibility(false);
-                
-                console.log('Visual accuracy controls initialized successfully');
             } catch (error) {
                 console.error('Failed to initialize visual accuracy controls:', error);
                 this.showError('Advanced mapping features unavailable');
@@ -804,8 +800,6 @@ export class EnhancedAreaFinder extends AreaFinder {
                     bounds.extend(new google.maps.LatLng(coord.lat, coord.lng));
                 });
                 this.map.fitBounds(bounds);
-                
-                console.log('Restored enhanced area finder data:', savedData);
             }
         } catch (error) {
             console.error('Error restoring previous enhanced area finder data:', error);

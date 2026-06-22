@@ -805,8 +805,6 @@ export class AreaFinder {
                     bounds.extend(new google.maps.LatLng(coord.lat, coord.lng));
                 });
                 this.map.fitBounds(bounds);
-                
-                console.log('Restored Google Maps measurement data:', savedData);
             }
         } catch (error) {
             console.error('Error restoring previous Google Maps data:', error);
