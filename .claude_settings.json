@@ -1,0 +1,39 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/**)",
+      "Write(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/**)",
+      "Edit(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/**)",
+      "Glob(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/**)",
+      "Grep(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/**)",
+      "Read(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/.auto-claude/specs/004-harden-the-google-maps-estimate-flow/**)",
+      "Write(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/.auto-claude/specs/004-harden-the-google-maps-estimate-flow/**)",
+      "Edit(/Users/jordanlang/Repos/neff-paving/.auto-claude/worktrees/tasks/004-harden-the-google-maps-estimate-flow/.auto-claude/specs/004-harden-the-google-maps-estimate-flow/**)",
+      "Read(/Users/jordanlang/Repos/neff-paving/.auto-claude/**)",
+      "Write(/Users/jordanlang/Repos/neff-paving/.auto-claude/**)",
+      "Edit(/Users/jordanlang/Repos/neff-paving/.auto-claude/**)",
+      "Glob(/Users/jordanlang/Repos/neff-paving/.auto-claude/**)",
+      "Grep(/Users/jordanlang/Repos/neff-paving/.auto-claude/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__query-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}

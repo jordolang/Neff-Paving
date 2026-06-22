@@ -1,5 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { ContractService } from './contract-service.js';
+import analyticsService from './analytics-service.js';
 
 export class PaymentService {
   constructor() {
@@ -156,6 +157,18 @@ export class PaymentService {
         };
       }
 
+      // Track payment completion via analytics service
+      if (paymentIntent && paymentIntent.status === 'succeeded') {
+        await analyticsService.track('payment_complete', {
+          payment_id: paymentIntent.id,
+          amount: paymentIntent.amount,
+          currency: paymentIntent.currency,
+          status: paymentIntent.status,
+          payment_method: paymentIntent.payment_method,
+          metadata: paymentIntent.metadata
+        });
+      }
+
       return {
         success: true,
         paymentIntent,
@@ -245,10 +258,20 @@ export class PaymentService {
    */
   async handlePaymentSuccess(paymentIntent) {
     try {
+      // Track payment completion via analytics service
+      await analyticsService.track('payment_complete', {
+        payment_id: paymentIntent.id,
+        amount: paymentIntent.amount,
+        currency: paymentIntent.currency,
+        status: paymentIntent.status,
+        payment_method: paymentIntent.payment_method,
+        metadata: paymentIntent.metadata
+      });
+
       // After payment success
       const scheduler = await this.contractService.initiateScheduling(paymentIntent.metadata.contractId);
       await scheduler.initializeWidget('calendly-embed');
-      
+
       return scheduler;
     } catch (error) {
       console.error('Error handling payment success:', error);
