@@ -56,14 +56,83 @@ export class EnhancedAreaFinder extends AreaFinder {
     async init() {
         try {
             this.render();
-            await this.loadGoogleMaps();
-            this.initMap();
-            this.setupEventListeners();
-            await this.initializeVisualAccuracyControls();
-            await this.initializeUXEnhancements();
+            const result = await this.loadGoogleMaps();
+
+            if (result.success) {
+                this.initMap();
+                this.setupEventListeners();
+                this.addVisualControlsButton();
+                await this.initializeVisualAccuracyControls();
+                await this.initializeUXEnhancements();
+            } else {
+                this.showFallbackForm(result);
+                // Initialize only non-map-dependent UX enhancements in fallback mode
+                await this.initializeFallbackUXEnhancements();
+            }
         } catch (error) {
-            console.error('Error initializing enhanced area finder:', error);
-            this.showError('Failed to initialize area finder');
+            this.showFallbackForm({
+                success: false,
+                errorType: 'UNKNOWN_ERROR',
+                message: 'Failed to initialize area finder. Please use manual entry.'
+            });
+            await this.initializeFallbackUXEnhancements();
+        }
+    }
+
+    /**
+     * Add visual controls button to the drawing controls
+     */
+    addVisualControlsButton() {
+        const drawingControls = this.container.querySelector('.drawing-controls');
+        if (!drawingControls) return;
+
+        const visualControlsBtn = document.createElement('button');
+        visualControlsBtn.type = 'button';
+        visualControlsBtn.id = 'toggle-visual-controls';
+        visualControlsBtn.className = 'btn btn-outline-primary';
+        visualControlsBtn.innerHTML = `
+            <span class="icon">🎛️</span>
+            Visual Controls
+        `;
+
+        // Add event listener for the button
+        visualControlsBtn.addEventListener('click', () => this.toggleVisualControls());
+
+        drawingControls.appendChild(visualControlsBtn);
+    }
+
+    /**
+     * Initialize UX enhancements that work without maps (for fallback mode)
+     */
+    async initializeFallbackUXEnhancements() {
+        try {
+            // Initialize error handler
+            this.errorHandler = new ErrorHandler({
+                enableToasts: true,
+                enableModal: true,
+                enableAnalytics: true
+            });
+
+            // Initialize confirmation dialog
+            this.confirmationDialog = new ConfirmationDialog({
+                enableMobileOptimization: true,
+                enableAnimation: true
+            });
+
+            // Initialize tutorial system for fallback form
+            this.tutorialSystem = new TutorialSystem({
+                enableAutoStart: this.isFirstTimeUser,
+                enableSkip: true,
+                showProgress: true
+            });
+
+            // Check for mobile and show mobile-specific guidance
+            if (this.isMobile()) {
+                this.setupMobileEnhancements();
+            }
+        } catch (error) {
+            // Fallback UX enhancements are optional, don't block on errors
+            console.error('Failed to initialize fallback UX enhancements:', error);
         }
     }
 
@@ -148,10 +217,6 @@ export class EnhancedAreaFinder extends AreaFinder {
                     <div class="drawing-controls">
                         <button type="button" id="clear-shapes" class="btn btn-outline-danger" disabled>Clear All</button>
                         <button type="button" id="calculate-area" class="btn btn-outline-success" disabled>Calculate Area</button>
-                        <button type="button" id="toggle-visual-controls" class="btn btn-outline-primary">
-                            <span class="icon">🎛️</span>
-                            Visual Controls
-                        </button>
                     </div>
                 </div>
                 ` : ''}
@@ -166,7 +231,6 @@ export class EnhancedAreaFinder extends AreaFinder {
                             <li>Continue clicking to add points</li>
                             <li>Click the first point again to close the shape</li>
                             <li>Use the drawing tools above the map to switch between shapes</li>
-                            <li>Click "Visual Controls" for advanced mapping options</li>
                         </ul>
                     </div>
                 </div>
@@ -333,12 +397,7 @@ export class EnhancedAreaFinder extends AreaFinder {
      */
     setupEventListeners() {
         super.setupEventListeners();
-        
-        const visualControlsBtn = document.getElementById('toggle-visual-controls');
-        if (visualControlsBtn) {
-            visualControlsBtn.addEventListener('click', () => this.toggleVisualControls());
-        }
-        
+
         // Listen for measurement unit changes from visual controls
         window.addEventListener('measurementUnitsChanged', (e) => {
             this.currentUnits = e.detail.units;
