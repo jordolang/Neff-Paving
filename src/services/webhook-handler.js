@@ -513,8 +513,7 @@ export class WebhookHandler {
         calendly_event_uri: eventData?.uri,
         scheduled_time: eventData?.start_time,
         end_time: eventData?.end_time,
-        client_email: eventData?.invitees?.[0]?.email,
-        client_name: eventData?.invitees?.[0]?.name,
+        // client_email and client_name removed for privacy compliance
         meeting_type: eventData?.event_type?.name,
         source: 'webhook'
       });

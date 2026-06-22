@@ -67,8 +67,25 @@ export class AnalyticsService {
         return { success: true, queued: true };
       }
 
+      // Filter out blocked PII properties
+      const { BLOCKED_PROPERTIES } = await import('../config/analytics-config.js');
+      const filteredProperties = Object.keys(properties).reduce((acc, key) => {
+        // Check if property name contains any blocked terms
+        const isBlocked = BLOCKED_PROPERTIES.some(blocked =>
+          key.toLowerCase().includes(blocked.toLowerCase())
+        );
+
+        if (!isBlocked) {
+          acc[key] = properties[key];
+        } else if (this.options.debug) {
+          console.warn(`[Analytics] Blocked PII property: ${key}`);
+        }
+
+        return acc;
+      }, {});
+
       const enrichedProperties = {
-        ...properties,
+        ...filteredProperties,
         timestamp: new Date().toISOString(),
         url: typeof window !== 'undefined' ? window.location.href : undefined,
         userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined
@@ -221,12 +238,11 @@ export class AnalyticsService {
       calendly_event_uri: consultationData.calendlyEventUri,
       scheduled_time: consultationData.scheduledTime,
       end_time: consultationData.endTime,
-      client_name: consultationData.clientName,
-      client_email: consultationData.clientEmail,
+      // client_name and client_email removed for privacy compliance
       meeting_type: consultationData.meetingType,
       service_type: consultationData.estimateData?.serviceType,
-      estimated_cost: consultationData.estimateData?.totalCost,
-      ...consultationData
+      estimated_cost: consultationData.estimateData?.totalCost
+      // Removed unsafe spread operator
     });
   }
 

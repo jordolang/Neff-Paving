@@ -100,9 +100,10 @@ The application tracks a complete conversion funnel from initial page visit thro
 - `estimated_cost` - Cost estimate from backend
 - `has_measurement_data` - Whether measurement was included
 - `measurement_tool` - Tool used for measurement
-- `customer_email` - *Intentionally excluded for privacy*
 - `customer_state` - State/region (if applicable)
 - `timestamp` - Event timestamp
+
+**Privacy note:** Customer email is NOT tracked (excluded for privacy compliance)
 
 **What to look for:**
 - Conversion rate from estimate_started to estimate_submitted
@@ -189,11 +190,16 @@ Use Vercel Analytics filters to segment your data:
 
 To maintain privacy and comply with regulations:
 
-- ❌ Customer names (firstName, lastName)
-- ❌ Email addresses (tracked only server-side, not in analytics events)
+- ❌ Customer names (firstName, lastName, client_name)
+- ❌ Email addresses (customer_email, client_email)
 - ❌ Phone numbers
 - ❌ Street addresses
 - ❌ Personal identification information
+
+**Privacy Protection Mechanisms:**
+1. **Automatic PII Filtering**: The analytics service automatically filters out blocked properties (email, name, phone, address) before sending events
+2. **beforeSend Callback**: Vercel Analytics inject() includes a beforeSend callback as a last-resort PII filter
+3. **BLOCKED_PROPERTIES Config**: Centralized configuration defines all blocked PII terms
 
 ### What We DO Track
 
@@ -202,10 +208,15 @@ To maintain privacy and comply with regulations:
 - ✅ Business metrics (estimated cost, payment amount)
 - ✅ Timestamps and user agents (for fraud prevention)
 - ✅ Geographic region (state level only)
+- ✅ Reference numbers and IDs (non-PII identifiers)
 
 ### Privacy Policy Alignment
 
 All analytics tracking complies with the privacy commitments stated in `/privacy.html`. Vercel Analytics is GDPR-compliant and privacy-friendly by default.
+
+**Implementation Details:**
+- Email addresses are collected for business purposes (estimates, scheduling) but are NEVER sent to analytics
+- Multiple layers of PII filtering ensure privacy compliance even if a developer accidentally includes PII in an event
 
 ## Troubleshooting
 

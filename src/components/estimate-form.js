@@ -94,7 +94,7 @@ export class EstimateForm {
                 estimated_cost: result.estimate?.totalCost || 0,
                 has_measurement_data: !!result.areaData,
                 measurement_tool: result.measurementTool || this.measurementData?.activeTool,
-                customer_email: result.email,
+                // customer_email removed for privacy compliance
                 customer_state: result.state,
                 timestamp: new Date().toISOString()
             };

@@ -46,15 +46,44 @@ class NeffPavingApp {
         console.log('Neff Paving app initialized successfully')
     }
 
-    initAnalytics() {
+    async initAnalytics() {
         try {
+            // Import BLOCKED_PROPERTIES for PII filtering
+            const { BLOCKED_PROPERTIES } = await import('./config/analytics-config.js');
+
             // Initialize Vercel Analytics for page views and custom events
-            inject();
+            inject({
+                beforeSend: (event) => {
+                    // Filter PII from all analytics events as last resort
+                    if (event.data?.properties) {
+                        const filtered = Object.keys(event.data.properties).reduce((acc, key) => {
+                            const isBlocked = BLOCKED_PROPERTIES.some(blocked =>
+                                key.toLowerCase().includes(blocked.toLowerCase())
+                            );
+                            if (!isBlocked) {
+                                acc[key] = event.data.properties[key];
+                            } else {
+                                console.warn('[Analytics] beforeSend blocked PII:', key);
+                            }
+                            return acc;
+                        }, {});
+
+                        return {
+                            ...event,
+                            data: {
+                                ...event.data,
+                                properties: filtered
+                            }
+                        };
+                    }
+                    return event;
+                }
+            });
 
             // Initialize Vercel Speed Insights for performance monitoring
             injectSpeedInsights();
 
-            console.log('Analytics initialized successfully');
+            console.log('Analytics initialized with PII filtering');
         } catch (error) {
             console.error('Analytics initialization failed:', error);
         }
