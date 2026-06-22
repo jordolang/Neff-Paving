@@ -6,4 +6,4 @@ Allow: /
 Disallow: /developer.html
 
 # Sitemap location
-Sitemap: https://neffpaving.com/sitemap.xml
+Sitemap: https://neffpaving.github.io/Neff-Paving/sitemap.xml
