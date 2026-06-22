@@ -81,6 +81,33 @@ export class EstimateForm {
         }
     }
 
+    /**
+     * Track estimate submitted event on successful form submission
+     */
+    async trackEstimateSubmitted(result) {
+        try {
+            // Prepare event data with form information
+            const eventData = {
+                reference_number: result.referenceNumber,
+                service_type: result.serviceType,
+                square_footage: result.areaData?.areaInSquareFeet || result.estimate?.squareFootage || 0,
+                estimated_cost: result.estimate?.totalCost || 0,
+                has_measurement_data: !!result.areaData,
+                measurement_tool: result.measurementTool || this.measurementData?.activeTool,
+                customer_email: result.email,
+                customer_state: result.state,
+                timestamp: new Date().toISOString()
+            };
+
+            await analyticsService.trackEvent('estimate_submitted', eventData);
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track estimate submitted:', error);
+            }
+        }
+    }
+
     render() {
         this.container.innerHTML = `
             <div class="estimate-form-container">
@@ -505,6 +532,9 @@ export class EstimateForm {
     }
 
     handleSubmitSuccess(result) {
+        // Track successful submission
+        this.trackEstimateSubmitted(result);
+
         // Show success message
         this.container.innerHTML = `
             <div class="success-message">
