@@ -13,5 +13,81 @@ publish_mode: editorial_workflow
 media_folder: "public/images/cms"
 public_folder: "/images/cms"
 
-# Collections will be defined in subsequent configuration steps
-collections: []
+# Collections
+collections:
+  # Homepage content collection
+  - name: "homepage"
+    label: "Homepage"
+    files:
+      - name: "content"
+        label: "Homepage Content"
+        file: "content/homepage.json"
+        fields:
+          # Hero Section
+          - label: "Hero Section"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Badge", name: "badge", widget: "string", required: false }
+              - { label: "Eyebrow", name: "eyebrow", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Accent Word", name: "accent", widget: "string", hint: "The word in the title to highlight (e.g., 'Paving')" }
+              - { label: "Subtitle", name: "subtitle", widget: "text" }
+              - { label: "Motto", name: "motto", widget: "string" }
+              - label: "Call to Action Buttons"
+                name: "cta_buttons"
+                widget: "list"
+                max: 2
+                fields:
+                  - { label: "Text", name: "text", widget: "string" }
+                  - { label: "URL", name: "url", widget: "string" }
+                  - { label: "Style", name: "style", widget: "select", options: ["primary", "outline"] }
+              - label: "Hero Stats"
+                name: "hero_stats"
+                widget: "list"
+                hint: "Stats displayed in the hero section"
+                fields:
+                  - { label: "Value", name: "value", widget: "string" }
+                  - { label: "Label", name: "label", widget: "string" }
+
+          # Stats Band Section
+          - label: "Stats Band"
+            name: "stats"
+            widget: "list"
+            hint: "Main statistics section below the hero"
+            fields:
+              - { label: "Number", name: "number", widget: "string" }
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "Description", name: "description", widget: "string" }
+
+          # Introduction Section
+          - label: "Introduction Section"
+            name: "intro"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow", name: "eyebrow", widget: "string" }
+              - { label: "Heading", name: "heading", widget: "string" }
+              - { label: "Lead Paragraph", name: "lead", widget: "text" }
+              - label: "Key Points"
+                name: "points"
+                widget: "list"
+                fields:
+                  - { label: "Icon", name: "icon", widget: "select", options: ["star", "check", "fast"], hint: "Icon to display" }
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Description", name: "description", widget: "text" }
+              - label: "CTA"
+                name: "cta"
+                widget: "object"
+                fields:
+                  - { label: "Button Text", name: "button_text", widget: "string" }
+                  - { label: "Button URL", name: "button_url", widget: "string" }
+                  - { label: "Note Icon", name: "note_icon", widget: "string", required: false }
+                  - { label: "Note Text", name: "note_text", widget: "string", required: false }
+              - label: "Stat Cards"
+                name: "stat_cards"
+                widget: "list"
+                hint: "Stats displayed in the introduction section"
+                fields:
+                  - { label: "Number", name: "number", widget: "string" }
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "Description", name: "description", widget: "string" }
