@@ -109,7 +109,10 @@ export default defineConfig(({ mode }) => {
         'columbus-paving': resolve(__dirname, 'areas/columbus-paving.html'),
         'zanesville-paving': resolve(__dirname, 'areas/zanesville-paving.html'),
         'newark-paving': resolve(__dirname, 'areas/newark-paving.html'),
-        'lancaster-paving': resolve(__dirname, 'areas/lancaster-paving.html')
+        'lancaster-paving': resolve(__dirname, 'areas/lancaster-paving.html'),
+        // Customer portal
+        'customer-portal': resolve(__dirname, 'customer-portal.html'),
+        'customer-dashboard': resolve(__dirname, 'customer-dashboard.html')
       },
       output: {
         // Optimized asset file naming with cache-friendly hashes
