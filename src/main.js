@@ -2,6 +2,10 @@
 // The redesigned homepage is styled entirely by styles/redesign.css (linked in index.html).
 // The old index.legacy.html links main.css directly, so it remains unaffected.
 
+// Import Vercel Analytics and Speed Insights
+import { inject } from '@vercel/analytics';
+import { injectSpeedInsights } from '@vercel/speed-insights';
+
 // Import animation libraries
 import AOS from 'aos'
 import 'aos/dist/aos.css'
@@ -18,16 +22,19 @@ class NeffPavingApp {
 
     init() {
         console.log('Initializing Neff Paving App...');
-        
+
+        // Initialize analytics
+        this.initAnalytics()
+
         // Initialize hero video
         this.initHeroVideo()
-        
+
         // Initialize animations
         this.initAnimations()
-        
+
         // Initialize navigation
         this.initNavigation()
-        
+
         // Initialize gallery (CRITICAL for gallery functionality)
         try {
             this.initGalleryFilters()
@@ -35,8 +42,51 @@ class NeffPavingApp {
         } catch (error) {
             console.error('Gallery initialization failed:', error)
         }
-        
+
         console.log('Neff Paving app initialized successfully')
+    }
+
+    async initAnalytics() {
+        try {
+            // Import BLOCKED_PROPERTIES for PII filtering
+            const { BLOCKED_PROPERTIES } = await import('./config/analytics-config.js');
+
+            // Initialize Vercel Analytics for page views and custom events
+            inject({
+                beforeSend: (event) => {
+                    // Filter PII from all analytics events as last resort
+                    if (event.data?.properties) {
+                        const filtered = Object.keys(event.data.properties).reduce((acc, key) => {
+                            const isBlocked = BLOCKED_PROPERTIES.some(blocked =>
+                                key.toLowerCase().includes(blocked.toLowerCase())
+                            );
+                            if (!isBlocked) {
+                                acc[key] = event.data.properties[key];
+                            } else {
+                                console.warn('[Analytics] beforeSend blocked PII:', key);
+                            }
+                            return acc;
+                        }, {});
+
+                        return {
+                            ...event,
+                            data: {
+                                ...event.data,
+                                properties: filtered
+                            }
+                        };
+                    }
+                    return event;
+                }
+            });
+
+            // Initialize Vercel Speed Insights for performance monitoring
+            injectSpeedInsights();
+
+            console.log('Analytics initialized with PII filtering');
+        } catch (error) {
+            console.error('Analytics initialization failed:', error);
+        }
     }
 
     initHeroVideo() {

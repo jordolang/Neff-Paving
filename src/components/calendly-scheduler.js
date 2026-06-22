@@ -1,3 +1,5 @@
+import analyticsService from '../services/analytics-service.js';
+
 export class CalendlyScheduler {
   constructor(contractId, estimateData) {
     this.contractId = contractId;
@@ -5,6 +7,7 @@ export class CalendlyScheduler {
     this.calendlyUrl = this.generateCalendlyUrl();
     this.widget = null;
     this.eventTypeUrl = process.env.CALENDLY_EVENT_TYPE_URL || 'https://calendly.com/your-account/consultation';
+    this.analyticsService = analyticsService;
   }
 
   generateCalendlyUrl() {
@@ -136,7 +139,7 @@ export class CalendlyScheduler {
     // Process scheduling completion
     // Trigger notifications
     console.log('Meeting scheduled successfully:', event);
-    
+
     try {
       const schedulingData = {
         contractId: this.contractId,
@@ -150,21 +153,24 @@ export class CalendlyScheduler {
         estimateData: this.estimateData
       };
 
+      // Track consultation booking via analytics service
+      this.analyticsService.trackConsultationBooked(schedulingData);
+
       // Send notification to backend
       this.notifyBackend(schedulingData);
-      
+
       // Send confirmation email
       this.sendConfirmationEmail(schedulingData);
-      
+
       // Update contract status
       this.updateContractStatus(schedulingData);
-      
+
       // Trigger custom event for other components
       this.dispatchCustomEvent('calendly:scheduled', schedulingData);
-      
+
       // Show success message
       this.showSuccessMessage(schedulingData);
-      
+
     } catch (error) {
       console.error('Error processing scheduled meeting:', error);
       this.handleSchedulingError(error);
