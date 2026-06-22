@@ -148,7 +148,9 @@ export class ErrorHandler {
                 'GOOGLE_MAPS_API_KEY_MISSING': 'Map configuration error. Please refresh the page.',
                 'GOOGLE_MAPS_LOADING_ERROR': 'Unable to load maps. Please check your connection.',
                 'GEOCODING_ERROR': 'Unable to find location. Please try a different address.',
-                'DIRECTIONS_ERROR': 'Unable to calculate directions. Please try again.'
+                'DIRECTIONS_ERROR': 'Unable to calculate directions. Please try again.',
+                'OVER_QUERY_LIMIT': 'Map usage limit reached. Please try again in a moment.',
+                'REQUEST_DENIED': 'Map access denied. Please check your API key configuration.'
             },
             
             // Drawing errors
