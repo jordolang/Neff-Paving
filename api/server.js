@@ -36,9 +36,11 @@ app.get('/health/db', async (req, res) => {
 
 // Import routes
 const authRoutes = require('./routes/auth');
+const customerRoutes = require('./routes/customer');
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/customer', customerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
