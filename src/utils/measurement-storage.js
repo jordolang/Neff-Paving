@@ -29,8 +29,6 @@ export function storeMeasurementData(toolType, data) {
         
         // Update session metadata
         updateSessionMetadata();
-        
-        console.log(`Measurement data stored for ${toolType}:`, data);
     } catch (error) {
         console.error('Failed to store measurement data:', error);
     }
@@ -76,8 +74,6 @@ export function clearMeasurementData(toolType) {
         
         // Update session metadata
         updateSessionMetadata();
-        
-        console.log(`Measurement data cleared for ${toolType}`);
     } catch (error) {
         console.error('Failed to clear measurement data:', error);
     }
@@ -91,8 +87,6 @@ export function clearAllMeasurementData() {
         Object.values(STORAGE_KEYS).forEach(key => {
             sessionStorage.removeItem(key);
         });
-        
-        console.log('All measurement data cleared');
     } catch (error) {
         console.error('Failed to clear all measurement data:', error);
     }

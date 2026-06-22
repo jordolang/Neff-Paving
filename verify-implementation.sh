@@ -153,7 +153,7 @@ echo "=== Code Quality Checks ==="
 echo ""
 
 # Check for console.log (should be removed in production)
-CONSOLE_LOGS=$(grep -r "console.log" src/components/area-finder.js src/components/enhanced-area-finder.js src/components/estimate-form.js src/components/maps-fallback-form.js src/services/maps-loader-service.js 2>/dev/null | grep -v "// console.log" | wc -l)
+CONSOLE_LOGS=$(grep -r "console.log" src/components/area-finder.js src/components/enhanced-area-finder.js src/components/estimate-form.js src/components/maps-fallback-form.js src/services/maps-loader-service.js src/utils/measurement-storage.js 2>/dev/null | grep -v "// console.log" | wc -l)
 if [ "$CONSOLE_LOGS" -eq 0 ]; then
   check_pass "No console.log statements found"
 else
