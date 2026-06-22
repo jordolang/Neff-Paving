@@ -367,6 +367,24 @@ export class ErrorHandler {
                 description: error.message,
                 fatal: this.shouldShowModal(error)
             });
+
+            // Track specific map and drawing errors
+            if (error.type === 'map') {
+                window.gtag('event', 'map_error', {
+                    error_code: error.details.code || error.message,
+                    error_message: error.message,
+                    timestamp: error.timestamp
+                });
+            }
+
+            if (error.type === 'drawing') {
+                window.gtag('event', 'drawing_error', {
+                    error_code: error.details.code || error.message,
+                    error_message: error.message,
+                    vertex_count: error.details.vertexCount,
+                    timestamp: error.timestamp
+                });
+            }
         }
 
         // Track with custom analytics
@@ -375,10 +393,32 @@ export class ErrorHandler {
                 errorId: error.id,
                 errorType: error.type,
                 errorMessage: error.message,
+                errorDetails: error.details,
                 timestamp: error.timestamp,
                 userAgent: error.userAgent,
                 url: error.url
             });
+
+            // Track specific events for map and drawing errors
+            if (error.type === 'map') {
+                window.analytics.track('Map Error', {
+                    errorId: error.id,
+                    errorCode: error.details.code || error.message,
+                    errorMessage: error.message,
+                    timestamp: error.timestamp
+                });
+            }
+
+            if (error.type === 'drawing') {
+                window.analytics.track('Drawing Error', {
+                    errorId: error.id,
+                    errorCode: error.details.code || error.message,
+                    errorMessage: error.message,
+                    vertexCount: error.details.vertexCount,
+                    area: error.details.area,
+                    timestamp: error.timestamp
+                });
+            }
         }
 
         // Update error counts

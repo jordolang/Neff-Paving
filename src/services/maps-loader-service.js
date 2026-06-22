@@ -80,6 +80,10 @@ export class MapsLoaderService {
         // Don't retry on quota or key errors (they won't succeed on retry)
         if (errorType === 'QUOTA_EXCEEDED' || errorType === 'INVALID_KEY') {
           this.loadPromise = null;
+
+          // Track non-retryable errors
+          this._trackError(errorType, error, this.loadAttempts, false);
+
           return {
             success: false,
             error: error,
@@ -100,6 +104,9 @@ export class MapsLoaderService {
     // All retries exhausted
     this.loadPromise = null;
     const errorType = this._detectErrorType(lastError);
+
+    // Track retries exhausted errors
+    this._trackError(errorType, lastError, this.loadAttempts, true);
 
     return {
       success: false,
@@ -205,6 +212,41 @@ export class MapsLoaderService {
    */
   _sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Track error for analytics
+   * @private
+   */
+  _trackError(errorType, error, attempts, retriesExhausted) {
+    // Track with Google Analytics if available
+    if (window.gtag) {
+      window.gtag('event', 'exception', {
+        description: `Maps API Error: ${errorType}`,
+        fatal: errorType === 'QUOTA_EXCEEDED' || errorType === 'INVALID_KEY'
+      });
+
+      window.gtag('event', 'maps_load_error', {
+        error_type: errorType,
+        attempts: attempts,
+        retries_exhausted: retriesExhausted,
+        error_message: error?.message || 'Unknown error'
+      });
+    }
+
+    // Track with custom analytics if available
+    if (window.analytics) {
+      window.analytics.track('Maps API Load Error', {
+        errorType: errorType,
+        errorMessage: error?.message || 'Unknown error',
+        attempts: attempts,
+        retriesExhausted: retriesExhausted,
+        retryable: errorType !== 'QUOTA_EXCEEDED' && errorType !== 'INVALID_KEY',
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      });
+    }
   }
 
   /**
