@@ -211,6 +211,26 @@ export class AnalyticsService {
   }
 
   /**
+   * Track consultation booking
+   * @param {Object} consultationData - Consultation booking data
+   * @returns {Promise<Object>} Tracking result
+   */
+  async trackConsultationBooked(consultationData) {
+    return this.track('consultation_booked', {
+      contract_id: consultationData.contractId,
+      calendly_event_uri: consultationData.calendlyEventUri,
+      scheduled_time: consultationData.scheduledTime,
+      end_time: consultationData.endTime,
+      client_name: consultationData.clientName,
+      client_email: consultationData.clientEmail,
+      meeting_type: consultationData.meetingType,
+      service_type: consultationData.estimateData?.serviceType,
+      estimated_cost: consultationData.estimateData?.totalCost,
+      ...consultationData
+    });
+  }
+
+  /**
    * Track form abandonment
    * @param {string} formName - Name of the form
    * @param {Object} formData - Partial form data
