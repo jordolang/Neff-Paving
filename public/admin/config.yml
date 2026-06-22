@@ -91,3 +91,57 @@ collections:
                   - { label: "Number", name: "number", widget: "string" }
                   - { label: "Label", name: "label", widget: "string" }
                   - { label: "Description", name: "description", widget: "string" }
+
+  # Services content collection
+  - name: "services"
+    label: "Services"
+    files:
+      - name: "content"
+        label: "Services Content"
+        file: "content/services.json"
+        fields:
+          # Asphalt Services Category
+          - label: "Asphalt Services"
+            name: "asphalt"
+            widget: "object"
+            fields:
+              - { label: "Category Title", name: "title", widget: "string", default: "Asphalt Services" }
+              - { label: "Category Description", name: "description", widget: "text" }
+              - label: "Services"
+                name: "services"
+                widget: "list"
+                hint: "Individual asphalt services offered"
+                fields:
+                  - { label: "Service Name", name: "name", widget: "string" }
+                  - { label: "Short Description", name: "description", widget: "text" }
+                  - { label: "Icon", name: "icon", widget: "string", required: false, hint: "Icon identifier or class" }
+                  - label: "Features"
+                    name: "features"
+                    widget: "list"
+                    required: false
+                    hint: "Key features or benefits"
+                    field: { label: "Feature", name: "feature", widget: "string" }
+                  - { label: "Image", name: "image", widget: "image", required: false }
+
+          # Concrete Services Category
+          - label: "Concrete Services"
+            name: "concrete"
+            widget: "object"
+            fields:
+              - { label: "Category Title", name: "title", widget: "string", default: "Concrete Services" }
+              - { label: "Category Description", name: "description", widget: "text" }
+              - label: "Services"
+                name: "services"
+                widget: "list"
+                hint: "Individual concrete services offered"
+                fields:
+                  - { label: "Service Name", name: "name", widget: "string" }
+                  - { label: "Short Description", name: "description", widget: "text" }
+                  - { label: "Icon", name: "icon", widget: "string", required: false, hint: "Icon identifier or class" }
+                  - label: "Features"
+                    name: "features"
+                    widget: "list"
+                    required: false
+                    hint: "Key features or benefits"
+                    field: { label: "Feature", name: "feature", widget: "string" }
+                  - { label: "Image", name: "image", widget: "image", required: false }
