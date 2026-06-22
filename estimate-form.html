@@ -481,6 +481,21 @@
         </footer>
     </div>
 
+    <!-- Vercel Analytics -->
+    <script type="module">
+        import { inject, track } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@1.5.0/+esm';
+
+        // Initialize Vercel Analytics
+        inject();
+
+        // Track page visit
+        track('page_view', {
+            page_type: 'estimate_form',
+            page: 'estimate_form',
+            referrer: document.referrer || undefined
+        });
+    </script>
+
     <script>
         /* =================================================================
            CONFIG

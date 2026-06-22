@@ -6,6 +6,7 @@
 import { FormValidationService } from '../services/form-validation-service.js';
 import { EstimateService } from '../services/estimate-service.js';
 import { getMeasurementData, getAllMeasurementData, hasMeasurementData, handleFormSubmission, handleFormReset } from '../utils/measurement-storage.js';
+import analyticsService from '../services/analytics-service.js';
 
 export class EstimateForm {
     constructor(containerId) {
@@ -26,6 +27,25 @@ export class EstimateForm {
         this.attachEventListeners();
         this.loadMeasurementData();
         this.updateSubmitButtonState();
+        this.trackPageVisit();
+    }
+
+    /**
+     * Track page visit event for analytics
+     */
+    async trackPageVisit() {
+        try {
+            await analyticsService.trackPageView('estimate_form', {
+                page_type: 'estimate_form',
+                has_measurement_data: hasMeasurementData(),
+                referrer: typeof document !== 'undefined' ? document.referrer : undefined
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track page visit:', error);
+            }
+        }
     }
 
     render() {
