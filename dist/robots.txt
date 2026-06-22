@@ -1,32 +1,9 @@
+# robots.txt for Neff Paving
 User-agent: *
 Allow: /
 
+# Disallow admin and development pages
+Disallow: /developer.html
+
 # Sitemap location
-Sitemap: https://neff-paving.com/sitemap.xml
-
-# Disallow development and test files
-Disallow: /test-results/
-Disallow: /playwright-report/
-Disallow: /lighthouse-reports/
-Disallow: /*.json$
-Disallow: /node_modules/
-
-# Allow specific assets
-Allow: /assets/
-Allow: /images/
-Allow: /videos/
-Allow: *.css
-Allow: *.js
-
-# Crawl delay (optional - remove if not needed)
-# Crawl-delay: 1
-
-# Specific instructions for major search engines
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /
+Sitemap: https://neffpaving.com/sitemap.xml
