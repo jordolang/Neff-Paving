@@ -1,5 +1,7 @@
 import { GOOGLE_MAPS_CONFIG, DEFAULT_MAP_OPTIONS, DRAWING_MANAGER_OPTIONS, AREA_UNITS } from '../config/maps.js';
 import { storeMeasurementData, getMeasurementData } from '../utils/measurement-storage.js';
+import { MapsLoaderService } from '../services/maps-loader-service.js';
+import { MapsFallbackForm } from './maps-fallback-form.js';
 
 export class AreaFinder {
     constructor(containerId, options = {}) {
@@ -10,32 +12,44 @@ export class AreaFinder {
             showAddressSearch: true,
             showAreaInfo: true,
             onAreaCalculated: () => {},
+            onFallbackActivated: () => {},
             ...options
         };
-        
+
         this.map = null;
         this.drawingManager = null;
         this.currentShape = null;
         this.currentArea = null;
         this.geocoder = null;
         this.searchBox = null;
-        
+        this.mapsLoader = null;
+        this.fallbackForm = null;
+        this.mapsLoadFailed = false;
+
         if (!this.container) {
             throw new Error(`Container with ID "${containerId}" not found`);
         }
-        
+
         this.init();
     }
 
     async init() {
         try {
             this.render();
-            await this.loadGoogleMaps();
-            this.initMap();
-            this.setupEventListeners();
+            const result = await this.loadGoogleMaps();
+
+            if (result.success) {
+                this.initMap();
+                this.setupEventListeners();
+            } else {
+                this.showFallbackForm(result);
+            }
         } catch (error) {
-            console.error('Error initializing area finder:', error);
-            this.showError('Failed to initialize area finder');
+            this.showFallbackForm({
+                success: false,
+                errorType: 'UNKNOWN_ERROR',
+                message: 'Failed to initialize area finder. Please use manual entry.'
+            });
         }
     }
 
@@ -338,21 +352,50 @@ export class AreaFinder {
     }
 
     async loadGoogleMaps() {
-        return new Promise((resolve, reject) => {
-            if (typeof google !== 'undefined' && google.maps) {
-                resolve();
-                return;
+        // Create MapsLoaderService instance
+        this.mapsLoader = new MapsLoaderService({
+            apiKey: GOOGLE_MAPS_CONFIG.apiKey,
+            libraries: GOOGLE_MAPS_CONFIG.libraries,
+            region: GOOGLE_MAPS_CONFIG.region,
+            language: GOOGLE_MAPS_CONFIG.language,
+            version: GOOGLE_MAPS_CONFIG.version
+        });
+
+        // Attempt to load Google Maps with retry logic
+        const result = await this.mapsLoader.load();
+
+        if (result.success) {
+            // Maps loaded successfully
+            window.google = result.google;
+            return result;
+        } else {
+            // Maps failed to load
+            this.mapsLoadFailed = true;
+            return result;
+        }
+    }
+
+    showFallbackForm(loadResult) {
+        // Clear the container and render the fallback form
+        this.container.innerHTML = '';
+
+        this.fallbackForm = new MapsFallbackForm(this.containerId, {
+            errorMessage: loadResult.message || 'Google Maps is currently unavailable. Please enter your project details manually.',
+            errorType: loadResult.errorType || 'UNKNOWN_ERROR',
+            onDataSubmitted: (measurementData) => {
+                // Store fallback data
+                storeMeasurementData('manual', measurementData);
+
+                // Call callback
+                if (this.options.onAreaCalculated) {
+                    this.options.onAreaCalculated(measurementData);
+                }
+
+                // Call fallback activated callback
+                if (this.options.onFallbackActivated) {
+                    this.options.onFallbackActivated(measurementData);
+                }
             }
-
-            window.initAreaFinderMap = () => {
-                delete window.initAreaFinderMap;
-                resolve();
-            };
-
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.apiKey}&libraries=${GOOGLE_MAPS_CONFIG.libraries.join(',')}&callback=initAreaFinderMap`;
-            script.onerror = reject;
-            document.head.appendChild(script);
         });
     }
 
@@ -638,12 +681,20 @@ export class AreaFinder {
         if (this.currentShape) {
             this.currentShape.setMap(null);
         }
-        
+
         if (this.drawingManager) {
             this.drawingManager.setMap(null);
         }
-        
+
+        if (this.fallbackForm) {
+            this.fallbackForm = null;
+        }
+
         this.container.innerHTML = '';
+    }
+
+    isFallbackActive() {
+        return this.mapsLoadFailed && this.fallbackForm !== null;
     }
 
     restoreAreaData(data) {
