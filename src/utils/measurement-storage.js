@@ -5,6 +5,7 @@
 
 const STORAGE_KEYS = {
     GOOGLE_MAPS_DATA: 'neff_paving_google_maps_measurements',
+    MANUAL_ENTRY_DATA: 'neff_paving_manual_entry_data',
     ACTIVE_TOOL: 'neff_paving_active_measurement_tool',
     MEASUREMENT_SESSION: 'neff_paving_measurement_session'
 };
@@ -132,6 +133,7 @@ export function hasMeasurementData() {
 export function getAllMeasurementData() {
     return {
         googleMaps: getMeasurementData('google-maps'),
+        manualEntry: getMeasurementData('manual-entry'),
         activeTool: getActiveTool()
     };
 }
@@ -146,7 +148,7 @@ export function getMeasurementSummary() {
         tools: [],
         totalMeasurements: 0
     };
-    
+
     if (allData.googleMaps) {
         summary.hasData = true;
         summary.tools.push({
@@ -158,8 +160,19 @@ export function getMeasurementSummary() {
         });
         summary.totalMeasurements++;
     }
-    
-    
+
+    if (allData.manualEntry) {
+        summary.hasData = true;
+        summary.tools.push({
+            type: 'manual-entry',
+            name: 'Manual Entry',
+            hasArea: !!allData.manualEntry.squareFootage,
+            area: allData.manualEntry.squareFootage || 0,
+            timestamp: allData.manualEntry.timestamp
+        });
+        summary.totalMeasurements++;
+    }
+
     return summary;
 }
 
@@ -206,6 +219,8 @@ function getStorageKey(toolType) {
     switch (toolType) {
         case 'google-maps':
             return STORAGE_KEYS.GOOGLE_MAPS_DATA;
+        case 'manual-entry':
+            return STORAGE_KEYS.MANUAL_ENTRY_DATA;
         default:
             throw new Error(`Unknown tool type: ${toolType}`);
     }
@@ -217,13 +232,16 @@ function updateSessionMetadata() {
             lastUpdated: new Date().toISOString(),
             tools: []
         };
-        
+
         // Check which tools have data
         if (sessionStorage.getItem(STORAGE_KEYS.GOOGLE_MAPS_DATA)) {
             metadata.tools.push('google-maps');
         }
-        
-        
+
+        if (sessionStorage.getItem(STORAGE_KEYS.MANUAL_ENTRY_DATA)) {
+            metadata.tools.push('manual-entry');
+        }
+
         sessionStorage.setItem(STORAGE_KEYS.MEASUREMENT_SESSION, JSON.stringify(metadata));
     } catch (error) {
         console.error('Failed to update session metadata:', error);
