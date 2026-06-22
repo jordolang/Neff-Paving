@@ -18,7 +18,8 @@ export class EstimateForm {
     this.serviceType = document.getElementById('service-type');
     this.squareFootage = document.getElementById('square-footage');
         this.isSubmitting = false;
-        
+        this.hasTrackedEstimateStarted = false;
+
         this.init();
     }
 
@@ -44,6 +45,38 @@ export class EstimateForm {
             // Don't throw - analytics failure shouldn't break the form
             if (analyticsService.options.debug) {
                 console.error('Failed to track page visit:', error);
+            }
+        }
+    }
+
+    /**
+     * Track estimate started event when user begins filling form
+     * Fires only once on first field focus
+     */
+    async trackEstimateStarted(event) {
+        // Only track once
+        if (this.hasTrackedEstimateStarted) {
+            return;
+        }
+
+        // Only track for form input elements
+        const target = event.target;
+        if (!target || !target.matches('input, select, textarea')) {
+            return;
+        }
+
+        this.hasTrackedEstimateStarted = true;
+
+        try {
+            await analyticsService.trackEvent('estimate_started', {
+                first_field: target.id || target.name,
+                has_measurement_data: hasMeasurementData(),
+                timestamp: new Date().toISOString()
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track estimate started:', error);
             }
         }
     }
@@ -381,6 +414,9 @@ export class EstimateForm {
         form.addEventListener('input', (e) => this.handleFieldValidation(e));
         form.addEventListener('blur', (e) => this.handleFieldValidation(e), true);
 
+        // Track estimate started - fires once when user begins filling form
+        form.addEventListener('focus', (e) => this.trackEstimateStarted(e), true);
+
         // Measurement tool toggle buttons
         if (googleMapsToggle) {
             googleMapsToggle.addEventListener('click', () => this.toggleMeasurementTool('google-maps'));
@@ -389,7 +425,7 @@ export class EstimateForm {
         // Phone number formatting
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', (e) => this.formatPhoneNumber(e));
-        
+
         // Initialize measurement tools after form is rendered
         setTimeout(() => this.initializeMeasurementTools(), 100);
     }
