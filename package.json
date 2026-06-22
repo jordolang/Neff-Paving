@@ -21,7 +21,8 @@
     "deploy:github": "npm run build:github && gh-pages -d dist",
     "deploy:vercel": "npm run build:vercel",
     "test:sw": "node scripts/test-sw.js",
-    "verify:assets": "node verify-assets.js"
+    "verify:assets": "node verify-assets.js",
+    "audit:performance": "node scripts/run-lighthouse.js"
   },
   "keywords": [
     "paving",
@@ -36,20 +37,20 @@
     "npm": ">=9.0.0"
   },
   "dependencies": {
-    "@googlemaps/js-api-loader": "^1.16.10",
+    "@googlemaps/js-api-loader": "^2.1.1",
     "@stripe/stripe-js": "^7.4.0",
-    "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "animate.css": "^4.1.1",
     "aos": "^2.3.4",
     "decap-cms-app": "^3.3.3"
   },
   "devDependencies": {
-    "cross-env": "^10.0.0",
-    "fs-extra": "^11.2.0",
+    "cross-env": "^10.1.0",
+    "fs-extra": "^11.3.5",
     "gh-pages": "^6.3.0",
-    "sharp": "^0.33.5",
-    "terser": "^5.36.0",
+    "sharp": "^0.35.2",
+    "terser": "^5.48.0",
     "vite": "^7.0.0"
   }
 }

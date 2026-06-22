@@ -1,0 +1,9 @@
+# robots.txt for Neff Paving
+User-agent: *
+Allow: /
+
+# Disallow admin and development pages
+Disallow: /developer.html
+
+# Sitemap location
+Sitemap: https://neffpaving.com/sitemap.xml
