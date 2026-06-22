@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "004-harden-the-google-maps-estimate-flow",
+  "state": "building",
+  "subtasks": {
+    "completed": 10,
+    "total": 11,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "End-to-End Verification",
+    "id": null,
+    "total": 2
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 16,
+    "started_at": "2026-06-21T23:32:20.970116"
+  },
+  "last_update": "2026-06-22T00:21:53.529813"
+}
