@@ -1,5 +1,7 @@
 import { GOOGLE_MAPS_CONFIG, DEFAULT_MAP_OPTIONS, DRAWING_MANAGER_OPTIONS, AREA_UNITS } from '../config/maps.js';
 import { storeMeasurementData, getMeasurementData } from '../utils/measurement-storage.js';
+import { MapsLoaderService } from '../services/maps-loader-service.js';
+import { MapsFallbackForm } from './maps-fallback-form.js';
 import analyticsService from '../services/analytics-service.js';
 
 export class AreaFinder {
@@ -11,32 +13,44 @@ export class AreaFinder {
             showAddressSearch: true,
             showAreaInfo: true,
             onAreaCalculated: () => {},
+            onFallbackActivated: () => {},
             ...options
         };
-        
+
         this.map = null;
         this.drawingManager = null;
         this.currentShape = null;
         this.currentArea = null;
         this.geocoder = null;
         this.searchBox = null;
-        
+        this.mapsLoader = null;
+        this.fallbackForm = null;
+        this.mapsLoadFailed = false;
+
         if (!this.container) {
             throw new Error(`Container with ID "${containerId}" not found`);
         }
-        
+
         this.init();
     }
 
     async init() {
         try {
             this.render();
-            await this.loadGoogleMaps();
-            this.initMap();
-            this.setupEventListeners();
+            const result = await this.loadGoogleMaps();
+
+            if (result.success) {
+                this.initMap();
+                this.setupEventListeners();
+            } else {
+                this.showFallbackForm(result);
+            }
         } catch (error) {
-            console.error('Error initializing area finder:', error);
-            this.showError('Failed to initialize area finder');
+            this.showFallbackForm({
+                success: false,
+                errorType: 'UNKNOWN_ERROR',
+                message: 'Failed to initialize area finder. Please use manual entry.'
+            });
         }
     }
 
@@ -339,21 +353,50 @@ export class AreaFinder {
     }
 
     async loadGoogleMaps() {
-        return new Promise((resolve, reject) => {
-            if (typeof google !== 'undefined' && google.maps) {
-                resolve();
-                return;
+        // Create MapsLoaderService instance
+        this.mapsLoader = new MapsLoaderService({
+            apiKey: GOOGLE_MAPS_CONFIG.apiKey,
+            libraries: GOOGLE_MAPS_CONFIG.libraries,
+            region: GOOGLE_MAPS_CONFIG.region,
+            language: GOOGLE_MAPS_CONFIG.language,
+            version: GOOGLE_MAPS_CONFIG.version
+        });
+
+        // Attempt to load Google Maps with retry logic
+        const result = await this.mapsLoader.load();
+
+        if (result.success) {
+            // Maps loaded successfully
+            window.google = result.google;
+            return result;
+        } else {
+            // Maps failed to load
+            this.mapsLoadFailed = true;
+            return result;
+        }
+    }
+
+    showFallbackForm(loadResult) {
+        // Clear the container and render the fallback form
+        this.container.innerHTML = '';
+
+        this.fallbackForm = new MapsFallbackForm(this.containerId, {
+            errorMessage: loadResult.message || 'Google Maps is currently unavailable. Please enter your project details manually.',
+            errorType: loadResult.errorType || 'UNKNOWN_ERROR',
+            onDataSubmitted: (measurementData) => {
+                // Store fallback data
+                storeMeasurementData('manual', measurementData);
+
+                // Call callback
+                if (this.options.onAreaCalculated) {
+                    this.options.onAreaCalculated(measurementData);
+                }
+
+                // Call fallback activated callback
+                if (this.options.onFallbackActivated) {
+                    this.options.onFallbackActivated(measurementData);
+                }
             }
-
-            window.initAreaFinderMap = () => {
-                delete window.initAreaFinderMap;
-                resolve();
-            };
-
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.apiKey}&libraries=${GOOGLE_MAPS_CONFIG.libraries.join(',')}&callback=initAreaFinderMap`;
-            script.onerror = reject;
-            document.head.appendChild(script);
         });
     }
 
@@ -373,14 +416,30 @@ export class AreaFinder {
     }
 
     initDrawingManager() {
-        this.drawingManager = new google.maps.drawing.DrawingManager({
-            ...DRAWING_MANAGER_OPTIONS,
-            map: this.map
-        });
+        try {
+            this.drawingManager = new google.maps.drawing.DrawingManager({
+                ...DRAWING_MANAGER_OPTIONS,
+                map: this.map
+            });
 
-        google.maps.event.addListener(this.drawingManager, 'overlaycomplete', (event) => {
-            this.handleShapeComplete(event);
-        });
+            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', (event) => {
+                this.handleShapeComplete(event);
+            });
+        } catch (error) {
+            console.error('Drawing manager initialization error:', error);
+
+            // Track error for analytics
+            if (window.gtag) {
+                window.gtag('event', 'exception', {
+                    description: 'drawing_manager_init_error',
+                    fatal: false,
+                    error_type: error.name,
+                    error_message: error.message
+                });
+            }
+
+            this.showError('Unable to initialize drawing tools. Please refresh the page.');
+        }
     }
 
     initSearchBox() {
@@ -434,21 +493,38 @@ export class AreaFinder {
     }
 
     handleShapeComplete(event) {
-        // Remove previous shape
-        if (this.currentShape) {
-            this.currentShape.setMap(null);
-        }
+        try {
+            // Remove previous shape
+            if (this.currentShape) {
+                this.currentShape.setMap(null);
+            }
 
-        this.currentShape = event.overlay;
-        this.drawingManager.setDrawingMode(null);
+            this.currentShape = event.overlay;
+            this.drawingManager.setDrawingMode(null);
 
-        // Enable buttons
-        this.enableButton('clear-shapes');
-        this.enableButton('calculate-area');
+            // Enable buttons
+            this.enableButton('clear-shapes');
+            this.enableButton('calculate-area');
 
-        // Auto-calculate area if option is enabled
-        if (this.options.autoCalculate !== false) {
-            this.calculateArea();
+            // Auto-calculate area if option is enabled
+            if (this.options.autoCalculate !== false) {
+                this.calculateArea();
+            }
+        } catch (error) {
+            console.error('Shape completion error:', error);
+
+            // Track error for analytics
+            if (window.gtag) {
+                window.gtag('event', 'exception', {
+                    description: 'shape_complete_error',
+                    fatal: false,
+                    error_type: error.name,
+                    error_message: error.message,
+                    shape_type: event?.type
+                });
+            }
+
+            this.showError('Unable to complete shape drawing. Please try again.');
         }
     }
 
@@ -460,7 +536,12 @@ export class AreaFinder {
 
         try {
             const coordinates = this.getShapeCoordinates(this.currentShape);
-            
+
+            // Validate coordinates
+            if (!coordinates || coordinates.length < 3) {
+                throw new Error('INSUFFICIENT_POINTS');
+            }
+
             // Send to backend for calculation
             const response = await fetch('/api/maps/calculate-area', {
                 method: 'POST',
@@ -475,7 +556,7 @@ export class AreaFinder {
             if (result.success) {
                 this.displayAreaResults(result.data);
                 this.currentArea = result.data;
-                
+
                 // Store measurement data in session storage
                 const measurementData = {
                     ...result.data,
@@ -488,12 +569,38 @@ export class AreaFinder {
                 this.trackAreaMeasured(measurementData);
 
                 this.options.onAreaCalculated(result.data);
+
+                // Track successful calculation for analytics
+                if (window.gtag) {
+                    window.gtag('event', 'area_calculated', {
+                        area_sqft: result.data.areaInSquareFeet,
+                        area_acres: result.data.areaInAcres,
+                        num_points: coordinates.length
+                    });
+                }
             } else {
                 throw new Error(result.message || 'Calculation failed');
             }
         } catch (error) {
             console.error('Area calculation error:', error);
-            this.showError('Failed to calculate area. Please try again.');
+
+            // Track error for analytics
+            if (window.gtag) {
+                window.gtag('event', 'exception', {
+                    description: 'area_calculation_error',
+                    fatal: false,
+                    error_type: error.name,
+                    error_message: error.message,
+                    error_code: error.message.includes('INSUFFICIENT_POINTS') ? 'INSUFFICIENT_POINTS' : 'CALCULATION_ERROR'
+                });
+            }
+
+            // Show user-friendly error message
+            const errorMessage = error.message === 'INSUFFICIENT_POINTS'
+                ? 'Please add at least 3 points to create a shape.'
+                : 'Failed to calculate area. Please try again.';
+
+            this.showError(errorMessage);
         }
     }
 
@@ -642,12 +749,20 @@ export class AreaFinder {
         if (this.currentShape) {
             this.currentShape.setMap(null);
         }
-        
+
         if (this.drawingManager) {
             this.drawingManager.setMap(null);
         }
-        
+
+        if (this.fallbackForm) {
+            this.fallbackForm = null;
+        }
+
         this.container.innerHTML = '';
+    }
+
+    isFallbackActive() {
+        return this.mapsLoadFailed && this.fallbackForm !== null;
     }
 
     restoreAreaData(data) {
@@ -694,8 +809,6 @@ export class AreaFinder {
                     bounds.extend(new google.maps.LatLng(coord.lat, coord.lng));
                 });
                 this.map.fitBounds(bounds);
-                
-                console.log('Restored Google Maps measurement data:', savedData);
             }
         } catch (error) {
             console.error('Error restoring previous Google Maps data:', error);
