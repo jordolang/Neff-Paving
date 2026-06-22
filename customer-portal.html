@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal | Neff Paving — Track Your Project Status</title>
+    <meta name="description" content="Access your Neff Paving customer portal to view your estimate, contract, schedule, payment status, and project progress.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <meta name="theme-color" content="#0b0b0d">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+
+    <!-- Fonts (match main site) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Shared design system -->
+    <link rel="stylesheet" href="styles/redesign.css">
+
+    <style>
+        /* ---- Customer Portal Specific Styles ---- */
+        .portal-hero {
+            padding: 140px 0 50px;
+            text-align: center;
+        }
+
+        .portal-hero .eyebrow {
+            justify-content: center;
+        }
+
+        .portal-hero h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem);
+            letter-spacing: -1.5px;
+            margin-bottom: 14px;
+        }
+
+        .portal-hero p {
+            max-width: 640px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: var(--muted);
+        }
+
+        .portal-section {
+            padding: 10px 0 90px;
+        }
+
+        .portal-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 480px);
+            justify-content: center;
+        }
+
+        .portal-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 40px;
+            position: relative;
+        }
+
+        .portal-card h2 {
+            font-size: 1.6rem;
+            margin: 0 0 8px;
+            text-align: center;
+        }
+
+        .portal-card .card-sub {
+            font-size: .92rem;
+            color: var(--muted);
+            margin: 0 0 32px;
+            text-align: center;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            font-size: .85rem;
+            color: var(--text);
+        }
+
+        .form-field input {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-2);
+            border: 1px solid var(--line);
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: border-color .2s ease;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            font-size: .95rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--gold);
+            color: var(--on-gold);
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+
+        .btn-login:hover {
+            background: var(--gold-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-login:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-status {
+            margin-top: 16px;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            font-size: .95rem;
+            display: none;
+        }
+
+        .form-status.show {
+            display: block;
+        }
+
+        .form-status.ok {
+            background: rgba(52, 199, 123, .12);
+            border: 1px solid rgba(52, 199, 123, .4);
+            color: #8be0b3;
+        }
+
+        .form-status.err {
+            background: rgba(255, 90, 90, .1);
+            border: 1px solid rgba(255, 90, 90, .4);
+            color: #ff9b9b;
+        }
+
+        .forgot-link {
+            text-align: center;
+            font-size: .9rem;
+        }
+
+        .forgot-link a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: color .2s ease;
+        }
+
+        .forgot-link a:hover {
+            color: var(--gold-hover);
+            text-decoration: underline;
+        }
+
+        .help-note {
+            max-width: 640px;
+            margin: 36px auto 0;
+            text-align: center;
+            font-size: .85rem;
+            color: var(--muted-2);
+            line-height: 1.6;
+        }
+
+        .help-note a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .help-note a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 560px) {
+            .portal-card {
+                padding: 28px 22px;
+            }
+
+            .portal-hero {
+                padding: 120px 0 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <div class="header-container">
+                <a href="index.html#hero" class="brand" aria-label="Neff Paving home">
+                    <span class="mark"><img src="images/neff-logo.png" alt="Neff Paving"></span>
+                    <h1>NEFF<span>PAVING</span></h1>
+                </a>
+                <nav class="desktop-nav">
+                    <ul>
+                        <li><a href="index.html#hero">Home</a></li>
+                        <li><a href="index.html#services">Services</a></li>
+                        <li><a href="index.html#gallery">Gallery</a></li>
+                        <li><a href="index.html#locations">Locations</a></li>
+                        <li><a href="estimate-form.html">Estimate</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-cta">
+                    <a href="tel:7404533063" class="header-phone">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                        </svg>
+                        (740) 453-3063
+                    </a>
+                    <a href="estimate-form.html" class="btn btn-primary">Free Estimate</a>
+                    <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                        <span class="hamburger-line"></span><span class="hamburger-line"></span><span
+                            class="hamburger-line"></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="mobile-nav" id="mobile-nav">
+            <div class="mobile-nav-header">
+                <h2>Menu</h2>
+                <button class="mobile-nav-close" aria-label="Close menu">&times;</button>
+            </div>
+            <ul>
+                <li><a href="index.html#hero">Home</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#gallery">Gallery</a></li>
+                <li><a href="index.html#locations">Locations</a></li>
+                <li><a href="estimate-form.html">Estimate</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+            <div class="mobile-nav-footer">
+                <a href="tel:7404533063" class="btn btn-primary btn-block">(740) 453-3063</a>
+            </div>
+        </nav>
+
+        <section class="portal-hero">
+            <div class="container">
+                <div class="eyebrow">
+                    <span class="dot"></span>
+                    <span>Secure Access</span>
+                </div>
+                <h1>Customer Portal</h1>
+                <p>Track your estimate, contract, schedule, payment status, and project progress all in one place.</p>
+            </div>
+        </section>
+
+        <section class="portal-section">
+            <div class="container">
+                <div class="portal-layout">
+                    <div class="portal-card">
+                        <h2>Sign In</h2>
+                        <p class="card-sub">Enter your credentials to access your project dashboard</p>
+
+                        <form class="login-form" id="login-form">
+                            <div class="form-field">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required
+                                    placeholder="your.email@example.com">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" required
+                                    placeholder="Enter your password">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-login">Sign In</button>
+                                <div class="forgot-link">
+                                    <a href="#forgot-password">Forgot your password?</a>
+                                </div>
+                            </div>
+
+                            <div class="form-status" id="form-status"></div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="help-note">
+                    <p><strong>Need help accessing your account?</strong><br>
+                        Contact us at <a href="tel:7404533063">(740) 453-3063</a> or <a
+                            href="mailto:neffpaving@gmail.com">neffpaving@gmail.com</a> and we'll get you set up.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="mark"><img src="images/neff-logo.png" alt="Neff Paving"></span>
+                        <h2>NEFF<span>PAVING</span></h2>
+                    </div>
+                    <p class="footer-tagline">Built on Quality. Driven by Pride.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/neffpaving" target="_blank" rel="noopener"
+                            aria-label="Facebook">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h3>Services</h3>
+                        <ul>
+                            <li><a href="index.html#services">Residential Paving</a></li>
+                            <li><a href="index.html#services">Commercial Paving</a></li>
+                            <li><a href="index.html#services">Concrete Work</a></li>
+                            <li><a href="index.html#services">Maintenance</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h3>Company</h3>
+                        <ul>
+                            <li><a href="index.html#why-choose-us">Why Choose Us</a></li>
+                            <li><a href="index.html#gallery">Gallery</a></li>
+                            <li><a href="index.html#locations">Service Areas</a></li>
+                            <li><a href="estimate-form.html">Free Estimate</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-col">
+                        <h3>Contact</h3>
+                        <ul>
+                            <li><a href="tel:7404533063">(740) 453-3063</a></li>
+                            <li><a href="mailto:neffpaving@gmail.com">neffpaving@gmail.com</a></li>
+                            <li>6575 W Pike<br>Zanesville, OH 43701</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Neff Paving & Concrete. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavClose = document.querySelector('.mobile-nav-close');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileNav.classList.add('is-open');
+            mobileMenuToggle.setAttribute('aria-expanded', 'true');
+        });
+
+        mobileNavClose.addEventListener('click', () => {
+            mobileNav.classList.remove('is-open');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        });
+
+        // Login form handling
+        const loginForm = document.getElementById('login-form');
+        const formStatus = document.getElementById('form-status');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitBtn = loginForm.querySelector('.btn-login');
+
+            // Reset status
+            formStatus.className = 'form-status';
+            formStatus.textContent = '';
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            try {
+                // TODO: Replace with actual API endpoint
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    formStatus.className = 'form-status ok show';
+                    formStatus.textContent = 'Login successful! Redirecting...';
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/customer-dashboard.html';
+                    }, 1000);
+                } else {
+                    const error = await response.json();
+                    formStatus.className = 'form-status err show';
+                    formStatus.textContent = error.message || 'Invalid email or password. Please try again.';
+                }
+            } catch (error) {
+                formStatus.className = 'form-status err show';
+                formStatus.textContent = 'Unable to connect to server. Please try again later.';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Forgot password link (placeholder)
+        document.querySelector('.forgot-link a').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Password reset functionality will be implemented in the backend. Please contact us at (740) 453-3063 for assistance.');
+        });
+    </script>
+</body>
+
+</html>

@@ -86,9 +86,10 @@ self.addEventListener('fetch', event => {
     return;
   }
   
-  // Cache-first strategy for images
-  if (request.destination === 'image' || 
-      /\.(jpg|jpeg|png|gif|webp|svg|ico)$/i.test(url.pathname)) {
+  // Cache-first with stale-while-revalidate strategy for images
+  // Supports modern formats: WebP, AVIF
+  if (request.destination === 'image' ||
+      /\.(jpg|jpeg|png|gif|webp|avif|svg|ico)$/i.test(url.pathname)) {
     event.respondWith(cacheFirstStrategy(request, IMAGES_CACHE_NAME));
     return;
   }

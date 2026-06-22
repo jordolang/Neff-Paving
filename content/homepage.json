@@ -1,0 +1,121 @@
+{
+  "hero": {
+    "badge": "🏆 Top Paving Contractor in the USA — 3 Years Running",
+    "eyebrow": "Built on Quality. Driven by Pride.",
+    "title": "Professional <span class=\"accent\">Paving</span> Solutions",
+    "subtitle": "Central Ohio's trusted asphalt, concrete &amp; excavation contractor since 1999. Quality craftsmanship for residential and commercial projects — delivered faster and at lower cost than the competition.",
+    "motto": "Your Road. Our Reputation.",
+    "cta": {
+      "primary": {
+        "text": "Get Your Free Quote",
+        "link": "estimate-form.html"
+      },
+      "secondary": {
+        "text": "View Our Work",
+        "link": "#gallery"
+      }
+    },
+    "socialProof": [
+      {
+        "type": "rating",
+        "stars": "★★★★☆",
+        "label": "4.4 / 5 · 36+ verified reviews"
+      },
+      {
+        "type": "stat",
+        "number": "26+",
+        "label": "Years of experience"
+      },
+      {
+        "type": "stat",
+        "number": "2,500+",
+        "label": "Projects completed"
+      },
+      {
+        "type": "stat",
+        "number": "Licensed",
+        "label": "&amp; fully insured"
+      }
+    ],
+    "video": {
+      "src": "/assets/videos/optimized/neff-paving-1080p.mp4",
+      "poster": "/assets/images/posters/hero-poster-1920x1080.jpg"
+    }
+  },
+  "stats": [
+    {
+      "number": "26+",
+      "label": "Years of Excellence",
+      "description": "Serving Central Ohio since 1999"
+    },
+    {
+      "number": "2,500+",
+      "label": "Projects Completed",
+      "description": "Residential &amp; commercial"
+    },
+    {
+      "number": "4.4★",
+      "label": "Customer Rating",
+      "description": "36+ verified Google reviews"
+    },
+    {
+      "number": "2 Hrs",
+      "label": "Response Time",
+      "description": "Most estimates confirmed fast"
+    }
+  ],
+  "introduction": {
+    "eyebrow": "Central Ohio's Premier Paving Contractor",
+    "title": "Transforming Properties with Expert Paving Solutions",
+    "lead": "For over 26 years, Neff Paving has been the trusted choice for property owners throughout Central Ohio who demand excellence in every project. As a two-time Top Paving Contractor in the country, we outpace the competition and deliver quality asphalt services at lower costs. From residential driveways that enhance curb appeal to large-scale commercial installations, we bring unmatched expertise, premium materials, and personalized service to every job.",
+    "points": [
+      {
+        "icon": "star",
+        "title": "Quality Guaranteed",
+        "description": "Premium materials, advanced equipment, and skilled craftsmen ensure your project exceeds expectations."
+      },
+      {
+        "icon": "check-circle",
+        "title": "Licensed &amp; Insured",
+        "description": "Fully licensed and insured, with workers' compensation and state contractor licensing for your peace of mind."
+      },
+      {
+        "icon": "fast",
+        "title": "Fast Response",
+        "description": "Instant estimates, online contract enrollment, secure Stripe payments, and flexible scheduling around your needs."
+      }
+    ],
+    "cta": {
+      "button": {
+        "text": "Get Your Free Estimate",
+        "link": "#contact"
+      },
+      "note": {
+        "icon": "⚡",
+        "text": "Quick response guaranteed — most estimates approved and scheduled within 2 hours."
+      }
+    },
+    "statCards": [
+      {
+        "number": "26+",
+        "label": "Years of Excellence",
+        "description": "Serving Central Ohio since 1999"
+      },
+      {
+        "number": "2,500+",
+        "label": "Projects Completed",
+        "description": "Residential &amp; commercial success stories"
+      },
+      {
+        "number": "4.4★",
+        "label": "Customer Rating",
+        "description": "Based on 36+ verified Google reviews"
+      },
+      {
+        "number": "24/7",
+        "label": "Online Support",
+        "description": "Always available when you need us"
+      }
+    ]
+  }
+}

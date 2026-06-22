@@ -6,6 +6,7 @@
 import { FormValidationService } from '../services/form-validation-service.js';
 import { EstimateService } from '../services/estimate-service.js';
 import { getMeasurementData, getAllMeasurementData, hasMeasurementData, handleFormSubmission, handleFormReset } from '../utils/measurement-storage.js';
+import analyticsService from '../services/analytics-service.js';
 
 export class EstimateForm {
     constructor(containerId) {
@@ -17,7 +18,8 @@ export class EstimateForm {
     this.serviceType = document.getElementById('service-type');
     this.squareFootage = document.getElementById('square-footage');
         this.isSubmitting = false;
-        
+        this.hasTrackedEstimateStarted = false;
+
         this.init();
     }
 
@@ -26,6 +28,84 @@ export class EstimateForm {
         this.attachEventListeners();
         this.loadMeasurementData();
         this.updateSubmitButtonState();
+        this.trackPageVisit();
+    }
+
+    /**
+     * Track page visit event for analytics
+     */
+    async trackPageVisit() {
+        try {
+            await analyticsService.trackPageView('estimate_form', {
+                page_type: 'estimate_form',
+                has_measurement_data: hasMeasurementData(),
+                referrer: typeof document !== 'undefined' ? document.referrer : undefined
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track page visit:', error);
+            }
+        }
+    }
+
+    /**
+     * Track estimate started event when user begins filling form
+     * Fires only once on first field focus
+     */
+    async trackEstimateStarted(event) {
+        // Only track once
+        if (this.hasTrackedEstimateStarted) {
+            return;
+        }
+
+        // Only track for form input elements
+        const target = event.target;
+        if (!target || !target.matches('input, select, textarea')) {
+            return;
+        }
+
+        this.hasTrackedEstimateStarted = true;
+
+        try {
+            await analyticsService.trackEvent('estimate_started', {
+                first_field: target.id || target.name,
+                has_measurement_data: hasMeasurementData(),
+                timestamp: new Date().toISOString()
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track estimate started:', error);
+            }
+        }
+    }
+
+    /**
+     * Track estimate submitted event on successful form submission
+     */
+    async trackEstimateSubmitted(result) {
+        try {
+            // Prepare event data with form information
+            const eventData = {
+                reference_number: result.referenceNumber,
+                service_type: result.serviceType,
+                square_footage: result.areaData?.areaInSquareFeet || result.estimate?.squareFootage || 0,
+                estimated_cost: result.estimate?.totalCost || 0,
+                has_measurement_data: !!result.areaData,
+                measurement_tool: result.measurementTool || this.measurementData?.activeTool,
+                // customer_email removed for privacy compliance
+                customer_state: result.state,
+                timestamp: new Date().toISOString()
+            };
+
+            await analyticsService.trackEvent('estimate_submitted', eventData);
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track estimate submitted:', error);
+            }
+        }
     }
 
     render() {
@@ -361,6 +441,9 @@ export class EstimateForm {
         form.addEventListener('input', (e) => this.handleFieldValidation(e));
         form.addEventListener('blur', (e) => this.handleFieldValidation(e), true);
 
+        // Track estimate started - fires once when user begins filling form
+        form.addEventListener('focus', (e) => this.trackEstimateStarted(e), true);
+
         // Measurement tool toggle buttons
         if (googleMapsToggle) {
             googleMapsToggle.addEventListener('click', () => this.toggleMeasurementTool('google-maps'));
@@ -369,7 +452,7 @@ export class EstimateForm {
         // Phone number formatting
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', (e) => this.formatPhoneNumber(e));
-        
+
         // Initialize measurement tools after form is rendered
         setTimeout(() => this.initializeMeasurementTools(), 100);
     }
@@ -405,9 +488,19 @@ export class EstimateForm {
 
     async submitForm(data) {
         try {
+            // Get square footage from measurement data
+            let squareFootage = 0;
+            if (data.areaData?.areaInSquareFeet) {
+                squareFootage = data.areaData.areaInSquareFeet;
+            } else if (this.measurementData?.googleMaps) {
+                squareFootage = this.measurementData.googleMaps.areaInSquareFeet || this.measurementData.googleMaps.area || 0;
+            } else if (this.measurementData?.manualEntry) {
+                squareFootage = this.measurementData.manualEntry.squareFootage || 0;
+            }
+
             // Generate estimate
             const estimate = this.estimateService.calculateEstimate(
-                data.areaData?.areaInSquareFeet || 0,
+                squareFootage,
                 data.serviceType,
                 {
                     premium: false,
@@ -422,7 +515,18 @@ export class EstimateForm {
             const submissionData = {
                 ...data,
                 estimate,
-                submittedAt: new Date().toISOString()
+                submittedAt: new Date().toISOString(),
+                // Include measurement source information
+                measurementSource: this.measurementData?.manualEntry ? 'manual-entry' : 'google-maps',
+                // Include manual entry data if used
+                manualEntryData: this.measurementData?.manualEntry ? {
+                    streetAddress: this.measurementData.manualEntry.streetAddress,
+                    city: this.measurementData.manualEntry.city,
+                    state: this.measurementData.manualEntry.state,
+                    zipCode: this.measurementData.manualEntry.zipCode,
+                    squareFootage: this.measurementData.manualEntry.squareFootage,
+                    projectDescription: this.measurementData.manualEntry.projectDescription
+                } : null
             };
 
             // Submit to backend
@@ -449,6 +553,9 @@ export class EstimateForm {
     }
 
     handleSubmitSuccess(result) {
+        // Track successful submission
+        this.trackEstimateSubmitted(result);
+
         // Show success message
         this.container.innerHTML = `
             <div class="success-message">
@@ -579,16 +686,55 @@ export class EstimateForm {
         if (hasMeasurementData()) {
             this.measurementData = getAllMeasurementData();
             this.updateMeasurementStatus();
+            this.populateFormWithMeasurementData();
+        }
+    }
+
+    populateFormWithMeasurementData() {
+        // Pre-populate form fields if manual entry data exists
+        if (this.measurementData && this.measurementData.manualEntry) {
+            const data = this.measurementData.manualEntry;
+
+            // Populate address fields
+            if (data.streetAddress) {
+                const field = document.getElementById('streetAddress');
+                if (field) field.value = data.streetAddress;
+            }
+
+            if (data.city) {
+                const field = document.getElementById('city');
+                if (field) field.value = data.city;
+            }
+
+            if (data.state) {
+                const field = document.getElementById('state');
+                if (field) field.value = data.state;
+            }
+
+            if (data.zipCode) {
+                const field = document.getElementById('zipCode');
+                if (field) field.value = data.zipCode;
+            }
+
+            // Populate project description if provided
+            if (data.projectDescription) {
+                const field = document.getElementById('projectDescription');
+                if (field && !field.value) {
+                    // Only populate if field is empty to avoid overwriting user input
+                    field.value = data.projectDescription;
+                }
+            }
         }
     }
 
     updateMeasurementStatus() {
         const statusDiv = document.getElementById('measurement-status');
-        
+
+        // Check for Google Maps data first
         if (this.measurementData && this.measurementData.googleMaps) {
             const data = this.measurementData.googleMaps;
             const area = data.areaInSquareFeet || data.area || 0;
-            
+
             statusDiv.innerHTML = `
                 <div class="measurement-success">
                     <strong>✅ Area Measured: ${area.toLocaleString()} sq ft</strong>
@@ -601,16 +747,33 @@ export class EstimateForm {
             document.getElementById('measurementTool').value = this.measurementData.activeTool;
             document.getElementById('measurementTimestamp').value = new Date().toISOString();
         }
+        // Check for manual entry data
+        else if (this.measurementData && this.measurementData.manualEntry) {
+            const data = this.measurementData.manualEntry;
+            const area = data.squareFootage || 0;
+
+            statusDiv.innerHTML = `
+                <div class="measurement-success">
+                    <strong>✅ Area Estimated: ${area.toLocaleString()} sq ft</strong>
+                    <p>Using manual entry (Google Maps unavailable)</p>
+                </div>
+            `;
+
+            // Update hidden fields
+            document.getElementById('calculatedSquareFootage').value = area;
+            document.getElementById('measurementTool').value = 'manual-entry';
+            document.getElementById('measurementTimestamp').value = new Date().toISOString();
+        }
     }
 
     updateSubmitButtonState() {
         const submitButton = document.getElementById('submit-estimate');
         const getQuoteButton = document.getElementById('get-quote');
-        
+
         // Check if form is valid for submission
         const hasRequiredFields = this.checkRequiredFields();
-        const hasMeasurement = this.measurementData && 
-            this.measurementData.googleMaps;
+        const hasMeasurement = this.measurementData &&
+            (this.measurementData.googleMaps || this.measurementData.manualEntry);
 
         submitButton.disabled = !hasRequiredFields || !hasMeasurement;
         getQuoteButton.disabled = !hasMeasurement;
@@ -681,21 +844,21 @@ export class EstimateForm {
      * Handle get quote button click
      */
     async handleGetQuote() {
-        if (!this.measurementData || !this.measurementData.googleMaps) {
-            alert('Please measure the project area first using the map tool above.');
+        if (!this.measurementData || (!this.measurementData.googleMaps && !this.measurementData.manualEntry)) {
+            alert('Please measure the project area first using the map tool above or enter manual measurements.');
             return;
         }
 
         try {
             // Get current form data
             const serviceType = document.getElementById('serviceType').value || 'residential';
-            
+
             // Calculate pricing
             const pricingData = this.calculatePricing(serviceType);
-            
+
             // Display pricing
             this.displayPricing(pricingData);
-            
+
         } catch (error) {
             console.error('Error calculating pricing:', error);
             alert('Unable to calculate pricing. Please try again.');
@@ -710,8 +873,15 @@ export class EstimateForm {
             throw new Error('No measurement data available');
         }
 
-        const data = this.measurementData.googleMaps;
-        const squareFootage = data.areaInSquareFeet || data.area || 0;
+        // Get square footage from either Google Maps or manual entry
+        let squareFootage = 0;
+        if (this.measurementData.googleMaps) {
+            const data = this.measurementData.googleMaps;
+            squareFootage = data.areaInSquareFeet || data.area || 0;
+        } else if (this.measurementData.manualEntry) {
+            const data = this.measurementData.manualEntry;
+            squareFootage = data.squareFootage || 0;
+        }
         
         // Base pricing per square foot
         const basePricing = {

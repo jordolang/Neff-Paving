@@ -1,3 +1,5 @@
+import analyticsService from './analytics-service.js';
+
 /**
  * Webhook Handler Service for processing Stripe payment events
  */
@@ -80,9 +82,9 @@ export class WebhookHandler {
    */
   async handlePaymentSucceeded(event) {
     const paymentIntent = event.data.object;
-    
+
     console.log(`✅ Payment succeeded: ${paymentIntent.id} for $${paymentIntent.amount / 100}`);
-    
+
     try {
       // Update database with successful payment
       await this.updatePaymentStatus(paymentIntent.id, 'succeeded', {
@@ -97,6 +99,17 @@ export class WebhookHandler {
 
       // Trigger any business logic (e.g., update project status)
       await this.triggerBusinessLogic('payment_succeeded', paymentIntent);
+
+      // Track funnel event: payment_complete
+      analyticsService.track('payment_complete', {
+        payment_id: paymentIntent.id,
+        amount: paymentIntent.amount,
+        currency: paymentIntent.currency,
+        status: paymentIntent.status,
+        payment_method: paymentIntent.payment_method_types?.[0],
+        source: 'webhook',
+        metadata: paymentIntent.metadata
+      });
 
       // Analytics tracking
       this.trackEvent('payment_succeeded', {
@@ -398,17 +411,24 @@ export class WebhookHandler {
    */
   trackEvent(eventName, properties) {
     try {
-      // Integration with analytics service (Google Analytics, Mixpanel, etc.)
-      console.log(`Analytics Event: ${eventName}`, properties);
-      
-      if (window.gtag) {
+      // Track with centralized analytics service
+      analyticsService.track(eventName, {
+        source: 'webhook',
+        ...properties
+      });
+
+      // Backward compatibility: Also track with gtag if available
+      if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', eventName, {
-          event_category: 'payment',
+          event_category: 'webhook',
           ...properties
         });
       }
     } catch (error) {
-      console.error('Error tracking event:', error);
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('Error tracking event:', error);
+      }
     }
   }
 
@@ -475,19 +495,29 @@ export class WebhookHandler {
    */
   async handleEventScheduled(event) {
     const eventData = event.data?.object || event.payload;
-    
+
     console.log(`📅 Calendly event scheduled: ${eventData?.uri}`);
-    
+
     try {
       // Process new booking
       await this.processNewBooking(eventData);
-      
+
       // Update job schedule
       await this.updateJobSchedule(eventData);
-      
+
       // Generate alerts
       await this.generateSchedulingAlerts(eventData);
-      
+
+      // Track funnel event: consultation_booked
+      analyticsService.track('consultation_booked', {
+        calendly_event_uri: eventData?.uri,
+        scheduled_time: eventData?.start_time,
+        end_time: eventData?.end_time,
+        // client_email and client_name removed for privacy compliance
+        meeting_type: eventData?.event_type?.name,
+        source: 'webhook'
+      });
+
       // Track analytics
       this.trackEvent('calendly_event_scheduled', {
         event_uri: eventData?.uri,
@@ -495,7 +525,7 @@ export class WebhookHandler {
         invitee_email: eventData?.invitees?.[0]?.email,
         start_time: eventData?.start_time
       });
-      
+
     } catch (error) {
       console.error('Error handling Calendly event scheduled:', error);
     }

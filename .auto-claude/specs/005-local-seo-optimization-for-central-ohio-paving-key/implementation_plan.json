@@ -1,0 +1,587 @@
+{
+  "feature": "Local SEO optimization for Central Ohio paving keywords",
+  "workflow_type": "feature",
+  "workflow_rationale": "Adding new SEO capabilities (structured data, landing pages, sitemap) to an existing static website. This is new functionality being built on top of the existing site structure.",
+  "phases": [
+    {
+      "id": "phase-1-structured-data",
+      "name": "Enhanced Structured Data",
+      "type": "implementation",
+      "description": "Extend existing LocalBusiness schema with Service and Review structured data for better search engine understanding",
+      "depends_on": [],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Add Service schema for each paving service (Residential Asphalt, Commercial Asphalt, Concrete, Maintenance)",
+          "service": "frontend",
+          "files_to_modify": [
+            "index.html"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Validate structured data with Google Rich Results Test (https://search.google.com/test/rich-results). Should pass validation for LocalBusiness and Service schemas."
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Add Review/AggregateRating schema with real customer reviews",
+          "service": "frontend",
+          "files_to_modify": [
+            "index.html"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "manual",
+            "instructions": "Validate Review schema with Google Rich Results Test. Should show review stars in search results preview."
+          },
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "phase-2-meta-tags",
+      "name": "Meta Tags System",
+      "type": "implementation",
+      "description": "Create reusable meta tag templates and utilities for generating unique meta/OpenGraph tags per page",
+      "depends_on": [],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-2-1",
+          "description": "Create meta tag generation utility in src/utils/meta-tags.js",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "src/utils/meta-tags.js"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "node -e \"import('./src/utils/meta-tags.js').then(m => console.log(m.generateMetaTags ? 'OK' : 'FAIL'))\"",
+            "expected": "OK"
+          },
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "phase-3-service-pages",
+      "name": "Service Landing Pages",
+      "type": "implementation",
+      "description": "Create dedicated landing pages for each service type with unique meta tags and structured data targeting service-specific keywords",
+      "depends_on": [
+        "phase-1-structured-data",
+        "phase-2-meta-tags"
+      ],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-3-1",
+          "description": "Create residential-asphalt.html landing page with unique SEO content",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "services/residential-asphalt.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/services/residential-asphalt.html",
+            "checks": [
+              "Page renders",
+              "Unique title tag",
+              "Unique meta description",
+              "Service schema present",
+              "No console errors"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-3-2",
+          "description": "Create commercial-asphalt.html landing page with unique SEO content",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "services/commercial-asphalt.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/services/commercial-asphalt.html",
+            "checks": [
+              "Page renders",
+              "Unique title tag",
+              "Unique meta description",
+              "Service schema present"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-3-3",
+          "description": "Create concrete-solutions.html landing page with unique SEO content",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "services/concrete-solutions.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/services/concrete-solutions.html",
+            "checks": [
+              "Page renders",
+              "Unique title tag",
+              "Unique meta description",
+              "Service schema present"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-3-4",
+          "description": "Create maintenance.html landing page for seal coating and repair services",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "services/maintenance.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/services/maintenance.html",
+            "checks": [
+              "Page renders",
+              "Unique title tag",
+              "Unique meta description",
+              "Service schema present"
+            ]
+          },
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "phase-4-area-pages",
+      "name": "Area Landing Pages",
+      "type": "implementation",
+      "description": "Create location-specific landing pages targeting Central Ohio cities with local keyword optimization",
+      "depends_on": [
+        "phase-2-meta-tags"
+      ],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-4-1",
+          "description": "Create columbus-paving.html targeting 'paving contractor columbus ohio' keywords",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "areas/columbus-paving.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/areas/columbus-paving.html",
+            "checks": [
+              "Page renders",
+              "Columbus-specific title",
+              "Local keywords present",
+              "LocalBusiness schema with Columbus location"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-4-2",
+          "description": "Create zanesville-paving.html targeting 'paving contractor zanesville ohio' keywords",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "areas/zanesville-paving.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/areas/zanesville-paving.html",
+            "checks": [
+              "Page renders",
+              "Zanesville-specific title",
+              "Local keywords present"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-4-3",
+          "description": "Create newark-paving.html targeting 'paving contractor newark ohio' keywords",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "areas/newark-paving.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/areas/newark-paving.html",
+            "checks": [
+              "Page renders",
+              "Newark-specific title",
+              "Local keywords present"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-4-4",
+          "description": "Create lancaster-paving.html targeting 'paving contractor lancaster ohio' keywords",
+          "service": "frontend",
+          "files_to_modify": [],
+          "files_to_create": [
+            "areas/lancaster-paving.html"
+          ],
+          "patterns_from": [
+            "index.html"
+          ],
+          "verification": {
+            "type": "browser",
+            "url": "http://localhost:5173/areas/lancaster-paving.html",
+            "checks": [
+              "Page renders",
+              "Lancaster-specific title",
+              "Local keywords present"
+            ]
+          },
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "phase-5-sitemap-robots",
+      "name": "Sitemap & Robots Generation",
+      "type": "implementation",
+      "description": "Update sitemap generation script to include all new service and area pages, generate robots.txt",
+      "depends_on": [
+        "phase-3-service-pages",
+        "phase-4-area-pages"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-5-1",
+          "description": "Update scripts/generate-sitemap.js to include all service and area landing pages",
+          "service": "frontend",
+          "files_to_modify": [
+            "scripts/generate-sitemap.js"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "scripts/generate-sitemap.js"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "node scripts/generate-sitemap.js && test -f dist/sitemap.xml && test -f dist/robots.txt && echo 'OK'",
+            "expected": "OK"
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-5-2",
+          "description": "Integrate sitemap generation into Vite build process",
+          "service": "frontend",
+          "files_to_modify": [
+            "vite.config.js",
+            "package.json"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "vite.config.js"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "npm run build && test -f dist/sitemap.xml && test -f dist/robots.txt && echo 'OK'",
+            "expected": "OK"
+          },
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "phase-6-verification",
+      "name": "SEO Verification",
+      "type": "integration",
+      "description": "Validate all SEO implementations with Google tools and manual checks",
+      "depends_on": [
+        "phase-1-structured-data",
+        "phase-3-service-pages",
+        "phase-4-area-pages",
+        "phase-5-sitemap-robots"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-6-1",
+          "description": "Validate all structured data with Google Rich Results Test",
+          "service": "frontend",
+          "all_services": true,
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "manual",
+            "instructions": "Test each page (index.html, all service pages, all area pages) with Google Rich Results Test. Verify LocalBusiness, Service, and Review schemas validate correctly. Document any warnings or errors."
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-6-2",
+          "description": "Verify unique meta tags on all pages",
+          "service": "frontend",
+          "all_services": true,
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "e2e",
+            "steps": [
+              "Visit each service landing page and verify unique title tag",
+              "Visit each area landing page and verify unique title tag",
+              "Verify Open Graph tags are unique per page",
+              "Verify meta descriptions are unique and keyword-optimized"
+            ]
+          },
+          "status": "completed"
+        },
+        {
+          "id": "subtask-6-3",
+          "description": "Verify sitemap.xml is accessible and complete",
+          "service": "frontend",
+          "all_services": true,
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "api",
+            "method": "GET",
+            "url": "http://localhost:5173/sitemap.xml",
+            "expected_status": 200
+          },
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_phases": 6,
+    "total_subtasks": 16,
+    "services_involved": [
+      "frontend"
+    ],
+    "parallelism": {
+      "max_parallel_phases": 2,
+      "parallel_groups": [
+        {
+          "phases": [
+            "phase-1-structured-data",
+            "phase-2-meta-tags"
+          ],
+          "reason": "Both phases have no dependencies and work on different aspects (structured data vs meta tags)"
+        },
+        {
+          "phases": [
+            "phase-3-service-pages",
+            "phase-4-area-pages"
+          ],
+          "reason": "Both depend on phase-2 completion, create different file sets (services/ vs areas/), no file conflicts"
+        }
+      ],
+      "recommended_workers": 2,
+      "speedup_estimate": "1.4x faster than sequential (phases 1+2 parallel, then phases 3+4 parallel)"
+    }
+  },
+  "verification_strategy": {
+    "risk_level": "low",
+    "skip_validation": false,
+    "test_creation_phase": "post_implementation",
+    "test_types_required": [
+      "manual",
+      "browser"
+    ],
+    "security_scanning_required": false,
+    "staging_deployment_required": false,
+    "acceptance_criteria": [
+      "All structured data validates in Google Rich Results Test",
+      "Every page has unique title, meta description, and OpenGraph tags",
+      "Sitemap.xml includes all pages and is accessible",
+      "Robots.txt is properly configured",
+      "Service and area landing pages load without errors"
+    ],
+    "verification_steps": [
+      {
+        "name": "Google Rich Results Test",
+        "command": "manual",
+        "expected_outcome": "All schemas validate without errors",
+        "type": "manual",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Build Verification",
+        "command": "npm run build",
+        "expected_outcome": "Build completes without errors, sitemap.xml and robots.txt generated",
+        "type": "test",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Dev Server Test",
+        "command": "npm run dev",
+        "expected_outcome": "All landing pages accessible at correct URLs",
+        "type": "test",
+        "required": true,
+        "blocking": false
+      }
+    ],
+    "reasoning": "Low risk SEO enhancement - mostly adding new pages and metadata, minimal changes to existing functionality"
+  },
+  "qa_acceptance": {
+    "unit_tests": {
+      "required": false,
+      "commands": [],
+      "minimum_coverage": null
+    },
+    "integration_tests": {
+      "required": false,
+      "commands": [],
+      "services_to_test": []
+    },
+    "e2e_tests": {
+      "required": false,
+      "commands": [],
+      "flows": []
+    },
+    "browser_verification": {
+      "required": true,
+      "pages": [
+        {
+          "url": "http://localhost:5173/",
+          "checks": [
+            "renders",
+            "no-console-errors",
+            "has-structured-data"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/services/residential-asphalt.html",
+          "checks": [
+            "renders",
+            "unique-title",
+            "unique-meta"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/services/commercial-asphalt.html",
+          "checks": [
+            "renders",
+            "unique-title",
+            "unique-meta"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/services/concrete-solutions.html",
+          "checks": [
+            "renders",
+            "unique-title",
+            "unique-meta"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/services/maintenance.html",
+          "checks": [
+            "renders",
+            "unique-title",
+            "unique-meta"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/areas/columbus-paving.html",
+          "checks": [
+            "renders",
+            "local-keywords"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/areas/zanesville-paving.html",
+          "checks": [
+            "renders",
+            "local-keywords"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/areas/newark-paving.html",
+          "checks": [
+            "renders",
+            "local-keywords"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/areas/lancaster-paving.html",
+          "checks": [
+            "renders",
+            "local-keywords"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/sitemap.xml",
+          "checks": [
+            "accessible",
+            "valid-xml"
+          ]
+        },
+        {
+          "url": "http://localhost:5173/robots.txt",
+          "checks": [
+            "accessible"
+          ]
+        }
+      ]
+    },
+    "database_verification": {
+      "required": false,
+      "checks": []
+    }
+  },
+  "qa_signoff": null,
+  "executionPhase": "complete",
+  "status": "human_review",
+  "planStatus": "review",
+  "updated_at": "2026-06-22T04:49:45.704Z",
+  "reviewReason": "completed",
+  "xstateState": "human_review"
+}

@@ -111,6 +111,7 @@ public/images/new-ux/
 
 # Auto Claude data directory
 .auto-claude/
+node_modules
 .auto-claude-security.json
 .auto-claude-status
 .claude_settings.json
