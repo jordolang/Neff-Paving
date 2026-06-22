@@ -277,8 +277,8 @@ test.describe('Payment Form Flow', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          clientSecret: 'pi_test_secret_123456789',
-          paymentIntentId: 'pi_test_123456789'
+          clientSecret: 'mock-client-secret',
+          paymentIntentId: 'mock-payment-intent-id'
         })
       })
     })
@@ -289,7 +289,7 @@ test.describe('Payment Form Flow', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           success: true,
-          paymentIntentId: 'pi_test_123456789',
+          paymentIntentId: 'mock-payment-intent-id',
           status: 'succeeded'
         })
       })
@@ -418,8 +418,8 @@ test.describe('Payment Form Flow', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          clientSecret: 'pi_test_secret_123456789',
-          paymentIntentId: 'pi_test_123456789'
+          clientSecret: 'mock-client-secret',
+          paymentIntentId: 'mock-payment-intent-id'
         })
       })
     })
@@ -450,7 +450,7 @@ test.describe('Payment Form Flow', () => {
         window.Stripe.prototype.confirmPayment = async () => {
           return {
             paymentIntent: {
-              id: 'pi_test_123456789',
+              id: 'mock-payment-intent-id',
               status: 'succeeded'
             }
           }
@@ -577,8 +577,8 @@ test.describe('Payment Form Flow', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          clientSecret: 'pi_test_secret_123456789',
-          paymentIntentId: 'pi_test_123456789'
+          clientSecret: 'mock-client-secret',
+          paymentIntentId: 'mock-payment-intent-id'
         })
       })
     })
