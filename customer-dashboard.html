@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | Neff Paving Customer Portal</title>
+    <meta name="description" content="Your Neff Paving project dashboard - track your estimate, contract, schedule, and payment status.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <meta name="theme-color" content="#0b0b0d">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts (match main site) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Shared design system -->
+    <link rel="stylesheet" href="styles/redesign.css">
+</head>
+<body>
+    <div id="dashboard-root"></div>
+
+    <script type="module">
+        import { CustomerDashboard } from './src/components/customer-dashboard.js';
+
+        // Initialize dashboard
+        const dashboard = new CustomerDashboard('dashboard-root', {
+            refreshInterval: 300000, // Auto-refresh every 5 minutes
+            onLogout: () => {
+                window.location.href = '/customer-portal.html';
+            },
+            onError: (error) => {
+                console.error('Dashboard error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
