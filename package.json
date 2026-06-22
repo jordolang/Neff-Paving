@@ -23,6 +23,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "test:sw": "node scripts/test-sw.js",
     "verify:assets": "node verify-assets.js",
     "audit:performance": "node scripts/run-lighthouse.js"
