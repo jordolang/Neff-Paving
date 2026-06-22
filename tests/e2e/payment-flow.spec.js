@@ -41,6 +41,9 @@ test.describe('Payment Form Flow', () => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Payment Form Test</title>
+        <!-- setContent() pages have no origin (about:blank); a base href lets
+             relative fetch() URLs resolve so page.route() mocks can intercept them. -->
+        <base href="http://localhost/">
         <style>
           .payment-form-container {
             max-width: 500px;

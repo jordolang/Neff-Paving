@@ -23,8 +23,9 @@ export default defineConfig({
       ]
     },
 
-    // Test file patterns
-    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // Test file patterns — unit tests only. Playwright E2E specs live in
+    // tests/e2e and are run by Playwright, not Vitest.
+    include: ['tests/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 
     // Files to exclude from test runs
     exclude: [
@@ -32,7 +33,8 @@ export default defineConfig({
       'dist',
       '.idea',
       '.git',
-      '.cache'
+      '.cache',
+      'tests/e2e/**'
     ]
   },
 

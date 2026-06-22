@@ -1,341 +1,214 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * E2E tests for the estimate request flow
- * Tests the complete user journey from form access to submission
+ * E2E tests for the estimate request flow.
+ *
+ * These tests run against the real estimate-form.html page served by the Vite
+ * dev server (see playwright.config.js webServer). The page has two parts:
+ *   1. An instant-estimate calculator (service rate × measured area).
+ *   2. A "Request Your Free Quote" form that emails the request via FormSubmit.
+ *
+ * Network calls (FormSubmit, the keyless map geocoder/tiles) are mocked so the
+ * tests are deterministic and offline-safe.
  */
 
 test.describe('Estimate Request Flow', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the estimate form page
-    await page.goto('/estimate-form.html')
+    // Block all third-party requests (Leaflet CDN, satellite map tiles,
+    // geocoder, fonts, analytics). They are irrelevant to the form/calculator
+    // behaviour, and the blocking <script> tags would otherwise stall page load
+    // and make the suite depend on external CDNs being reachable. Aborting a
+    // blocking script lets the browser continue parsing immediately.
+    // Test-level routes (e.g. the FormSubmit mock) are registered later and take
+    // precedence over this catch-all.
+    await page.route('**/*', (route) => {
+      const { hostname } = new URL(route.request().url())
+      if (hostname === 'localhost' || hostname === '127.0.0.1') return route.continue()
+      return route.abort()
+    })
 
-    // Wait for the form to be fully loaded
+    // domcontentloaded is enough: the inline form/calculator script runs at parse
+    // time, so we don't need to wait for the (blocked) map assets.
+    await page.goto('/estimate-form.html', { waitUntil: 'domcontentloaded' })
     await page.waitForSelector('#estimate-form')
   })
 
   test('should display the estimate form with all required fields', async ({ page }) => {
-    // Verify form header
-    await expect(page.locator('h2')).toContainText('Request Your Free Estimate')
+    await expect(
+      page.getByRole('heading', { name: 'Get Your Free Paving Estimate' })
+    ).toBeVisible()
 
-    // Verify personal information fields
-    await expect(page.locator('#firstName')).toBeVisible()
-    await expect(page.locator('#lastName')).toBeVisible()
-    await expect(page.locator('#email')).toBeVisible()
+    // Request form fields
+    await expect(page.locator('#name')).toBeVisible()
     await expect(page.locator('#phone')).toBeVisible()
+    await expect(page.locator('#email')).toBeVisible()
+    await expect(page.locator('#project-type')).toBeVisible()
+    await expect(page.locator('#address')).toBeVisible()
+    await expect(page.locator('#notes')).toBeVisible()
 
-    // Verify project details fields
-    await expect(page.locator('#serviceType')).toBeVisible()
-    await expect(page.locator('#timeline')).toBeVisible()
-    await expect(page.locator('#projectDescription')).toBeVisible()
-
-    // Verify address fields
-    await expect(page.locator('#streetAddress')).toBeVisible()
-    await expect(page.locator('#city')).toBeVisible()
-    await expect(page.locator('#state')).toBeVisible()
-    await expect(page.locator('#zipCode')).toBeVisible()
-
-    // Verify form actions
-    await expect(page.locator('#submit-estimate')).toBeVisible()
-    await expect(page.locator('#reset-form')).toBeVisible()
-    await expect(page.locator('#get-quote')).toBeVisible()
-
-    // Verify submit button is initially disabled
-    await expect(page.locator('#submit-estimate')).toBeDisabled()
+    // Submit button with the real label
+    await expect(page.locator('#submit-btn')).toBeVisible()
+    await expect(page.locator('#submit-btn')).toContainText('Request My Free Quote')
   })
 
-  test('should show validation errors for empty required fields', async ({ page }) => {
-    // Try to submit empty form by enabling the button temporarily (simulating form manipulation)
-    await page.evaluate(() => {
-      document.getElementById('submit-estimate').disabled = false
-    })
-
-    // Click submit
-    await page.locator('#submit-estimate').click()
-
-    // Wait for validation messages to appear
-    await page.waitForTimeout(500)
-
-    // Check for validation error messages
-    const validationSummary = page.locator('#validation-summary')
-
-    // Validation summary may be visible or individual field errors may show
-    const hasValidationSummary = await validationSummary.isVisible().catch(() => false)
-    const hasFieldErrors = await page.locator('.error-message:visible').count() > 0
-
-    expect(hasValidationSummary || hasFieldErrors).toBeTruthy()
+  test('should list all project type options', async ({ page }) => {
+    const options = page.locator('#project-type option')
+    await expect(options).toHaveCount(6)
+    await expect(page.locator('#project-type')).toContainText('Driveway')
+    await expect(page.locator('#project-type')).toContainText('Parking Lot')
+    await expect(page.locator('#project-type')).toContainText('Other')
   })
 
-  test('should validate email format', async ({ page }) => {
-    // Fill in invalid email
-    await page.locator('#email').fill('invalid-email')
-    await page.locator('#email').blur()
+  test('should show a validation message when required fields are empty', async ({ page }) => {
+    // novalidate is set on the form, so the page's own JS handles validation.
+    await page.locator('#submit-btn').click()
 
-    // Wait for validation
-    await page.waitForTimeout(300)
-
-    // Check for email validation error (if visible validation is implemented)
-    const emailError = page.locator('#email-error')
-    const errorText = await emailError.textContent()
-
-    // Error should be present or field should be marked invalid
-    if (errorText) {
-      expect(errorText.toLowerCase()).toContain('email')
-    }
+    await expect(page.locator('#form-status')).toContainText(
+      'Please fill in your name, phone, and email.'
+    )
+    // Submission was prevented — still on the same page.
+    await expect(page).toHaveURL(/estimate-form\.html/)
   })
 
-  test('should successfully fill and submit the estimate form', async ({ page }) => {
-    // Fill personal information
-    await page.locator('#firstName').fill('John')
-    await page.locator('#lastName').fill('Doe')
-    await page.locator('#email').fill('john.doe@example.com')
-    await page.locator('#phone').fill('(555) 123-4567')
+  test('should calculate an estimate range from length and width', async ({ page }) => {
+    await page.locator('#service-type').selectOption('residential')
+    await page.locator('#length').fill('40')
+    await page.locator('#width').fill('20')
 
-    // Fill project details
-    await page.locator('#serviceType').selectOption('residential')
+    // 40 × 20 = 800 sq ft
+    await expect(page.locator('#area-display')).toHaveText('800')
 
-    // Set timeline to tomorrow
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const tomorrowStr = tomorrow.toISOString().split('T')[0]
-    await page.locator('#timeline').fill(tomorrowStr)
+    // Residential is $3.50/sq ft, so a non-zero range should be shown.
+    const price = await page.locator('#price-display').textContent()
+    expect(price).not.toBe('$0')
+    expect(price).toMatch(/\$[\d,]+\s*–\s*\$[\d,]+/)
+    await expect(page.locator('#result')).not.toHaveClass(/empty/)
+  })
 
-    await page.locator('#projectDescription').fill('Need a new driveway for my home')
+  test('should recalculate when the service type changes', async ({ page }) => {
+    await page.locator('#service-type').selectOption('residential')
+    await page.locator('#length').fill('50')
+    await page.locator('#width').fill('20') // 1000 sq ft
 
-    // Fill address information
-    await page.locator('#streetAddress').fill('123 Main Street')
-    await page.locator('#city').fill('Columbus')
-    await page.locator('#state').selectOption('OH')
-    await page.locator('#zipCode').fill('43215')
+    const residentialPrice = await page.locator('#price-display').textContent()
 
-    // Add measurement data by directly setting hidden fields
-    // This simulates the measurement tool providing data
-    await page.evaluate(() => {
-      document.getElementById('calculatedSquareFootage').value = '500'
-      document.getElementById('measurementTool').value = 'google-maps'
-      document.getElementById('measurementTimestamp').value = new Date().toISOString()
+    // Decorative concrete is the most expensive rate, so the range must change.
+    await page.locator('#service-type').selectOption('decorative')
+    const decorativePrice = await page.locator('#price-display').textContent()
 
-      // Simulate measurement data being set
-      const form = document.querySelector('.estimate-form')
-      if (form && form.__vue__) {
-        // For Vue component
-        form.__vue__.measurementData = {
-          areaInSquareFeet: 500,
-          perimeter: 100
-        }
-      } else {
-        // Set custom property for vanilla JS
-        const formElement = document.getElementById('estimate-form')
-        if (formElement) {
-          formElement.measurementData = {
-            areaInSquareFeet: 500,
-            perimeter: 100
-          }
-        }
-      }
-    })
+    expect(decorativePrice).not.toBe(residentialPrice)
+  })
 
-    // Wait a moment for form validation to process
-    await page.waitForTimeout(500)
+  test('should sync hidden estimate fields for submission', async ({ page }) => {
+    await page.locator('#service-type').selectOption('concrete')
+    await page.locator('#length').fill('30')
+    await page.locator('#width').fill('30') // 900 sq ft
 
-    // Check if submit button is enabled (it may require measurement data)
-    const submitButton = page.locator('#submit-estimate')
-    const isEnabled = await submitButton.isEnabled()
+    await expect(page.locator('#hidden-area')).toHaveValue('900')
+    await expect(page.locator('#hidden-service')).toHaveValue('Concrete')
+    await expect(page.locator('#hidden-estimate')).not.toHaveValue('')
+  })
 
-    if (!isEnabled) {
-      // Enable it for testing purposes
-      await page.evaluate(() => {
-        document.getElementById('submit-estimate').disabled = false
-      })
-    }
+  test('should switch between dimensions and total-area input modes', async ({ page }) => {
+    // Default is dimensions mode.
+    await expect(page.locator('#mode-dimensions')).toBeVisible()
+    await expect(page.locator('#mode-area')).toBeHidden()
 
-    // Mock the API endpoint to avoid actual submission
-    await page.route('/api/estimates', async (route) => {
-      await route.fulfill({
+    await page.locator('.seg button[data-mode="area"]').click()
+    await expect(page.locator('#mode-area')).toBeVisible()
+    await expect(page.locator('#mode-dimensions')).toBeHidden()
+
+    // Total-area mode drives the calculation directly.
+    await page.locator('#area-input').fill('1500')
+    await expect(page.locator('#area-display')).toHaveText('1,500')
+
+    await page.locator('.seg button[data-mode="dimensions"]').click()
+    await expect(page.locator('#mode-dimensions')).toBeVisible()
+    await expect(page.locator('#mode-area')).toBeHidden()
+  })
+
+  test('should successfully submit the estimate request', async ({ page }) => {
+    // Mock the FormSubmit AJAX endpoint with a success response.
+    await page.route('**/formsubmit.co/**', (route) =>
+      route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          success: true,
-          estimateId: 'EST-12345',
-          message: 'Estimate request received successfully'
-        })
+        body: JSON.stringify({ success: true, message: 'The form was submitted successfully.' })
       })
-    })
+    )
 
-    // Submit the form
-    await submitButton.click()
+    await page.locator('#name').fill('Jane Customer')
+    await page.locator('#phone').fill('740-555-0100')
+    await page.locator('#email').fill('jane@example.com')
+    await page.locator('#project-type').selectOption('Driveway')
 
-    // Wait for response/redirect
-    await page.waitForTimeout(1000)
+    await page.locator('#submit-btn').click()
 
-    // Verify success (this depends on implementation)
-    // Could be a success message, redirect, or modal
-    const possibleSuccessIndicators = [
-      page.locator('text=/thank you/i'),
-      page.locator('text=/success/i'),
-      page.locator('text=/received/i'),
-      page.locator('.success-message'),
-      page.locator('.confirmation')
-    ]
+    // Success status message is shown and the form is reset.
+    await expect(page.locator('#form-status')).toContainText('Thank you')
+    await expect(page.locator('#form-status')).toHaveClass(/ok/)
+    await expect(page.locator('#name')).toHaveValue('')
+  })
 
-    // Check if any success indicator is visible
-    let foundSuccess = false
-    for (const indicator of possibleSuccessIndicators) {
-      const isVisible = await indicator.isVisible().catch(() => false)
-      if (isVisible) {
-        foundSuccess = true
+  test('should show an error message when submission fails', async ({ page }) => {
+    // FormSubmit reachable but reports failure.
+    await page.route('**/formsubmit.co/**', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ success: false })
+      })
+    )
+
+    await page.locator('#name').fill('Jane Customer')
+    await page.locator('#phone').fill('740-555-0100')
+    await page.locator('#email').fill('jane@example.com')
+
+    await page.locator('#submit-btn').click()
+
+    await expect(page.locator('#form-status')).toHaveClass(/err/)
+    await expect(page.locator('#form-status')).toContainText('couldn\'t send')
+  })
+
+  test('should display the satellite measurement map section', async ({ page }) => {
+    await expect(page.locator('#map')).toBeVisible()
+    await expect(page.locator('#map-search-input')).toBeVisible()
+    await expect(page.locator('#draw-rect')).toBeVisible()
+    await expect(page.locator('#draw-poly')).toBeVisible()
+  })
+
+  test('should re-enable the submit button after a network error', async ({ page }) => {
+    // FormSubmit unreachable — the page should recover and re-enable the button.
+    await page.route('**/formsubmit.co/**', (route) => route.abort())
+
+    await page.locator('#name').fill('Jane Customer')
+    await page.locator('#phone').fill('740-555-0100')
+    await page.locator('#email').fill('jane@example.com')
+
+    await page.locator('#submit-btn').click()
+
+    await expect(page.locator('#form-status')).toHaveClass(/err/)
+    await expect(page.locator('#submit-btn')).toBeEnabled()
+    await expect(page.locator('#submit-btn')).toContainText('Request My Free Quote')
+  })
+
+  test('should navigate to the estimate form from the home page', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+
+    // Click the first visible link that points at the estimate form.
+    const links = page.locator('a[href*="estimate-form.html"]')
+    const count = await links.count()
+    let clicked = false
+    for (let i = 0; i < count; i++) {
+      const link = links.nth(i)
+      if (await link.isVisible()) {
+        await link.click()
+        clicked = true
         break
       }
     }
-
-    // If no success message, check that we're not showing errors
-    if (!foundSuccess) {
-      const errorSummary = page.locator('#validation-summary')
-      const isErrorVisible = await errorSummary.isVisible().catch(() => false)
-      expect(isErrorVisible).toBeFalsy()
-    }
-  })
-
-  test('should allow user to reset the form', async ({ page }) => {
-    // Fill in some fields
-    await page.locator('#firstName').fill('John')
-    await page.locator('#lastName').fill('Doe')
-    await page.locator('#email').fill('john.doe@example.com')
-
-    // Verify fields have values
-    await expect(page.locator('#firstName')).toHaveValue('John')
-    await expect(page.locator('#lastName')).toHaveValue('Doe')
-
-    // Click reset button
-    await page.locator('#reset-form').click()
-
-    // Wait for reset to complete
-    await page.waitForTimeout(300)
-
-    // Verify fields are cleared
-    await expect(page.locator('#firstName')).toHaveValue('')
-    await expect(page.locator('#lastName')).toHaveValue('')
-    await expect(page.locator('#email')).toHaveValue('')
-  })
-
-  test('should format phone number correctly', async ({ page }) => {
-    const phoneInput = page.locator('#phone')
-
-    // Type a 10-digit phone number
-    await phoneInput.fill('5551234567')
-    await phoneInput.blur()
-
-    // Wait for formatting
-    await page.waitForTimeout(300)
-
-    // Check that phone number was formatted (implementation dependent)
-    const phoneValue = await phoneInput.inputValue()
-
-    // Phone should contain the digits we entered
-    expect(phoneValue.replace(/\D/g, '')).toBe('5551234567')
-  })
-
-  test('should enable Get Quote button with valid measurement data', async ({ page }) => {
-    // Fill minimum required fields
-    await page.locator('#firstName').fill('John')
-    await page.locator('#lastName').fill('Doe')
-    await page.locator('#email').fill('john.doe@example.com')
-    await page.locator('#phone').fill('5551234567')
-    await page.locator('#serviceType').selectOption('residential')
-
-    // Add measurement data
-    await page.evaluate(() => {
-      document.getElementById('calculatedSquareFootage').value = '500'
-    })
-
-    // Wait for state update
-    await page.waitForTimeout(500)
-
-    // Check if get quote button state changed
-    const getQuoteButton = page.locator('#get-quote')
-
-    // Button may be enabled or disabled based on implementation
-    // Just verify it's visible and clickable
-    await expect(getQuoteButton).toBeVisible()
-  })
-
-  test('should display service type help text on selection', async ({ page }) => {
-    // Select a service type
-    await page.locator('#serviceType').selectOption('residential')
-
-    // Wait for help text to appear
-    await page.waitForTimeout(300)
-
-    // Check if help text appeared
-    const helpText = page.locator('#serviceType-help')
-    const helpContent = await helpText.textContent()
-
-    // Help text should be related to residential service
-    // (exact content depends on implementation)
-    expect(helpContent.length).toBeGreaterThan(0)
-  })
-
-  test('should handle service type change correctly', async ({ page }) => {
-    // Select residential first
-    await page.locator('#serviceType').selectOption('residential')
-    await page.waitForTimeout(200)
-
-    // Change to commercial
-    await page.locator('#serviceType').selectOption('commercial')
-    await page.waitForTimeout(200)
-
-    // Verify selection changed
-    await expect(page.locator('#serviceType')).toHaveValue('commercial')
-
-    // Change to maintenance
-    await page.locator('#serviceType').selectOption('maintenance')
-    await page.waitForTimeout(200)
-
-    await expect(page.locator('#serviceType')).toHaveValue('maintenance')
-  })
-
-  test('should validate ZIP code format', async ({ page }) => {
-    const zipInput = page.locator('#zipCode')
-
-    // Try invalid ZIP code
-    await zipInput.fill('123')
-    await zipInput.blur()
-    await page.waitForTimeout(300)
-
-    // Check validation state (depends on implementation)
-    const zipError = page.locator('#zipCode-error')
-    const errorText = await zipError.textContent()
-
-    // Clear and try valid ZIP
-    await zipInput.fill('43215')
-    await zipInput.blur()
-    await page.waitForTimeout(300)
-
-    // Error should be cleared or not shown
-    const validErrorText = await zipError.textContent()
-    expect(validErrorText.length).toBeLessThanOrEqual(errorText.length)
-  })
-
-  test('should show measurement tool section', async ({ page }) => {
-    // Verify measurement section is visible
-    await expect(page.locator('#google-maps-container')).toBeVisible()
-
-    // Check for map container
-    await expect(page.locator('#google-maps-measurement')).toBeVisible()
-  })
-
-  test('should navigate to estimate form from home page', async ({ page }) => {
-    // Go to home page
-    await page.goto('/')
-
-    // Click on "Free Estimate" button in header
-    await page.locator('a[href="estimate-form.html"]').first().click()
-
-    // Wait for navigation
-    await page.waitForURL('**/estimate-form.html')
-
-    // Verify we're on the estimate form page
-    await expect(page.locator('h2')).toContainText('Request Your Free Estimate')
+    expect(clicked).toBeTruthy()
+    await expect(page).toHaveURL(/estimate-form\.html/)
     await expect(page.locator('#estimate-form')).toBeVisible()
   })
 })

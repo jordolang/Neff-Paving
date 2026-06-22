@@ -32,6 +32,9 @@ test.describe('Scheduling Flow', () => {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Schedule Consultation - Neff Paving</title>
+        <!-- setContent() pages have no origin (about:blank); a base href lets
+             relative fetch() URLs resolve so page.route() mocks can intercept them. -->
+        <base href="http://localhost/">
         <style>
           .scheduling-container {
             max-width: 800px;
@@ -180,11 +183,12 @@ test.describe('Scheduling Flow', () => {
               statusElement.textContent = 'Calendly widget loaded successfully';
               widgetElement.dataset.initialized = 'true';
 
-              // Dispatch custom event to indicate widget is ready
-              const event = new CustomEvent('calendly:widget_ready', {
-                detail: { contractId, estimateData }
-              });
-              window.dispatchEvent(event);
+              // Dispatch custom event to indicate widget is ready. Also persist
+              // the detail on window so a listener attached after this fires can
+              // still read it (avoids a race with the 500ms timer).
+              const detail = { contractId, estimateData };
+              window.__calendlyWidgetReady = detail;
+              window.dispatchEvent(new CustomEvent('calendly:widget_ready', { detail }));
             }, 500);
           }
 
@@ -651,18 +655,23 @@ test.describe('Scheduling Flow', () => {
   })
 
   test('should handle widget initialization event', async ({ page }) => {
-    const widgetReadyPromise = page.evaluate(() => {
+    // The widget_ready event fires 500ms after setContent, so the listener must
+    // be attached after the page content exists (a listener registered on the
+    // pre-setContent about:blank document would be discarded). Guard against the
+    // event having already fired by also reading the persisted window value.
+    await setupSchedulingWidget(page)
+
+    const widgetData = await page.evaluate(() => {
       return new Promise((resolve) => {
+        if (window.__calendlyWidgetReady) {
+          resolve(window.__calendlyWidgetReady)
+          return
+        }
         window.addEventListener('calendly:widget_ready', (e) => {
           resolve(e.detail)
         }, { once: true })
       })
     })
-
-    await setupSchedulingWidget(page)
-
-    // Wait for widget ready event
-    const widgetData = await widgetReadyPromise
 
     // Verify event data
     expect(widgetData.contractId).toBe('CONTRACT-12345')

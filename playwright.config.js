@@ -33,7 +33,7 @@ export default defineConfig({
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: 'http://localhost:5173',
+    baseURL: 'http://localhost:3000',
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -51,39 +51,27 @@ export default defineConfig({
     navigationTimeout: 15 * 1000
   },
 
-  // Configure projects for major browsers
+  // Configure projects. CI installs only the Chromium browser
+  // (see .github/workflows/test.yml), so we run desktop + mobile Chromium.
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
-    },
-
-    // Mobile viewports
+    // Mobile viewport (also Chromium-based)
     {
       name: 'Mobile Chrome',
       use: { ...devices['Pixel 5'] }
-    },
-
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] }
     }
   ],
 
-  // Run your local dev server before starting the tests
+  // Run your local dev server before starting the tests.
+  // Force base '/' (the default dev base is '/Neff-Paving/' for GitHub Pages),
+  // so tests can use simple paths like '/estimate-form.html' and '/'.
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
+    command: 'npm run dev -- --base=/',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
     stdout: 'ignore',
