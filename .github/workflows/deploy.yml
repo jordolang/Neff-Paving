@@ -41,6 +41,13 @@ jobs:
         VITE_DEPLOY_TIME: ${{ github.run_number }}
         VITE_BUILD_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
 
+    - name: Copy CMS admin files
+      run: |
+        echo "📋 Copying CMS admin files to dist..."
+        cp -r public/admin dist/admin
+        echo "✅ Admin files copied successfully"
+        ls -la dist/admin/
+
     - name: Setup Pages
       uses: actions/configure-pages@v4
 

@@ -42,7 +42,8 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "animate.css": "^4.1.1",
-    "aos": "^2.3.4"
+    "aos": "^2.3.4",
+    "decap-cms-app": "^3.3.3"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",

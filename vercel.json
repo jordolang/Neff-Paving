@@ -25,6 +25,10 @@
     {
       "source": "/estimate-form-demo",
       "destination": "/estimate-form-demo.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
     }
   ],
   "headers": [

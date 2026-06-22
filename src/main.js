@@ -13,15 +13,27 @@ import 'aos/dist/aos.css'
 // Import gallery component (CRITICAL for gallery functionality)
 import GalleryFilter from './components/gallery-filter.js';
 
+// Import content populator for dynamic CMS content
+import { ContentPopulator } from './utils/content-populator.js';
+
 // Simple application class
 class NeffPavingApp {
     constructor() {
         this.galleryFilter = null;
+        this.contentPopulator = null;
         this.init();
     }
 
-    init() {
+    async init() {
         console.log('Initializing Neff Paving App...');
+
+        // Load dynamic content first (CRITICAL for CMS integration)
+        try {
+            await this.initDynamicContent();
+            console.log('Dynamic content loaded successfully');
+        } catch (error) {
+            console.error('Dynamic content loading failed:', error);
+        }
 
         // Initialize analytics
         this.initAnalytics()
@@ -44,6 +56,11 @@ class NeffPavingApp {
         }
 
         console.log('Neff Paving app initialized successfully')
+    }
+
+    async initDynamicContent() {
+        this.contentPopulator = new ContentPopulator();
+        await this.contentPopulator.populate();
     }
 
     async initAnalytics() {
@@ -231,10 +248,10 @@ class NeffPavingApp {
 }
 
 // Initialize the app when DOM is loaded
-function initializeApp() {
+async function initializeApp() {
     try {
         console.log('Starting NeffPavingApp initialization...');
-        new NeffPavingApp();
+        await new NeffPavingApp();
         console.log('NeffPavingApp initialized successfully');
     } catch (error) {
         console.error('Failed to initialize NeffPavingApp:', error);
