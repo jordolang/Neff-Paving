@@ -78,6 +78,10 @@ export default defineConfig(({ mode }) => {
       if (filePath && filePath.includes('gallery/')) {
         return false;
       }
+      // Exclude content JSON files from inlining to ensure they're available at runtime
+      if (filePath && filePath.includes('content/') && filePath.endsWith('.json')) {
+        return false;
+      }
       // For Vercel, use smaller inline limit to ensure proper asset handling
       const inlineLimit = mode === 'vercel' ? 4096 : 8192;
       return content.length < inlineLimit;
@@ -100,7 +104,7 @@ export default defineConfig(({ mode }) => {
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
-          
+
           // Gallery images - preserve original paths without hashing for Vercel
           if (assetInfo.name && assetInfo.name.includes('gallery/')) {
             // Extract the gallery path from the original name
@@ -110,7 +114,15 @@ export default defineConfig(({ mode }) => {
               return `assets/${galleryMatch[1]}`;
             }
           }
-          
+
+          // Content JSON files - preserve in content directory without hashing
+          if (assetInfo.name && assetInfo.name.includes('content/') && /json/i.test(ext)) {
+            const contentMatch = assetInfo.name.match(/content\/(.+)/);
+            if (contentMatch) {
+              return `content/${contentMatch[1]}`;
+            }
+          }
+
           // Special handling for different asset types
           if (/md|json/i.test(ext)) {
             return `blog-posts/[name][extname]`
@@ -189,6 +201,39 @@ export default defineConfig(({ mode }) => {
   },
   // Enhanced plugin configuration
   plugins: [
+    // Copy content JSON files to dist - runs after build process
+    {
+      name: 'copy-content-files',
+      async writeBundle() {
+        const sourceDir = resolve(__dirname, 'content');
+        const targetDir = resolve(__dirname, 'dist/content');
+
+        console.log('🔄 Starting content files copy process...');
+
+        try {
+          // Ensure target directory exists
+          mkdirSync(targetDir, { recursive: true });
+
+          // Read all files in content directory
+          const files = readdirSync(sourceDir);
+          const jsonFiles = files.filter(file => file.endsWith('.json'));
+
+          // Copy each JSON file
+          jsonFiles.forEach(file => {
+            const sourcePath = join(sourceDir, file);
+            const targetPath = join(targetDir, file);
+
+            copyFileSync(sourcePath, targetPath);
+            console.log(`  ✅ Copied ${file}`);
+          });
+
+          console.log(`✨ Content files copy complete! (${jsonFiles.length} files)`);
+        } catch (error) {
+          console.error('❌ Error copying content files:', error);
+          throw error;
+        }
+      }
+    },
     // Copy gallery images to dist - runs after build process to avoid Vite asset pipeline
     {
       name: 'copy-gallery-images',
