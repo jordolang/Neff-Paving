@@ -185,10 +185,12 @@ export default defineConfig(({ mode }) => {
           return `entries/[name]-[hash].js`
         },
         
-        // Manual chunks for better code splitting - simplified
-        manualChunks: {
-          // Vendor chunks
-          'vendor': ['aos']
+        // Manual chunks for better code splitting (Rolldown/Vite 8 format)
+        advancedChunks: {
+          groups: [
+            // Vendor chunk for the AOS animation library
+            { name: 'vendor', test: /[\\/]node_modules[\\/]aos[\\/]/ }
+          ]
         }
       },
     },
