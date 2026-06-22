@@ -145,3 +145,23 @@ collections:
                     hint: "Key features or benefits"
                     field: { label: "Feature", name: "feature", widget: "string" }
                   - { label: "Image", name: "image", widget: "image", required: false }
+
+  # Gallery collection
+  - name: "gallery"
+    label: "Gallery"
+    folder: "content/gallery"
+    create: true
+    slug: "{{category}}-{{slug}}"
+    fields:
+      - { label: "Image", name: "image", widget: "image", hint: "Upload gallery image" }
+      - { label: "Title", name: "title", widget: "string", hint: "Image title" }
+      - { label: "Alt Text", name: "alt", widget: "string", hint: "Descriptive alt text for accessibility" }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "Commercial", value: "commercial" }
+          - { label: "Residential", value: "residential" }
+          - { label: "Equipment", value: "equipment" }
+          - { label: "Concrete", value: "concrete" }
+        hint: "Gallery category for filtering and organization"
