@@ -415,14 +415,30 @@ export class AreaFinder {
     }
 
     initDrawingManager() {
-        this.drawingManager = new google.maps.drawing.DrawingManager({
-            ...DRAWING_MANAGER_OPTIONS,
-            map: this.map
-        });
+        try {
+            this.drawingManager = new google.maps.drawing.DrawingManager({
+                ...DRAWING_MANAGER_OPTIONS,
+                map: this.map
+            });
 
-        google.maps.event.addListener(this.drawingManager, 'overlaycomplete', (event) => {
-            this.handleShapeComplete(event);
-        });
+            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', (event) => {
+                this.handleShapeComplete(event);
+            });
+        } catch (error) {
+            console.error('Drawing manager initialization error:', error);
+
+            // Track error for analytics
+            if (window.gtag) {
+                window.gtag('event', 'exception', {
+                    description: 'drawing_manager_init_error',
+                    fatal: false,
+                    error_type: error.name,
+                    error_message: error.message
+                });
+            }
+
+            this.showError('Unable to initialize drawing tools. Please refresh the page.');
+        }
     }
 
     initSearchBox() {
@@ -476,21 +492,38 @@ export class AreaFinder {
     }
 
     handleShapeComplete(event) {
-        // Remove previous shape
-        if (this.currentShape) {
-            this.currentShape.setMap(null);
-        }
+        try {
+            // Remove previous shape
+            if (this.currentShape) {
+                this.currentShape.setMap(null);
+            }
 
-        this.currentShape = event.overlay;
-        this.drawingManager.setDrawingMode(null);
+            this.currentShape = event.overlay;
+            this.drawingManager.setDrawingMode(null);
 
-        // Enable buttons
-        this.enableButton('clear-shapes');
-        this.enableButton('calculate-area');
+            // Enable buttons
+            this.enableButton('clear-shapes');
+            this.enableButton('calculate-area');
 
-        // Auto-calculate area if option is enabled
-        if (this.options.autoCalculate !== false) {
-            this.calculateArea();
+            // Auto-calculate area if option is enabled
+            if (this.options.autoCalculate !== false) {
+                this.calculateArea();
+            }
+        } catch (error) {
+            console.error('Shape completion error:', error);
+
+            // Track error for analytics
+            if (window.gtag) {
+                window.gtag('event', 'exception', {
+                    description: 'shape_complete_error',
+                    fatal: false,
+                    error_type: error.name,
+                    error_message: error.message,
+                    shape_type: event?.type
+                });
+            }
+
+            this.showError('Unable to complete shape drawing. Please try again.');
         }
     }
 
@@ -502,7 +535,12 @@ export class AreaFinder {
 
         try {
             const coordinates = this.getShapeCoordinates(this.currentShape);
-            
+
+            // Validate coordinates
+            if (!coordinates || coordinates.length < 3) {
+                throw new Error('INSUFFICIENT_POINTS');
+            }
+
             // Send to backend for calculation
             const response = await fetch('/api/maps/calculate-area', {
                 method: 'POST',
@@ -517,7 +555,7 @@ export class AreaFinder {
             if (result.success) {
                 this.displayAreaResults(result.data);
                 this.currentArea = result.data;
-                
+
                 // Store measurement data in session storage
                 const measurementData = {
                     ...result.data,
@@ -525,14 +563,40 @@ export class AreaFinder {
                     timestamp: new Date().toISOString()
                 };
                 storeMeasurementData('google-maps', measurementData);
-                
+
                 this.options.onAreaCalculated(result.data);
+
+                // Track successful calculation for analytics
+                if (window.gtag) {
+                    window.gtag('event', 'area_calculated', {
+                        area_sqft: result.data.areaInSquareFeet,
+                        area_acres: result.data.areaInAcres,
+                        num_points: coordinates.length
+                    });
+                }
             } else {
                 throw new Error(result.message || 'Calculation failed');
             }
         } catch (error) {
             console.error('Area calculation error:', error);
-            this.showError('Failed to calculate area. Please try again.');
+
+            // Track error for analytics
+            if (window.gtag) {
+                window.gtag('event', 'exception', {
+                    description: 'area_calculation_error',
+                    fatal: false,
+                    error_type: error.name,
+                    error_message: error.message,
+                    error_code: error.message.includes('INSUFFICIENT_POINTS') ? 'INSUFFICIENT_POINTS' : 'CALCULATION_ERROR'
+                });
+            }
+
+            // Show user-friendly error message
+            const errorMessage = error.message === 'INSUFFICIENT_POINTS'
+                ? 'Please add at least 3 points to create a shape.'
+                : 'Failed to calculate area. Please try again.';
+
+            this.showError(errorMessage);
         }
     }
 
