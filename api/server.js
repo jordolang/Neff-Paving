@@ -1,10 +1,34 @@
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const pool = require('./config/database');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Trust the first proxy hop so rate limiting keys on the real client IP
+// when running behind a reverse proxy / load balancer.
+app.set('trust proxy', 1);
+
+// Global rate limiter: cap requests per IP across all endpoints to mitigate
+// abuse and brute-force/DoS attempts.
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // limit each IP to 300 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests', message: 'Please try again later.' }
+});
+
+// Stricter limiter for authentication endpoints to slow credential stuffing.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests', message: 'Too many authentication attempts, please try again later.' }
+});
 
 // CORS configuration
 const corsOptions = {
@@ -44,6 +68,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Apply the global rate limiter to every request.
+app.use(globalLimiter);
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
@@ -71,8 +98,8 @@ app.get('/health/db', async (req, res) => {
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
 
-// API routes
-app.use('/api/auth', authRoutes);
+// API routes (auth endpoints get the stricter limiter on top of the global one)
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/customer', customerRoutes);
 
 // Error handling middleware

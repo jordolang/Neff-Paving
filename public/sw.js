@@ -181,8 +181,14 @@ async function updateCacheInBackground(request, cacheName) {
   }
 }
 
-// Handle messages from the main thread
+// Handle messages from the main thread.
+// Only accept messages from same-origin clients to avoid acting on messages
+// posted from other origins. (event.origin is empty for some same-origin
+// client posts, which we also allow.)
 self.addEventListener('message', event => {
+  if (event.origin && event.origin !== self.location.origin) {
+    return;
+  }
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }

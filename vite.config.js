@@ -459,8 +459,16 @@ export default defineConfig(({ mode }) => {
         ];
         
         for (const htmlFilePath of htmlFiles) {
-          if (fs.existsSync(htmlFilePath)) {
-            let content = fs.readFileSync(htmlFilePath, 'utf8');
+          // Read directly (no existsSync check first) to avoid a time-of-check
+          // to time-of-use race; skip files that disappear between listing and read.
+          let content;
+          try {
+            content = fs.readFileSync(htmlFilePath, 'utf8');
+          } catch (err) {
+            if (err.code === 'ENOENT') continue;
+            throw err;
+          }
+          {
             
             // Replace build-time placeholders
             content = content.replace(/{{ BUILD_TIMESTAMP }}/g, buildTimestamp);

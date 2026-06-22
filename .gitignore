@@ -4,8 +4,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build outputs
-# dist/ - commented out for GitHub Pages deployment
+# Build outputs (generated fresh by CI for GitHub Pages and Vercel — never committed)
+dist/
+dist-github/
 build/
 .vite/
 

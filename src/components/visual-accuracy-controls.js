@@ -545,10 +545,19 @@ export class VisualAccuracyControls {
             const savedData = getMeasurementData('visual-accuracy');
             if (savedData && savedData.area) {
                 const convertedArea = this.convertArea(savedData.area, savedData.originalUnits, this.currentUnits);
-                measurementDisplay.innerHTML = `
-                    <span class="measurement-icon">📐</span>
-                    <span class="measurement-text">Area: ${convertedArea.toFixed(2)} ${this.currentUnits}</span>
-                `;
+                // Build via DOM + textContent (no innerHTML) so values can never be
+                // interpreted as HTML.
+                measurementDisplay.replaceChildren();
+
+                const icon = document.createElement('span');
+                icon.className = 'measurement-icon';
+                icon.textContent = '📐';
+
+                const text = document.createElement('span');
+                text.className = 'measurement-text';
+                text.textContent = `Area: ${convertedArea.toFixed(2)} ${this.currentUnits}`;
+
+                measurementDisplay.append(icon, text);
             }
         }
     }

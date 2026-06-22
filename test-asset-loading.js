@@ -158,7 +158,12 @@ class AssetLoadingTester {
         
         const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
         for (const link of cssLinks) {
-            if (link.href && !link.href.includes('fonts.googleapis.com')) {
+            if (!link.href) continue;
+            // Compare the parsed host exactly — a substring check like
+            // includes('fonts.googleapis.com') can be bypassed (e.g. fonts.googleapis.com.evil.example).
+            let host = '';
+            try { host = new URL(link.href).hostname; } catch (e) { host = ''; }
+            if (host !== 'fonts.googleapis.com') {
                 await this.testExternalResource(link.href, 'css');
             }
         }

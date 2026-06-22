@@ -392,10 +392,11 @@ class BuildVerifier {
     
     for (const swFile of swFiles) {
       if (swFile.includes('*')) {
-        // Pattern matching
+        // Pattern matching: escape every regex metacharacter, then turn the
+        // glob '*' into '.*'. Anchored so the whole basename must match.
         const files = await this.getAllFiles(this.buildDir);
-        const pattern = swFile.replace('*', '.*');
-        const regex = new RegExp(pattern);
+        const pattern = swFile.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+        const regex = new RegExp(`^${pattern}$`);
         
         for (const file of files) {
           const basename = path.basename(file);

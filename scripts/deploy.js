@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process'
-import { writeFile, mkdir, copyFile, readdir, stat } from 'fs/promises'
+import { readFile, writeFile, mkdir, copyFile, readdir, stat } from 'fs/promises'
+import { gzipSync, brotliCompressSync } from 'zlib'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -210,17 +211,21 @@ async function optimizeAssets() {
       const files = await getFilesToCompress(buildPath)
       
       for (const file of files) {
+        // Compress in-process with Node's zlib instead of shelling out, so file
+        // paths are never interpolated into a shell command.
+        const input = await readFile(file)
+
         if (deployConfig.performance.gzip) {
           try {
-            execCommand(`gzip -9 -c "${file}" > "${file}.gz"`)
+            await writeFile(`${file}.gz`, gzipSync(input, { level: 9 }))
           } catch (error) {
             log(`⚠️  Gzip compression failed for ${file}`, 'yellow')
           }
         }
-        
+
         if (deployConfig.performance.brotli) {
           try {
-            execCommand(`brotli -Z -c "${file}" > "${file}.br"`)
+            await writeFile(`${file}.br`, brotliCompressSync(input))
           } catch (error) {
             log(`⚠️  Brotli compression failed for ${file}`, 'yellow')
           }
