@@ -34,7 +34,7 @@ export class CustomerDashboard {
   async init() {
     try {
       if (!this.authService.isAuthenticated()) {
-        this.showError('Please log in to view your dashboard');
+        this.redirectToLogin();
         return;
       }
 
@@ -885,6 +885,11 @@ export class CustomerDashboard {
     this.stopAutoRefresh();
     this.authService.logout();
     this.options.onLogout();
+    this.redirectToLogin();
+  }
+
+  redirectToLogin() {
+    window.location.href = '/customer-portal.html';
   }
 
   startAutoRefresh() {
