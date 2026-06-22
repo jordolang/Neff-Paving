@@ -34,10 +34,11 @@ app.get('/health/db', async (req, res) => {
   }
 });
 
-// API routes will be added here
-app.use('/api', (req, res) => {
-  res.json({ message: 'API endpoint - routes coming soon' });
-});
+// Import routes
+const authRoutes = require('./routes/auth');
+
+// API routes
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
