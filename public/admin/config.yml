@@ -1,0 +1,17 @@
+backend:
+  name: github
+  repo: jordolang/neff-paving
+  branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+
+# Publish mode: Editorial workflow allows draft/review/publish flow
+# Set to 'simple' for direct publish
+publish_mode: editorial_workflow
+
+# Media files will be stored in the repository
+media_folder: "public/images/cms"
+public_folder: "/images/cms"
+
+# Collections will be defined in subsequent configuration steps
+collections: []
