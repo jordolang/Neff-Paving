@@ -1,0 +1,292 @@
+================================================================================
+STRUCTURED DATA VALIDATION REPORT
+Google Rich Results Test - Pre-Validation
+Generated: 2026-06-22T04:37:48.736Z
+================================================================================
+
+
+================================================================================
+PAGE: Homepage
+FILE: ./index.html
+--------------------------------------------------------------------------------
+✓ Found 1 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ @graph with 8 items
+  ✓ Schema types: Organization, LocalBusiness, Review, Review, Review, Review, Review, Review
+
+  Schema Components:
+    Organization: ✓
+    LocalBusiness: ✓
+    Service: ❌
+    Review: ✓
+
+  LocalBusiness Schema:
+    Name: ✓ Neff Paving
+    Address: ✓
+    Telephone: ✓ +1-740-453-3063
+    URL: ✓
+    AggregateRating: ✓
+      Rating: 4.5
+      Reviews: 41
+
+  Review Schema:
+    Author: ✓
+    Rating: ✓
+    Date: ✓
+
+  Review Schema:
+    Author: ✓
+    Rating: ✓
+    Date: ✓
+
+  Review Schema:
+    Author: ✓
+    Rating: ✓
+    Date: ✓
+
+  Review Schema:
+    Author: ✓
+    Rating: ✓
+    Date: ✓
+
+  Review Schema:
+    Author: ✓
+    Rating: ✓
+    Date: ✓
+
+  Review Schema:
+    Author: ✓
+    Rating: ✓
+    Date: ✓
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Residential Asphalt Service Page
+FILE: ./services/residential-asphalt.html
+--------------------------------------------------------------------------------
+✓ Found 2 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: Service
+
+  Block 2:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: BreadcrumbList
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Commercial Asphalt Service Page
+FILE: ./services/commercial-asphalt.html
+--------------------------------------------------------------------------------
+✓ Found 2 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: Service
+
+  Block 2:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: BreadcrumbList
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Concrete Solutions Service Page
+FILE: ./services/concrete-solutions.html
+--------------------------------------------------------------------------------
+✓ Found 2 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: Service
+
+  Block 2:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: BreadcrumbList
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Maintenance Service Page
+FILE: ./services/maintenance.html
+--------------------------------------------------------------------------------
+✓ Found 2 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: Service
+
+  Block 2:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ Schema type: BreadcrumbList
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Columbus Area Page
+FILE: ./areas/columbus-paving.html
+--------------------------------------------------------------------------------
+✓ Found 1 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ @graph with 2 items
+  ✓ Schema types: Organization, LocalBusiness
+
+  Schema Components:
+    Organization: ✓
+    LocalBusiness: ✓
+    Service: ❌
+    Review: ⚠️  (optional)
+
+  LocalBusiness Schema:
+    Name: ✓ Neff Paving - Columbus
+    Address: ✓
+    Telephone: ✓ +1-740-548-7014
+    URL: ✓
+    AggregateRating: ✓
+      Rating: 4.5
+      Reviews: 41
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Zanesville Area Page
+FILE: ./areas/zanesville-paving.html
+--------------------------------------------------------------------------------
+✓ Found 1 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ @graph with 2 items
+  ✓ Schema types: Organization, LocalBusiness
+
+  Schema Components:
+    Organization: ✓
+    LocalBusiness: ✓
+    Service: ❌
+    Review: ⚠️  (optional)
+
+  LocalBusiness Schema:
+    Name: ✓ Neff Paving - Zanesville
+    Address: ✓
+    Telephone: ✓ +1-740-453-3063
+    URL: ✓
+    AggregateRating: ✓
+      Rating: 4.5
+      Reviews: 41
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Newark Area Page
+FILE: ./areas/newark-paving.html
+--------------------------------------------------------------------------------
+✓ Found 1 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ @graph with 2 items
+  ✓ Schema types: Organization, LocalBusiness
+
+  Schema Components:
+    Organization: ✓
+    LocalBusiness: ✓
+    Service: ❌
+    Review: ⚠️  (optional)
+
+  LocalBusiness Schema:
+    Name: ✓ Neff Paving - Newark
+    Address: ✓
+    Telephone: ✓ +1-740-453-3063
+    URL: ✓
+    AggregateRating: ✓
+      Rating: 4.5
+      Reviews: 41
+
+✅ PASSED: All structured data valid
+
+================================================================================
+PAGE: Lancaster Area Page
+FILE: ./areas/lancaster-paving.html
+--------------------------------------------------------------------------------
+✓ Found 1 structured data block(s)
+
+  Block 1:
+  ✓ Valid JSON syntax
+  ✓ @context: https://schema.org
+  ✓ @graph with 2 items
+  ✓ Schema types: Organization, LocalBusiness
+
+  Schema Components:
+    Organization: ✓
+    LocalBusiness: ✓
+    Service: ❌
+    Review: ⚠️  (optional)
+
+  LocalBusiness Schema:
+    Name: ✓ Neff Paving - Lancaster
+    Address: ✓
+    Telephone: ✓ +1-740-453-3063
+    URL: ✓
+    AggregateRating: ✓
+      Rating: 4.5
+      Reviews: 41
+
+✅ PASSED: All structured data valid
+
+
+
+================================================================================
+VALIDATION SUMMARY
+================================================================================
+Total Pages Tested: 9
+✅ Valid: 9
+❌ Invalid: 0
+Success Rate: 100%
+
+
+
+================================================================================
+NEXT STEPS - GOOGLE RICH RESULTS TEST
+================================================================================
+
+1. Start the dev server: npm run dev
+2. Visit: https://search.google.com/test/rich-results
+3. Test each page URL:
+
+   http://localhost:5173/index.html
+   http://localhost:5173/services/residential-asphalt.html
+   http://localhost:5173/services/commercial-asphalt.html
+   http://localhost:5173/services/concrete-solutions.html
+   http://localhost:5173/services/maintenance.html
+   http://localhost:5173/areas/columbus-paving.html
+   http://localhost:5173/areas/zanesville-paving.html
+   http://localhost:5173/areas/newark-paving.html
+   http://localhost:5173/areas/lancaster-paving.html
+
+4. Verify:
+   - LocalBusiness schema appears in results
+   - Service schema appears in results
+   - Review schema appears in results (homepage only)
+   - No errors or critical warnings
+
+================================================================================
+
