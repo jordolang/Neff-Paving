@@ -4,37 +4,35 @@ on:
   push:
     branches: [ main ]   # also fires when a Facebook-sync PR is merged → publishes new photos
   pull_request:
-    branches: [ main ]
+    branches: [ main ]   # PRs build for validation only (deploy job is skipped)
   workflow_dispatch:
 
+# Build is read-only; only the deploy job requests pages/id-token write.
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         lfs: false
-    
+
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: '22'
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build
       run: |
         echo "VITE_PLATFORM=github" >> .env
@@ -42,15 +40,31 @@ jobs:
       env:
         VITE_DEPLOY_TIME: ${{ github.run_number }}
         VITE_BUILD_TIMESTAMP: ${{ github.event.head_commit.timestamp }}
-    
+
     - name: Setup Pages
       uses: actions/configure-pages@v4
-    
+
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v5
       with:
         path: './dist'
-    
+
+  deploy:
+    # Deploy only from main. The github-pages environment rejects non-main
+    # refs, which previously made this workflow fail on every pull request.
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v4
+      uses: actions/deploy-pages@v5

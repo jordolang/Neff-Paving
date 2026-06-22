@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
-import { copyFileSync, mkdirSync, readdirSync, statSync } from 'fs'
+import { copyFileSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 
 export default defineConfig(({ mode }) => {
@@ -74,8 +74,10 @@ export default defineConfig(({ mode }) => {
     sourcemap: mode !== 'production',
     // Optimize asset inlining
     assetsInlineLimit: (filePath, content) => {
-      // Exclude gallery images from inlining to preserve paths
-      if (filePath && filePath.includes('gallery/')) {
+      // Exclude gallery and pre-optimized responsive images from inlining so the
+      // hero <picture> srcset and LCP <link rel="preload"> resolve to real file URLs
+      // (inlined data: URIs bloat the HTML and can't be preloaded).
+      if (filePath && (filePath.includes('gallery/') || filePath.includes('images/optimized/'))) {
         return false;
       }
       // For Vercel, use smaller inline limit to ensure proper asset handling
@@ -93,7 +95,17 @@ export default defineConfig(({ mode }) => {
         'data-protection': resolve(__dirname, 'data-protection.html'),
         'returns': resolve(__dirname, 'returns.html'),
         'delete-my-data': resolve(__dirname, 'delete-my-data.html'),
-        'developer': resolve(__dirname, 'developer.html')
+        'developer': resolve(__dirname, 'developer.html'),
+        // Service landing pages
+        'residential-asphalt': resolve(__dirname, 'services/residential-asphalt.html'),
+        'commercial-asphalt': resolve(__dirname, 'services/commercial-asphalt.html'),
+        'concrete-solutions': resolve(__dirname, 'services/concrete-solutions.html'),
+        'maintenance': resolve(__dirname, 'services/maintenance.html'),
+        // Area landing pages
+        'columbus-paving': resolve(__dirname, 'areas/columbus-paving.html'),
+        'zanesville-paving': resolve(__dirname, 'areas/zanesville-paving.html'),
+        'newark-paving': resolve(__dirname, 'areas/newark-paving.html'),
+        'lancaster-paving': resolve(__dirname, 'areas/lancaster-paving.html')
       },
       output: {
         // Optimized asset file naming with cache-friendly hashes
@@ -439,6 +451,106 @@ export default defineConfig(({ mode }) => {
             fs.writeFileSync(htmlFilePath, content, 'utf8');
           }
         }
+      }
+    },
+    // Generate sitemap.xml
+    {
+      name: 'generate-sitemap',
+      async writeBundle() {
+        const distDir = resolve(__dirname, 'dist');
+
+        // Determine the site URL based on deployment mode
+        const getSiteUrl = () => {
+          if (mode === 'vercel' || process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
+            // For Vercel, use production domain
+            return 'https://neffpaving.com';
+          }
+          if (mode === 'github') {
+            return 'https://neffpaving.github.io/Neff-Paving';
+          }
+          return 'https://neffpaving.com';
+        };
+
+        const siteUrl = getSiteUrl();
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // Define all public pages (excluding 404)
+        const pages = [
+          { path: '', priority: '1.0', changefreq: 'weekly' },
+          { path: 'estimate-form.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'terms.html', priority: '0.3', changefreq: 'yearly' },
+          { path: 'privacy.html', priority: '0.3', changefreq: 'yearly' },
+          { path: 'data-protection.html', priority: '0.3', changefreq: 'yearly' },
+          { path: 'returns.html', priority: '0.3', changefreq: 'yearly' },
+          { path: 'delete-my-data.html', priority: '0.3', changefreq: 'yearly' },
+          { path: 'developer.html', priority: '0.4', changefreq: 'monthly' },
+          // Service landing pages
+          { path: 'services/residential-asphalt.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/commercial-asphalt.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/concrete-solutions.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/maintenance.html', priority: '0.9', changefreq: 'monthly' },
+          // Area landing pages
+          { path: 'areas/columbus-paving.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/zanesville-paving.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/newark-paving.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/lancaster-paving.html', priority: '0.9', changefreq: 'monthly' }
+        ];
+
+        // Generate sitemap XML
+        const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${pages.map(page => `  <url>
+    <loc>${siteUrl}/${page.path}</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+        // Write sitemap to dist
+        const sitemapPath = join(distDir, 'sitemap.xml');
+        writeFileSync(sitemapPath, sitemapContent, 'utf8');
+
+        console.log('✅ Sitemap generated successfully at dist/sitemap.xml');
+        console.log(`📊 Sitemap includes ${pages.length} pages`);
+      }
+    },
+    // Generate robots.txt
+    {
+      name: 'generate-robots',
+      async writeBundle() {
+        const distDir = resolve(__dirname, 'dist');
+
+        // Determine the sitemap URL based on deployment mode
+        const getSitemapUrl = () => {
+          if (mode === 'vercel' || process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
+            return 'https://neffpaving.com/sitemap.xml';
+          }
+          if (mode === 'github') {
+            return 'https://neffpaving.github.io/Neff-Paving/sitemap.xml';
+          }
+          return 'https://neffpaving.com/sitemap.xml';
+        };
+
+        const sitemapUrl = getSitemapUrl();
+
+        // Generate robots.txt content
+        const robotsContent = `# robots.txt for Neff Paving
+User-agent: *
+Allow: /
+
+# Disallow admin and development pages
+Disallow: /developer.html
+
+# Sitemap location
+Sitemap: ${sitemapUrl}`;
+
+        // Write robots.txt to dist
+        const robotsPath = join(distDir, 'robots.txt');
+        writeFileSync(robotsPath, robotsContent, 'utf8');
+
+        console.log('✅ Robots.txt generated successfully at dist/robots.txt');
+        console.log(`🔗 Sitemap URL: ${sitemapUrl}`);
       }
     }
   ]

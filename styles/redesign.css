@@ -312,6 +312,104 @@ header {
 .hero-social .stars { color: var(--gold); font-size: 1.1rem; letter-spacing: 2px; }
 
 /* =====================================================================
+   Trust Badges
+   ===================================================================== */
+.trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,165,36,.12);
+    border: 1px solid rgba(245,165,36,.32);
+    color: var(--gold-2);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: background .2s ease, border-color .2s ease;
+}
+.trust-badge:hover {
+    background: rgba(245,165,36,.18);
+    border-color: rgba(245,165,36,.42);
+}
+.trust-badge .icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* Trust badge variants */
+.trust-badge--green {
+    background: rgba(52,199,123,.12);
+    border-color: rgba(52,199,123,.32);
+    color: var(--green);
+}
+.trust-badge--green:hover {
+    background: rgba(52,199,123,.18);
+    border-color: rgba(52,199,123,.42);
+}
+
+.trust-badge--warranty {
+    background: rgba(255,192,46,.1);
+    border-color: rgba(255,192,46,.28);
+    color: var(--gold);
+}
+.trust-badge--warranty:hover {
+    background: rgba(255,192,46,.16);
+    border-color: rgba(255,192,46,.38);
+}
+
+/* Trust badges container */
+.trust-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+.trust-badges--center {
+    justify-content: center;
+}
+.trust-badges--stacked {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Trust badge with description */
+.trust-badge-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.trust-badge-item .trust-badge {
+    margin: 0;
+}
+.trust-badge-item .description {
+    font-size: 12px;
+    color: var(--muted-2);
+    padding-left: 4px;
+}
+
+/* Light theme variant */
+.section--light .trust-badge {
+    background: rgba(245,165,36,.08);
+    border-color: rgba(245,165,36,.24);
+    color: var(--gold-deep);
+}
+.section--light .trust-badge:hover {
+    background: rgba(245,165,36,.14);
+    border-color: rgba(245,165,36,.34);
+}
+.section--light .trust-badge--green {
+    background: rgba(52,199,123,.08);
+    border-color: rgba(52,199,123,.24);
+    color: #1fa865;
+}
+.section--light .trust-badge--green:hover {
+    background: rgba(52,199,123,.14);
+    border-color: rgba(52,199,123,.34);
+}
+
+/* =====================================================================
    Stats band
    ===================================================================== */
 .stats-band { background: var(--gold); color: var(--on-gold); }
@@ -727,23 +825,122 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
 }
 
 /* =====================================================================
-   Footer — Google Reviews widget + Legal column
+   Google Reviews Widget — Reusable component for standalone placement
    ===================================================================== */
+/* Base widget styles - works in any context */
 .google-reviews {
-    margin-top: 26px;
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 18px 20px; max-width: 340px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    width: 100%;
+    max-width: 340px;
 }
-.gr-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.gr-logo { width: 22px; height: 22px; flex: none; }
-.gr-title { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 1px; font-size: 14px; color: var(--text); }
-.gr-rating { display: flex; align-items: center; gap: 12px; }
-.gr-score { font-family: var(--font-head); font-size: 2.1rem; line-height: 1; color: var(--text); }
-.gr-stars-wrap { display: flex; flex-direction: column; gap: 2px; }
-.gr-stars { color: var(--gold); font-size: 1.05rem; letter-spacing: 2px; line-height: 1; }
-.gr-count { font-size: .8rem; color: var(--muted-2); }
-.gr-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-.gr-actions .btn { padding: 10px 18px; font-size: 12px; }
+
+/* Footer-specific placement (existing usage) */
+.footer-section .google-reviews {
+    margin-top: 26px;
+}
+
+/* Standalone/centered placement modifier */
+.google-reviews--centered {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Compact variant for inline placement near CTAs */
+.google-reviews--compact {
+    padding: 14px 16px;
+    max-width: 280px;
+}
+.google-reviews--compact .gr-score {
+    font-size: 1.8rem;
+}
+.google-reviews--compact .gr-actions {
+    margin-top: 10px;
+}
+.google-reviews--compact .gr-actions .btn {
+    padding: 8px 14px;
+    font-size: 11px;
+}
+
+/* Full-width variant for section placement */
+.google-reviews--full {
+    max-width: 100%;
+}
+
+.gr-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.gr-logo {
+    width: 22px;
+    height: 22px;
+    flex: none;
+}
+.gr-title {
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+    color: var(--text);
+}
+.gr-rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.gr-score {
+    font-family: var(--font-head);
+    font-size: 2.1rem;
+    line-height: 1;
+    color: var(--text);
+}
+.gr-stars-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.gr-stars {
+    color: var(--gold);
+    font-size: 1.05rem;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+.gr-count {
+    font-size: .8rem;
+    color: var(--muted-2);
+}
+.gr-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.gr-actions .btn {
+    padding: 10px 18px;
+    font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .google-reviews {
+        max-width: 100%;
+    }
+    .gr-rating {
+        gap: 10px;
+    }
+    .gr-actions {
+        flex-direction: column;
+    }
+    .gr-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
 /* =====================================================================
    Legal / policy pages

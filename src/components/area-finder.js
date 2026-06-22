@@ -2,6 +2,7 @@ import { GOOGLE_MAPS_CONFIG, DEFAULT_MAP_OPTIONS, DRAWING_MANAGER_OPTIONS, AREA_
 import { storeMeasurementData, getMeasurementData } from '../utils/measurement-storage.js';
 import { MapsLoaderService } from '../services/maps-loader-service.js';
 import { MapsFallbackForm } from './maps-fallback-form.js';
+import analyticsService from '../services/analytics-service.js';
 
 export class AreaFinder {
     constructor(containerId, options = {}) {
@@ -564,6 +565,9 @@ export class AreaFinder {
                 };
                 storeMeasurementData('google-maps', measurementData);
 
+                // Track area measured event
+                this.trackAreaMeasured(measurementData);
+
                 this.options.onAreaCalculated(result.data);
 
                 // Track successful calculation for analytics
@@ -808,6 +812,26 @@ export class AreaFinder {
             }
         } catch (error) {
             console.error('Error restoring previous Google Maps data:', error);
+        }
+    }
+
+    /**
+     * Track area measured event for analytics
+     */
+    async trackAreaMeasured(measurementData) {
+        try {
+            await analyticsService.trackEvent('area_measured', {
+                square_footage: measurementData.areaInSquareFeet || measurementData.area || 0,
+                area_acres: measurementData.areaInAcres || 0,
+                perimeter_ft: measurementData.perimeter ? (measurementData.perimeter * 3.28084).toFixed(2) : 0,
+                measurement_tool: 'google-maps',
+                timestamp: measurementData.timestamp || new Date().toISOString()
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the measurement
+            if (analyticsService.options.debug) {
+                console.error('Failed to track area measured:', error);
+            }
         }
     }
 }

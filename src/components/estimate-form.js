@@ -6,6 +6,7 @@
 import { FormValidationService } from '../services/form-validation-service.js';
 import { EstimateService } from '../services/estimate-service.js';
 import { getMeasurementData, getAllMeasurementData, hasMeasurementData, handleFormSubmission, handleFormReset } from '../utils/measurement-storage.js';
+import analyticsService from '../services/analytics-service.js';
 
 export class EstimateForm {
     constructor(containerId) {
@@ -17,7 +18,8 @@ export class EstimateForm {
     this.serviceType = document.getElementById('service-type');
     this.squareFootage = document.getElementById('square-footage');
         this.isSubmitting = false;
-        
+        this.hasTrackedEstimateStarted = false;
+
         this.init();
     }
 
@@ -26,6 +28,84 @@ export class EstimateForm {
         this.attachEventListeners();
         this.loadMeasurementData();
         this.updateSubmitButtonState();
+        this.trackPageVisit();
+    }
+
+    /**
+     * Track page visit event for analytics
+     */
+    async trackPageVisit() {
+        try {
+            await analyticsService.trackPageView('estimate_form', {
+                page_type: 'estimate_form',
+                has_measurement_data: hasMeasurementData(),
+                referrer: typeof document !== 'undefined' ? document.referrer : undefined
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track page visit:', error);
+            }
+        }
+    }
+
+    /**
+     * Track estimate started event when user begins filling form
+     * Fires only once on first field focus
+     */
+    async trackEstimateStarted(event) {
+        // Only track once
+        if (this.hasTrackedEstimateStarted) {
+            return;
+        }
+
+        // Only track for form input elements
+        const target = event.target;
+        if (!target || !target.matches('input, select, textarea')) {
+            return;
+        }
+
+        this.hasTrackedEstimateStarted = true;
+
+        try {
+            await analyticsService.trackEvent('estimate_started', {
+                first_field: target.id || target.name,
+                has_measurement_data: hasMeasurementData(),
+                timestamp: new Date().toISOString()
+            });
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track estimate started:', error);
+            }
+        }
+    }
+
+    /**
+     * Track estimate submitted event on successful form submission
+     */
+    async trackEstimateSubmitted(result) {
+        try {
+            // Prepare event data with form information
+            const eventData = {
+                reference_number: result.referenceNumber,
+                service_type: result.serviceType,
+                square_footage: result.areaData?.areaInSquareFeet || result.estimate?.squareFootage || 0,
+                estimated_cost: result.estimate?.totalCost || 0,
+                has_measurement_data: !!result.areaData,
+                measurement_tool: result.measurementTool || this.measurementData?.activeTool,
+                // customer_email removed for privacy compliance
+                customer_state: result.state,
+                timestamp: new Date().toISOString()
+            };
+
+            await analyticsService.trackEvent('estimate_submitted', eventData);
+        } catch (error) {
+            // Don't throw - analytics failure shouldn't break the form
+            if (analyticsService.options.debug) {
+                console.error('Failed to track estimate submitted:', error);
+            }
+        }
     }
 
     render() {
@@ -361,6 +441,9 @@ export class EstimateForm {
         form.addEventListener('input', (e) => this.handleFieldValidation(e));
         form.addEventListener('blur', (e) => this.handleFieldValidation(e), true);
 
+        // Track estimate started - fires once when user begins filling form
+        form.addEventListener('focus', (e) => this.trackEstimateStarted(e), true);
+
         // Measurement tool toggle buttons
         if (googleMapsToggle) {
             googleMapsToggle.addEventListener('click', () => this.toggleMeasurementTool('google-maps'));
@@ -369,7 +452,7 @@ export class EstimateForm {
         // Phone number formatting
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', (e) => this.formatPhoneNumber(e));
-        
+
         // Initialize measurement tools after form is rendered
         setTimeout(() => this.initializeMeasurementTools(), 100);
     }
@@ -470,6 +553,9 @@ export class EstimateForm {
     }
 
     handleSubmitSuccess(result) {
+        // Track successful submission
+        this.trackEstimateSubmitted(result);
+
         // Show success message
         this.container.innerHTML = `
             <div class="success-message">
