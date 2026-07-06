@@ -158,7 +158,7 @@
             <section class="openings-section" id="openings">
                 <div class="container">
                     <div class="openings-head">
-                        <h2>Current Openings</h2>
+                        <h2>Active Listings</h2>
                         <a href="https://www.indeed.com/cmp/Neff-Paving/jobs" target="_blank" rel="noopener" id="indeed-all-link">View all openings on Indeed →</a>
                     </div>
                     <div class="jobs-list" id="jobs-list" aria-live="polite">
@@ -287,9 +287,11 @@
     </div>
 
     <script>
-        // ---- Current openings, rendered from content/jobs.json ----
-        // Indeed blocks automated feeds, so the postings live in that file and
-        // are kept in step with the company's Indeed profile (see its _readme).
+        // ---- Active Listings component ----
+        // Pulls the company's open Indeed postings from /api/indeed-jobs, which
+        // fetches Indeed live when possible; when Indeed's bot protection denies
+        // the pull (or the endpoint isn't deployed), the curated list in
+        // /content/jobs.json is used so the section always renders.
         (async function renderOpenings() {
             const list = document.getElementById("jobs-list");
             const allLink = document.getElementById("indeed-all-link");
@@ -298,11 +300,18 @@
             const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
                 ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-            let data = null;
-            try {
-                const res = await fetch("/content/jobs.json", { cache: "no-cache" });
-                if (res.ok) data = await res.json();
-            } catch (e) { /* fall through to the empty state */ }
+            async function tryFetch(url) {
+                try {
+                    const res = await fetch(url, { cache: "no-cache" });
+                    if (!res.ok) return null;
+                    const body = await res.json();
+                    return (body && Array.isArray(body.jobs)) ? body : null;
+                } catch (e) { return null; }
+            }
+
+            // Relative URLs so both deployments resolve correctly (Vercel serves
+            // the site at /, GitHub Pages under /Neff-Paving/).
+            const data = (await tryFetch("api/indeed-jobs")) || (await tryFetch("content/jobs.json"));
 
             const companyUrl = (data && data.indeedCompanyUrl) || "https://www.indeed.com/cmp/Neff-Paving/jobs";
             if (allLink) allLink.href = companyUrl;
