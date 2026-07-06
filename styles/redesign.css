@@ -550,6 +550,8 @@ header {
 
 /* Simplified two-card services layout */
 .service-grid--simple { max-width: 900px; margin: 0 auto 48px; }
+.service-photo { margin: 0; }
+.service-photo img { width: 100%; height: 210px; object-fit: cover; display: block; border-bottom: 1px solid var(--line); }
 .service-grid--simple .service-card { padding-bottom: 26px; }
 .service-grid--simple .service-hero h3 { font-size: 1.5rem; margin: 0; }
 .service-list { list-style: none; margin: 0; padding: 8px 28px 0; }
