@@ -1,0 +1,14 @@
+{
+  "_readme": "Job postings shown on careers.html. Indeed blocks automated syncing, so keep this list in step with the company's Indeed profile by hand: add an object to 'jobs' for each posting (get the 'jk' id from the Indeed posting URL, e.g. indeed.com/viewjob?jk=XXXX), and remove it when the posting closes. An empty 'jobs' list makes the page show a 'see our Indeed profile' notice instead.",
+  "indeedCompanyUrl": "https://www.indeed.com/cmp/Neff-Paving/jobs",
+  "jobs": [
+    {
+      "id": "8e0c4ef94ff570d3",
+      "title": "Operations Manager",
+      "location": "Zanesville, OH",
+      "type": "Full-time",
+      "summary": "Lead daily operations for our paving and concrete crews — supervising field teams, coordinating projects, and managing costs. Proven management experience and a valid driver's license required.",
+      "indeedUrl": "https://www.indeed.com/viewjob?jk=8e0c4ef94ff570d3"
+    }
+  ]
+}
