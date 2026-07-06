@@ -45,6 +45,24 @@
 
         .careers-form { display: grid; gap: 18px; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .form-row--city { grid-template-columns: 2fr 1fr 1fr; }
+        .form-row--three { grid-template-columns: 1fr 1fr 1fr; }
+        .form-section-title {
+            font-size: 1rem; color: var(--gold); margin: 14px 0 0;
+            padding-bottom: 8px; border-bottom: 1px solid var(--line); letter-spacing: 1px;
+        }
+        .careers-form .form-section-title:first-child { margin-top: 0; }
+        .careers-form input[type="file"] {
+            width: 100%; padding: 12px 14px; border-radius: var(--radius-sm);
+            background: var(--bg-2); border: 1px dashed var(--line); color: var(--muted);
+            font-family: var(--font-body); font-size: .95rem; cursor: pointer;
+        }
+        .careers-form input[type="file"]::file-selector-button {
+            font-family: var(--font-head); text-transform: uppercase; letter-spacing: .5px; font-size: 12px;
+            padding: 8px 16px; margin-right: 14px; border-radius: 999px; border: 0; cursor: pointer;
+            background: var(--gold); color: var(--on-gold);
+        }
+        .careers-form .field-hint { font-size: .8rem; color: var(--muted-2); margin: 6px 0 0; }
         .form-status { padding: 14px 16px; border-radius: var(--radius-sm); font-size: .95rem; display: none; }
         .form-status.show { display: block; }
         .form-status.ok { background: rgba(52,199,123,.12); border: 1px solid rgba(52,199,123,.4); color: #8be0b3; }
@@ -82,7 +100,7 @@
         }
         @media (max-width: 560px) {
             .careers-card { padding: 22px; }
-            .form-row { grid-template-columns: 1fr; }
+            .form-row, .form-row--city, .form-row--three { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -183,24 +201,52 @@
                         </div>
 
                         <div class="careers-card" id="apply">
-                            <h2>General Application</h2>
-                            <p class="card-sub">Don't see the right opening? Send us your information and we'll contact you when a position fits.</p>
+                            <h2>Apply Now</h2>
+                            <p class="card-sub">Tell us about yourself and attach your resume — we review every application and contact qualified applicants directly.</p>
                             <form id="application-form" class="careers-form" novalidate>
+
+                                <h3 class="form-section-title">Contact Information</h3>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="name">Full Name *</label>
                                         <input type="text" id="name" name="name" autocomplete="name" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="phone">Phone *</label>
-                                        <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+                                        <label for="dob">Date of Birth *</label>
+                                        <input type="date" id="dob" name="date_of_birth" autocomplete="bday" required>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
+                                        <label for="phone">Phone *</label>
+                                        <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="email">Email *</label>
                                         <input type="email" id="email" name="email" autocomplete="email" required>
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Street Address *</label>
+                                    <input type="text" id="address" name="street_address" autocomplete="street-address" required>
+                                </div>
+                                <div class="form-row form-row--city">
+                                    <div class="form-group">
+                                        <label for="city">City *</label>
+                                        <input type="text" id="city" name="city" autocomplete="address-level2" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="state">State *</label>
+                                        <input type="text" id="state" name="state" autocomplete="address-level1" value="OH" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="zip">ZIP *</label>
+                                        <input type="text" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" required>
+                                    </div>
+                                </div>
+
+                                <h3 class="form-section-title">Position &amp; Availability</h3>
+                                <div class="form-row">
                                     <div class="form-group">
                                         <label for="position">Position of Interest</label>
                                         <select id="position" name="position">
@@ -208,16 +254,126 @@
                                             <option value="Concrete Crew">Concrete Crew</option>
                                             <option value="Equipment Operator">Equipment Operator</option>
                                             <option value="CDL Driver">CDL Driver</option>
+                                            <option value="Office / Operations">Office / Operations</option>
                                             <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="start-date">Earliest Start Date</label>
+                                        <input type="date" id="start-date" name="earliest_start_date">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="full-time">Available Full-Time, Monday–Friday? *</label>
+                                        <select id="full-time" name="available_full_time_mon_fri" required>
+                                            <option value="">Please select…</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="work-auth">Legally Authorized to Work in the U.S.? *</label>
+                                        <select id="work-auth" name="authorized_to_work_us" required>
+                                            <option value="">Please select…</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="experience">Relevant Experience</label>
-                                    <textarea id="experience" name="experience" rows="4" placeholder="Briefly describe your work experience..."></textarea>
+                                    <label for="restrictions">Anything That Would Limit Your Availability or Ability to Perform Physical Construction Work?</label>
+                                    <textarea id="restrictions" name="restrictions" rows="2" placeholder="Schedule conflicts, transportation limits, lifting restrictions, upcoming obligations — or leave blank if none."></textarea>
                                 </div>
+
+                                <h3 class="form-section-title">Driving</h3>
+                                <div class="form-row form-row--three">
+                                    <div class="form-group">
+                                        <label for="license">Valid Driver's License? *</label>
+                                        <select id="license" name="valid_drivers_license" required>
+                                            <option value="">Please select…</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="transport">Reliable Transportation? *</label>
+                                        <select id="transport" name="reliable_transportation" required>
+                                            <option value="">Please select…</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cdl">CDL Held</label>
+                                        <select id="cdl" name="cdl">
+                                            <option value="None">None</option>
+                                            <option value="Class A">Class A</option>
+                                            <option value="Class B">Class B</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <h3 class="form-section-title">Work History &amp; Connections</h3>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="prior-employee">Ever Worked for Neff Paving Before? *</label>
+                                        <select id="prior-employee" name="previously_employed_here" required>
+                                            <option value="">Please select…</option>
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="prior-details">If Yes — When, and in What Role?</label>
+                                        <input type="text" id="prior-details" name="previous_employment_details">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="referral">Friends or Relatives Working at Neff Paving? *</label>
+                                        <select id="referral" name="friends_or_relatives_here" required>
+                                            <option value="">Please select…</option>
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="referral-name">If Yes — Who?</label>
+                                        <input type="text" id="referral-name" name="friend_or_relative_name">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="experience-years">Years of Relevant Experience</label>
+                                        <select id="experience-years" name="years_of_experience">
+                                            <option value="None">None</option>
+                                            <option value="Under 1 year">Under 1 year</option>
+                                            <option value="1–3 years">1–3 years</option>
+                                            <option value="3–5 years">3–5 years</option>
+                                            <option value="5+ years">5+ years</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="equipment">Equipment You Can Operate</label>
+                                        <input type="text" id="equipment" name="equipment_experience" placeholder="e.g. paver, roller, skid steer, dump truck">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience">Work Experience Summary</label>
+                                    <textarea id="experience" name="experience" rows="3" placeholder="Most recent jobs, duties, and anything else we should know..."></textarea>
+                                </div>
+
+                                <h3 class="form-section-title">Resume</h3>
+                                <div class="form-group">
+                                    <label for="resume">Attach Resume (PDF or Word, up to 10&nbsp;MB)</label>
+                                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                    <p class="field-hint">Optional but recommended — your resume is emailed to us with this application.</p>
+                                </div>
+
                                 <button type="submit" class="btn btn-primary btn-large" id="submit-btn" style="width:100%;">Submit Application</button>
                                 <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+                                <p class="field-hint">Neff Paving is an equal opportunity employer. The information above is used only to evaluate your application.</p>
                             </form>
                         </div>
                     </div>
@@ -353,36 +509,61 @@
             statusEl.className = "form-status show " + (ok ? "ok" : "err");
         }
 
+        const MAX_RESUME_BYTES = 10 * 1024 * 1024; // FormSubmit's cumulative attachment cap
+
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const data = Object.fromEntries(new FormData(form).entries());
-            if (!data.name || !data.phone || !data.email) {
-                showStatus("Please fill in your name, phone, and email.", false);
+            // Submit as multipart FormData so the resume file is emailed as an
+            // attachment along with the application fields.
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
+
+            if (!data.name || !data.phone || !data.email || !data.date_of_birth ||
+                !data.street_address || !data.city || !data.state || !data.zip) {
+                showStatus("Please fill in your name, date of birth, phone, email, and address.", false);
                 return;
             }
+            const requiredSelects = [
+                ["available_full_time_mon_fri", "full-time availability"],
+                ["authorized_to_work_us", "work authorization"],
+                ["valid_drivers_license", "driver's license"],
+                ["reliable_transportation", "transportation"],
+                ["previously_employed_here", "previous employment with us"],
+                ["friends_or_relatives_here", "friends or relatives here"],
+            ];
+            for (const [field, label] of requiredSelects) {
+                if (!data[field]) {
+                    showStatus("Please answer the " + label + " question.", false);
+                    return;
+                }
+            }
+
+            const resume = el("resume").files[0];
+            if (resume && resume.size > MAX_RESUME_BYTES) {
+                showStatus("Your resume file is over 10 MB. Please attach a smaller file.", false);
+                return;
+            }
+            if (!resume) fd.delete("resume"); // don't send an empty file part
+
+            fd.append("_subject", "Employment application — " + data.name);
+            fd.append("_template", "table");
+            fd.append("_captcha", "false");
 
             const btn = el("submit-btn");
             const original = btn.textContent;
             btn.disabled = true;
             btn.textContent = "Sending…";
 
-            const payload = {
-                _subject: "Employment application — " + data.name,
-                _template: "table",
-                _captcha: "false",
-                ...data,
-            };
-
             try {
                 const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(FORM_EMAIL), {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify(payload),
+                    headers: { "Accept": "application/json" },
+                    body: fd,
                 });
                 const out = await res.json();
                 if (res.ok && (out.success === true || out.success === "true")) {
-                    showStatus("Thank you! Your application has been received. We'll contact you about current openings.", true);
+                    showStatus("Thank you! Your application" + (resume ? " and resume have" : " has") + " been received. We'll contact you about current openings.", true);
                     form.reset();
                 } else {
                     showStatus("We couldn't send that automatically. Please call (740) 453-3063 or email neffpaving@gmail.com.", false);
