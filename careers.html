@@ -214,6 +214,7 @@
                                     <div class="form-group">
                                         <label for="dob">Date of Birth *</label>
                                         <input type="date" id="dob" name="date_of_birth" autocomplete="bday" required>
+                                        <p class="field-hint">Used only to verify age eligibility for employment.</p>
                                     </div>
                                 </div>
                                 <div class="form-row">
@@ -237,11 +238,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="state">State *</label>
-                                        <input type="text" id="state" name="state" autocomplete="address-level1" value="OH" required>
+                                        <input type="text" id="state" name="state" autocomplete="address-level1" value="OH" maxlength="2" pattern="[A-Za-z]{2}" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="zip">ZIP *</label>
-                                        <input type="text" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" required>
+                                        <input type="text" id="zip" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="10" pattern="[0-9]{5}(-[0-9]{4})?" required>
                                     </div>
                                 </div>
 
@@ -519,9 +520,24 @@
             const fd = new FormData(form);
             const data = Object.fromEntries(fd.entries());
 
-            if (!data.name || !data.phone || !data.email || !data.date_of_birth ||
-                !data.street_address || !data.city || !data.state || !data.zip) {
-                showStatus("Please fill in your name, date of birth, phone, email, and address.", false);
+            const requiredText = [
+                ["name", "full name"],
+                ["date_of_birth", "date of birth"],
+                ["phone", "phone number"],
+                ["email", "email address"],
+                ["street_address", "street address"],
+                ["city", "city"],
+                ["state", "state"],
+                ["zip", "ZIP code"],
+            ];
+            for (const [field, label] of requiredText) {
+                if (!data[field] || !String(data[field]).trim()) {
+                    showStatus("Please fill in your " + label + ".", false);
+                    return;
+                }
+            }
+            if (!/^[0-9]{5}(-[0-9]{4})?$/.test(data.zip.trim())) {
+                showStatus("Please enter a valid ZIP code (e.g. 43701).", false);
                 return;
             }
             const requiredSelects = [
