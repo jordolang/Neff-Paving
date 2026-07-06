@@ -283,8 +283,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="restrictions">Anything That Would Limit Your Availability or Ability to Perform Physical Construction Work?</label>
-                                    <textarea id="restrictions" name="restrictions" rows="2" placeholder="Schedule conflicts, transportation limits, lifting restrictions, upcoming obligations — or leave blank if none."></textarea>
+                                    <label for="essential-functions">Able to Perform the Essential Functions of the Job, With or Without Reasonable Accommodation? *</label>
+                                    <select id="essential-functions" name="able_to_perform_essential_functions" required>
+                                        <option value="">Please select…</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="restrictions">Schedule or Availability Conflicts</label>
+                                    <textarea id="restrictions" name="schedule_conflicts" rows="2" placeholder="Planned time off, second jobs, or other scheduling commitments — leave blank if none."></textarea>
                                 </div>
 
                                 <h3 class="form-section-title">Driving</h3>
@@ -543,6 +551,7 @@
             const requiredSelects = [
                 ["available_full_time_mon_fri", "full-time availability"],
                 ["authorized_to_work_us", "work authorization"],
+                ["able_to_perform_essential_functions", "essential job functions"],
                 ["valid_drivers_license", "driver's license"],
                 ["reliable_transportation", "transportation"],
                 ["previously_employed_here", "previous employment with us"],
