@@ -320,6 +320,30 @@ header {
 .hero-social .lbl { font-size: 13px; color: var(--muted); letter-spacing: .5px; }
 .hero-social .stars { color: var(--gold); font-size: 1.1rem; letter-spacing: 2px; }
 
+/* Redesigned hero: brand-first title + quiet supporting lines */
+.hero-title--brand {
+    font-size: clamp(3.4rem, 9vw, 6.4rem);
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+.hero-tagline {
+    font-family: var(--font-head);
+    font-size: clamp(1.15rem, 2.6vw, 1.7rem);
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text);
+    margin: 0 0 14px;
+}
+.hero-credentials {
+    margin: 36px 0 0;
+    font-family: var(--font-head);
+    font-size: .95rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
 /* =====================================================================
    Trust Badges
    ===================================================================== */
@@ -524,6 +548,55 @@ header {
 .service-price small { display: block; font-family: var(--font-body); font-size: .76rem; color: var(--muted-2); letter-spacing: 0; text-transform: none; }
 .service-foot .btn { padding: 12px 22px; font-size: 13px; }
 
+/* Simplified two-card services layout */
+.service-grid--simple { max-width: 900px; margin: 0 auto 48px; }
+.service-grid--simple .service-card { padding-bottom: 26px; }
+.service-grid--simple .service-hero h3 { font-size: 1.5rem; margin: 0; }
+.service-list { list-style: none; margin: 0; padding: 8px 28px 0; }
+.service-list li {
+    position: relative; padding: 9px 0 9px 26px; font-size: 1rem; color: var(--muted);
+    border-top: 1px solid var(--line);
+}
+.service-list li:first-child { border-top: 0; }
+.service-list li::before {
+    content: "▸"; position: absolute; left: 0; color: var(--gold);
+}
+
+/* Credentials strip */
+.credentials-strip {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 46px;
+    padding: 26px 24px; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--line);
+    max-width: 900px; margin: 0 auto;
+}
+.credential {
+    font-family: var(--font-head); text-transform: uppercase; letter-spacing: 2px;
+    font-size: 15px; color: var(--text);
+    display: inline-flex; align-items: center; gap: 10px;
+}
+.credential::before { content: "✓"; color: var(--gold); font-weight: 700; }
+
+/* Curated work grids (commercial / residential) */
+.work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+.work-grid--residential { grid-template-columns: repeat(4, 1fr); }
+.work-item {
+    position: relative; margin: 0; border-radius: var(--radius-sm); overflow: hidden;
+    cursor: pointer; aspect-ratio: 4 / 3; background: var(--surface);
+    border: 1px solid var(--line);
+}
+.work-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.work-item:hover img { transform: scale(1.06); }
+.work-item figcaption {
+    position: absolute; inset: auto 0 0 0; padding: 26px 16px 12px;
+    background: linear-gradient(180deg, transparent, rgba(11,11,13,.85));
+    font-family: var(--font-head); text-transform: uppercase; letter-spacing: .5px;
+    font-size: .9rem; color: #fff;
+}
+
 .services-bottom-cta {
     background: linear-gradient(135deg, var(--surface-2), var(--surface));
     border: 1px solid var(--line); border-radius: var(--radius);
@@ -723,6 +796,16 @@ header {
 /* =====================================================================
    Contact
    ===================================================================== */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+.contact-office {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); overflow: hidden;
+}
+.office-photo { margin: 0; }
+.office-photo img { width: 100%; height: 280px; object-fit: cover; display: block; }
+.contact-office .office-details { display: grid; gap: 20px; padding: 30px; margin: 0; }
+.contact-office .detail-content a:hover { color: var(--gold); }
+
 .contact-form-section { display: grid; grid-template-columns: .8fr 1.2fr; gap: 30px; align-items: start; }
 .contact-cards-left { display: grid; gap: 18px; }
 .contact-method {
@@ -799,9 +882,10 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
     .intro-grid { grid-template-columns: 1fr; gap: 40px; }
     .process-grid { grid-template-columns: repeat(2, 1fr); gap: 36px 20px; }
     .process-step::after { display: none; }
-    .contact-form-section { grid-template-columns: 1fr; }
+    .contact-form-section, .contact-grid { grid-template-columns: 1fr; }
     .contact-cards-left { grid-template-columns: repeat(3, 1fr); }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .work-grid, .work-grid--residential { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 860px) {
     .desktop-nav, .header-phone, .social-links.desktop-social { display: none; }
@@ -821,6 +905,8 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
     .testimonial-stats { grid-template-columns: repeat(2, 1fr); }
     .services-bottom-cta, .office-info, .contact-form-container { padding: 28px; }
     .hero-social { gap: 18px; }
+    .work-grid, .work-grid--residential { grid-template-columns: 1fr; }
+    .credentials-strip { gap: 12px 28px; }
 }
 
 /* AOS safety: guarantee content is always visible regardless of scroll-reveal

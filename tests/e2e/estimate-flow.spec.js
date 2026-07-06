@@ -5,8 +5,10 @@ import { test, expect } from '@playwright/test'
  *
  * These tests run against the real estimate-form.html page served by the Vite
  * dev server (see playwright.config.js webServer). The page has two parts:
- *   1. An instant-estimate calculator (service rate × measured area).
- *   2. A "Request Your Free Quote" form that emails the request via FormSubmit.
+ *   1. An optional satellite map where the visitor outlines their project area
+ *      (no measurements or pricing are ever displayed — the outline is carried
+ *      on a hidden field for the estimators).
+ *   2. A "Request Your Free Estimate" form that emails the request via FormSubmit.
  *
  * Network calls (FormSubmit, the keyless map geocoder/tiles) are mocked so the
  * tests are deterministic and offline-safe.
@@ -15,10 +17,10 @@ import { test, expect } from '@playwright/test'
 test.describe('Estimate Request Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Block all third-party requests (Leaflet CDN, satellite map tiles,
-    // geocoder, fonts, analytics). They are irrelevant to the form/calculator
-    // behaviour, and the blocking <script> tags would otherwise stall page load
-    // and make the suite depend on external CDNs being reachable. Aborting a
-    // blocking script lets the browser continue parsing immediately.
+    // geocoder, fonts, analytics). They are irrelevant to the form behaviour,
+    // and the blocking <script> tags would otherwise stall page load and make
+    // the suite depend on external CDNs being reachable. Aborting a blocking
+    // script lets the browser continue parsing immediately.
     // Test-level routes (e.g. the FormSubmit mock) are registered later and take
     // precedence over this catch-all.
     await page.route('**/*', (route) => {
@@ -27,15 +29,15 @@ test.describe('Estimate Request Flow', () => {
       return route.abort()
     })
 
-    // domcontentloaded is enough: the inline form/calculator script runs at parse
-    // time, so we don't need to wait for the (blocked) map assets.
+    // domcontentloaded is enough: the inline form script runs at parse time,
+    // so we don't need to wait for the (blocked) map assets.
     await page.goto('/estimate-form.html', { waitUntil: 'domcontentloaded' })
     await page.waitForSelector('#estimate-form')
   })
 
   test('should display the estimate form with all required fields', async ({ page }) => {
     await expect(
-      page.getByRole('heading', { name: 'Get Your Free Paving Estimate' })
+      page.getByRole('heading', { name: 'Request an Estimate' })
     ).toBeVisible()
 
     // Request form fields
@@ -48,7 +50,25 @@ test.describe('Estimate Request Flow', () => {
 
     // Submit button with the real label
     await expect(page.locator('#submit-btn')).toBeVisible()
-    await expect(page.locator('#submit-btn')).toContainText('Request My Free Quote')
+    await expect(page.locator('#submit-btn')).toContainText('Request Free Estimate')
+  })
+
+  test('should explain that online estimates are preliminary', async ({ page }) => {
+    const explainer = page.locator('.estimate-explainer')
+    await expect(explainer).toBeVisible()
+    await expect(explainer).toContainText('Online estimates are preliminary')
+    await expect(explainer).toContainText('aerial imagery')
+    await expect(explainer).toContainText('on-site visit')
+  })
+
+  test('should not expose pricing or measurements anywhere on the page', async ({ page }) => {
+    const body = await page.locator('body').innerText()
+    // No dollar figures, per-square-foot rates, or displayed measurements.
+    expect(body).not.toMatch(/\$\s?\d/)
+    expect(body).not.toMatch(/per sq\s?\.?\s?ft/i)
+    expect(body).not.toMatch(/\d[\d,]*\s*sq\s?\.?\s?ft/i)
+    // The internal area field exists but starts empty.
+    await expect(page.locator('#hidden-area')).toHaveValue('')
   })
 
   test('should list all project type options', async ({ page }) => {
@@ -68,63 +88,6 @@ test.describe('Estimate Request Flow', () => {
     )
     // Submission was prevented — still on the same page.
     await expect(page).toHaveURL(/estimate-form\.html/)
-  })
-
-  test('should calculate an estimate range from length and width', async ({ page }) => {
-    await page.locator('#service-type').selectOption('residential')
-    await page.locator('#length').fill('40')
-    await page.locator('#width').fill('20')
-
-    // 40 × 20 = 800 sq ft
-    await expect(page.locator('#area-display')).toHaveText('800')
-
-    // Residential is $3.50/sq ft, so a non-zero range should be shown.
-    const price = await page.locator('#price-display').textContent()
-    expect(price).not.toBe('$0')
-    expect(price).toMatch(/\$[\d,]+\s*–\s*\$[\d,]+/)
-    await expect(page.locator('#result')).not.toHaveClass(/empty/)
-  })
-
-  test('should recalculate when the service type changes', async ({ page }) => {
-    await page.locator('#service-type').selectOption('residential')
-    await page.locator('#length').fill('50')
-    await page.locator('#width').fill('20') // 1000 sq ft
-
-    const residentialPrice = await page.locator('#price-display').textContent()
-
-    // Decorative concrete is the most expensive rate, so the range must change.
-    await page.locator('#service-type').selectOption('decorative')
-    const decorativePrice = await page.locator('#price-display').textContent()
-
-    expect(decorativePrice).not.toBe(residentialPrice)
-  })
-
-  test('should sync hidden estimate fields for submission', async ({ page }) => {
-    await page.locator('#service-type').selectOption('concrete')
-    await page.locator('#length').fill('30')
-    await page.locator('#width').fill('30') // 900 sq ft
-
-    await expect(page.locator('#hidden-area')).toHaveValue('900')
-    await expect(page.locator('#hidden-service')).toHaveValue('Concrete')
-    await expect(page.locator('#hidden-estimate')).not.toHaveValue('')
-  })
-
-  test('should switch between dimensions and total-area input modes', async ({ page }) => {
-    // Default is dimensions mode.
-    await expect(page.locator('#mode-dimensions')).toBeVisible()
-    await expect(page.locator('#mode-area')).toBeHidden()
-
-    await page.locator('.seg button[data-mode="area"]').click()
-    await expect(page.locator('#mode-area')).toBeVisible()
-    await expect(page.locator('#mode-dimensions')).toBeHidden()
-
-    // Total-area mode drives the calculation directly.
-    await page.locator('#area-input').fill('1500')
-    await expect(page.locator('#area-display')).toHaveText('1,500')
-
-    await page.locator('.seg button[data-mode="dimensions"]').click()
-    await expect(page.locator('#mode-dimensions')).toBeVisible()
-    await expect(page.locator('#mode-area')).toBeHidden()
   })
 
   test('should successfully submit the estimate request', async ({ page }) => {
@@ -170,11 +133,13 @@ test.describe('Estimate Request Flow', () => {
     await expect(page.locator('#form-status')).toContainText('couldn\'t send')
   })
 
-  test('should display the satellite measurement map section', async ({ page }) => {
+  test('should display the satellite outline map section', async ({ page }) => {
     await expect(page.locator('#map')).toBeVisible()
     await expect(page.locator('#map-search-input')).toBeVisible()
     await expect(page.locator('#draw-rect')).toBeVisible()
     await expect(page.locator('#draw-poly')).toBeVisible()
+    // The outline readout confirms capture without numbers.
+    await expect(page.locator('#map-area-status')).toContainText('optional')
   })
 
   test('should re-enable the submit button after a network error', async ({ page }) => {
@@ -189,7 +154,7 @@ test.describe('Estimate Request Flow', () => {
 
     await expect(page.locator('#form-status')).toHaveClass(/err/)
     await expect(page.locator('#submit-btn')).toBeEnabled()
-    await expect(page.locator('#submit-btn')).toContainText('Request My Free Quote')
+    await expect(page.locator('#submit-btn')).toContainText('Request Free Estimate')
   })
 
   test('should navigate to the estimate form from the home page', async ({ page }) => {
