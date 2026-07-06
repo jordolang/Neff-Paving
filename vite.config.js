@@ -94,6 +94,7 @@ export default defineConfig(({ mode }) => {
         main: resolve(__dirname, 'index.html'),
         '404': resolve(__dirname, '404.html'),
         'estimate-form': resolve(__dirname, 'estimate-form.html'),
+        'careers': resolve(__dirname, 'careers.html'),
         'terms': resolve(__dirname, 'terms.html'),
         'privacy': resolve(__dirname, 'privacy.html'),
         'data-protection': resolve(__dirname, 'data-protection.html'),
@@ -247,6 +248,21 @@ export default defineConfig(({ mode }) => {
           console.log(`✨ Content files copy complete! (${jsonFiles.length} files)`);
         } catch (error) {
           console.error('❌ Error copying content files:', error);
+          throw error;
+        }
+
+        // Copy plain scripts referenced by <script src="js/..."> tags on every
+        // page (e.g. mobile-nav.js) — these bypass the Vite module pipeline.
+        try {
+          const jsSourceDir = resolve(__dirname, 'js');
+          const jsTargetDir = resolve(__dirname, 'dist/js');
+          mkdirSync(jsTargetDir, { recursive: true });
+          readdirSync(jsSourceDir)
+            .filter(file => file.endsWith('.js'))
+            .forEach(file => copyFileSync(join(jsSourceDir, file), join(jsTargetDir, file)));
+          console.log('✨ Plain js/ scripts copied to dist/js');
+        } catch (error) {
+          console.error('❌ Error copying js/ scripts:', error);
           throw error;
         }
       }

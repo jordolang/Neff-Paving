@@ -1,66 +1,25 @@
 // NOTE: legacy '../styles/main.css' is intentionally NOT imported here.
 // The redesigned homepage is styled entirely by styles/redesign.css (linked in index.html).
-// The old index.legacy.html links main.css directly, so it remains unaffected.
 
 // Import Vercel Analytics and Speed Insights
 import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 
-// Import animation libraries
-import AOS from 'aos'
-import 'aos/dist/aos.css'
-
-// Import gallery component (CRITICAL for gallery functionality)
-import GalleryFilter from './components/gallery-filter.js';
-
-// Import content populator for dynamic CMS content
-import { ContentPopulator } from './utils/content-populator.js';
+// Lightbox for the curated work galleries
+import Lightbox from './components/lightbox.js';
 
 // Simple application class
 class NeffPavingApp {
     constructor() {
-        this.galleryFilter = null;
-        this.contentPopulator = null;
+        this.lightbox = null;
         this.init();
     }
 
-    async init() {
-        console.log('Initializing Neff Paving App...');
-
-        // Load dynamic content first (CRITICAL for CMS integration)
-        try {
-            await this.initDynamicContent();
-            console.log('Dynamic content loaded successfully');
-        } catch (error) {
-            console.error('Dynamic content loading failed:', error);
-        }
-
-        // Initialize analytics
-        this.initAnalytics()
-
-        // Initialize hero video
-        this.initHeroVideo()
-
-        // Initialize animations
-        this.initAnimations()
-
-        // Initialize navigation
-        this.initNavigation()
-
-        // Initialize gallery (CRITICAL for gallery functionality)
-        try {
-            this.initGalleryFilters()
-            console.log('Gallery initialized successfully')
-        } catch (error) {
-            console.error('Gallery initialization failed:', error)
-        }
-
-        console.log('Neff Paving app initialized successfully')
-    }
-
-    async initDynamicContent() {
-        this.contentPopulator = new ContentPopulator();
-        await this.contentPopulator.populate();
+    init() {
+        this.initAnalytics();
+        this.initHeroVideo();
+        this.initNavigation();
+        this.initWorkLightbox();
     }
 
     async initAnalytics() {
@@ -79,8 +38,6 @@ class NeffPavingApp {
                             );
                             if (!isBlocked) {
                                 acc[key] = event.data.properties[key];
-                            } else {
-                                console.warn('[Analytics] beforeSend blocked PII:', key);
                             }
                             return acc;
                         }, {});
@@ -99,8 +56,6 @@ class NeffPavingApp {
 
             // Initialize Vercel Speed Insights for performance monitoring
             injectSpeedInsights();
-
-            console.log('Analytics initialized with PII filtering');
         } catch (error) {
             console.error('Analytics initialization failed:', error);
         }
@@ -144,85 +99,6 @@ class NeffPavingApp {
         videoObserver.observe(video);
     }
 
-    initAnimations() {
-        // Defer AOS initialization until after first paint to reduce main thread blocking
-        // This improves INP (Interaction to Next Paint) Core Web Vital metric
-        const initAOS = () => {
-            AOS.init({
-                duration: 1000,
-                once: true,
-                offset: 100
-            });
-        };
-
-        // Use requestIdleCallback for optimal performance, with setTimeout fallback
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(initAOS, { timeout: 2000 });
-        } else {
-            // Fallback for browsers without requestIdleCallback support
-            setTimeout(initAOS, 100);
-        }
-
-        // Remove any loading states immediately
-        this.removeLoadingStates();
-    }
-    
-    removeLoadingStates() {
-        // Force immediate display of all content - no loading screens or spinners
-        const style = document.createElement('style');
-        style.textContent = `
-            /* Force immediate visibility - no loading states */
-            .loading,
-            .spinner,
-            .loader,
-            .loading-overlay,
-            .progress-bar,
-            .loading-indicator {
-                display: none !important;
-                opacity: 0 !important;
-                visibility: hidden !important;
-            }
-            
-            /* Ensure all gallery images are immediately visible */
-            .gallery-card,
-            .gallery-item,
-            .gallery img,
-            .card-image img {
-                opacity: 1 !important;
-                visibility: visible !important;
-                display: block !important;
-            }
-            
-            /* Ensure forms work without loading indicators */
-            .form-loading,
-            .btn .loading,
-            .submit-loading {
-                display: none !important;
-            }
-            
-            /* Remove any transition delays that might appear as loading */
-            .gallery-card,
-            .service-card,
-            .contact-method {
-                transition-delay: 0s !important;
-            }
-            
-            /* Force maps and images to display immediately */
-            .map-placeholder,
-            .image-placeholder {
-                background: transparent !important;
-            }
-            
-            /* Disable animations that might look like loading */
-            .spin {
-                animation: none !important;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        console.log('✅ Loading states removed - content displays immediately');
-    }
-
     initNavigation() {
         // Smooth scrolling for navigation links
         document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
@@ -238,21 +114,41 @@ class NeffPavingApp {
             })
         })
     }
-    
-    initGalleryFilters() {
-        const galleryElement = document.getElementById('gallery');
-        if (galleryElement) {
-            this.galleryFilter = new GalleryFilter(galleryElement);
-        }
+
+    // Open the curated project photos (.work-item) in the shared lightbox,
+    // scoped per section so commercial and residential browse separately.
+    initWorkLightbox() {
+        const grids = document.querySelectorAll('.work-grid');
+        if (!grids.length) return;
+
+        this.lightbox = new Lightbox();
+
+        grids.forEach(grid => {
+            const items = Array.from(grid.querySelectorAll('.work-item'));
+            const images = items.map(item => {
+                const img = item.querySelector('img');
+                const caption = item.querySelector('figcaption');
+                return {
+                    src: img.getAttribute('src'),
+                    title: caption ? caption.textContent : '',
+                    category: '',
+                    alt: img.getAttribute('alt') || ''
+                };
+            });
+
+            items.forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    this.lightbox.open(images, index);
+                });
+            });
+        });
     }
 }
 
 // Initialize the app when DOM is loaded
-async function initializeApp() {
+function initializeApp() {
     try {
-        console.log('Starting NeffPavingApp initialization...');
-        await new NeffPavingApp();
-        console.log('NeffPavingApp initialized successfully');
+        new NeffPavingApp();
     } catch (error) {
         console.error('Failed to initialize NeffPavingApp:', error);
     }
