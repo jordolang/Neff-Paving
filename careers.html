@@ -327,7 +327,7 @@
                         "</div>" +
                         (job.summary ? "<p>" + esc(job.summary) + "</p>" : "") +
                     "</div>" +
-                    '<a href="' + esc(job.indeedUrl) + '" target="_blank" rel="noopener" class="btn btn-primary">Apply on Indeed</a>' +
+                    '<a href="' + esc(job.indeedUrl) + '" target="_blank" rel="noopener" class="btn btn-primary" aria-label="Apply on Indeed — ' + esc(job.title) + '">Apply on Indeed</a>' +
                 "</article>"
             ).join("");
         })();
