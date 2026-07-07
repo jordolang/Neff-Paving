@@ -175,8 +175,8 @@ function generateStructuredData() {
         "logo": {
           "@type": "ImageObject",
           "url": `${siteConfig.baseUrl}/assets/images/logo.png`,
-          "width": 300,
-          "height": 100
+          "width": 256,
+          "height": 256
         },
         "description": "Professional paving services for residential and commercial projects. Licensed, insured, and experienced paving contractors.",
         "address": {
