@@ -8,6 +8,9 @@ import { injectSpeedInsights } from '@vercel/speed-insights';
 // Lightbox for the curated work galleries
 import Lightbox from './components/lightbox.js';
 
+// Photos synced daily from the Facebook "Website Feed" album
+import { facebookImages } from './data/facebook-images.js';
+
 // Simple application class
 class NeffPavingApp {
     constructor() {
@@ -19,7 +22,31 @@ class NeffPavingApp {
         this.initAnalytics();
         this.initHeroVideo();
         this.initNavigation();
+        this.initFacebookGallery();
         this.initWorkLightbox();
+    }
+
+    // Fill the "Facebook Favorites" section from the synced album manifest,
+    // so new photos appear without touching the HTML.
+    initFacebookGallery() {
+        const grid = document.getElementById('facebook-gallery');
+        if (!grid) return;
+
+        facebookImages.forEach(image => {
+            const figure = document.createElement('figure');
+            figure.className = 'work-item';
+
+            const img = document.createElement('img');
+            img.src = `/assets/gallery/facebook/${image.filename}`;
+            img.alt = image.alt || image.title || 'Recent work by Neff Paving & Concrete';
+            img.loading = 'lazy';
+
+            const caption = document.createElement('figcaption');
+            caption.textContent = image.title || '';
+
+            figure.append(img, caption);
+            grid.appendChild(figure);
+        });
     }
 
     async initAnalytics() {
