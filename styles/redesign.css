@@ -155,8 +155,9 @@ header {
 .brand h1 span { color: var(--gold); }
 
 .desktop-nav ul {
-    display: flex; gap: 30px; list-style: none; margin: 0; padding: 0;
+    display: flex; gap: 22px; list-style: none; margin: 0; padding: 0;
 }
+.desktop-nav li { white-space: nowrap; }
 .desktop-nav a {
     font-family: var(--font-head);
     font-weight: 500;
@@ -178,7 +179,7 @@ header {
 .header-phone {
     display: inline-flex; align-items: center; gap: 9px;
     font-family: var(--font-head); font-weight: 600; letter-spacing: 1px;
-    color: var(--text); font-size: 15px;
+    color: var(--text); font-size: 15px; white-space: nowrap;
 }
 .header-phone svg { width: 18px; height: 18px; color: var(--gold); }
 
@@ -650,7 +651,7 @@ header {
 /* =====================================================================
    Process
    ===================================================================== */
-.process-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; counter-reset: step; }
+.process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
 .process-step { position: relative; text-align: center; padding: 0 8px; }
 .process-step .ring {
     width: 78px; height: 78px; margin: 0 auto 20px; border-radius: 50%;
@@ -721,7 +722,7 @@ header {
 /* =====================================================================
    Testimonials  (static grid — no JS dependency)
    ===================================================================== */
-.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 24px; }
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .testimonial-card {
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius); padding: 30px; display: flex; flex-direction: column;
@@ -897,6 +898,13 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
 /* =====================================================================
    Responsive
    ===================================================================== */
+@media (max-width: 1220px) {
+    .header-phone { display: none; }
+}
+@media (max-width: 1150px) {
+    .desktop-nav { display: none; }
+    .mobile-menu-toggle { display: flex; }
+}
 @media (max-width: 1024px) {
     .intro-grid { grid-template-columns: 1fr; gap: 40px; }
     .process-grid { grid-template-columns: repeat(2, 1fr); gap: 36px 20px; }
@@ -906,6 +914,7 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
     .work-grid, .work-grid--residential { grid-template-columns: repeat(2, 1fr); }
     .about-stats { grid-template-columns: repeat(2, 1fr); }
+    .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 860px) {
     .desktop-nav, .header-phone, .social-links.desktop-social { display: none; }
@@ -926,6 +935,7 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
     .services-bottom-cta, .office-info, .contact-form-container { padding: 28px; }
     .hero-social { gap: 18px; }
     .work-grid, .work-grid--residential { grid-template-columns: 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
     .credentials-strip { gap: 12px 28px; }
 }
 
