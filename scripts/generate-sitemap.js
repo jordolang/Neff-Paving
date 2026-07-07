@@ -181,15 +181,15 @@ function generateStructuredData() {
         "description": "Professional paving services for residential and commercial projects. Licensed, insured, and experienced paving contractors.",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "123 Main Street", // Replace with actual address
-          "addressLocality": "Your City",
-          "addressRegion": "Your State", 
-          "postalCode": "12345",
+          "streetAddress": "6575 W Pike", // Replace with actual address
+          "addressLocality": "Zanesville",
+          "addressRegion": "Ohio", 
+          "postalCode": "43701",
           "addressCountry": "US"
         },
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": "+1-555-123-7283",
+          "telephone": "+1-740-453-3063",
           "contactType": "customer service",
           "availableLanguage": "English",
           "areaServed": "Local Metro Area"
@@ -208,7 +208,7 @@ function generateStructuredData() {
         "@id": `${siteConfig.baseUrl}/#website`,
         "url": siteConfig.baseUrl,
         "name": "Neff Paving - Professional Paving Services",
-        "description": "Quality paving solutions for driveways, parking lots, and commercial surfaces. 35+ years of experience.",
+        "description": "Quality paving solutions for driveways, parking lots, and commercial surfaces. Family owned and operated since 1999.",
         "publisher": {
           "@id": `${siteConfig.baseUrl}/#organization`
         },
@@ -225,15 +225,15 @@ function generateStructuredData() {
         ],
         "description": "Professional paving contractor specializing in residential driveways, commercial parking lots, and maintenance services.",
         "priceRange": "$$",
-        "telephone": "+1-555-123-7283",
-        "email": "info@neff-paving.com",
+        "telephone": "+1-740-453-3063",
+        "email": "neffpaving@gmail.com",
         "url": siteConfig.baseUrl,
         "address": {
           "@type": "PostalAddress", 
-          "streetAddress": "123 Main Street",
-          "addressLocality": "Your City",
-          "addressRegion": "Your State",
-          "postalCode": "12345",
+          "streetAddress": "6575 W Pike",
+          "addressLocality": "Zanesville",
+          "addressRegion": "Ohio",
+          "postalCode": "43701",
           "addressCountry": "US"
         },
         "geo": {
@@ -399,7 +399,7 @@ function generateMetaTags() {
   return `<!-- Primary Meta Tags -->
 <title>Neff Paving - Professional Paving Services | Residential & Commercial</title>
 <meta name="title" content="Neff Paving - Professional Paving Services | Residential & Commercial">
-<meta name="description" content="Expert paving contractors with 35+ years experience. Residential driveways, commercial parking lots, maintenance services. Licensed, insured & satisfaction guaranteed.">
+<meta name="description" content="Family-owned, ODOT Certified paving contractors serving Central & Southeastern Ohio since 1999. Residential driveways, commercial parking lots, concrete & maintenance.">
 <meta name="keywords" content="paving contractor, driveway paving, parking lot construction, asphalt paving, residential paving, commercial paving, crack sealing, seal coating">
 <meta name="robots" content="index, follow">
 <meta name="language" content="English">
@@ -412,7 +412,7 @@ function generateMetaTags() {
 <meta property="og:type" content="website">
 <meta property="og:url" content="${siteConfig.baseUrl}/">
 <meta property="og:title" content="Neff Paving - Professional Paving Services">
-<meta property="og:description" content="Expert paving contractors with 35+ years experience. Residential driveways, commercial parking lots, maintenance services. Licensed, insured & satisfaction guaranteed.">
+<meta property="og:description" content="Family-owned, ODOT Certified paving contractors serving Central & Southeastern Ohio since 1999. Residential driveways, commercial parking lots, concrete & maintenance.">
 <meta property="og:image" content="${siteConfig.baseUrl}/assets/images/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -423,7 +423,7 @@ function generateMetaTags() {
 <meta property="twitter:card" content="summary_large_image">
 <meta property="twitter:url" content="${siteConfig.baseUrl}/">
 <meta property="twitter:title" content="Neff Paving - Professional Paving Services">
-<meta property="twitter:description" content="Expert paving contractors with 35+ years experience. Residential driveways, commercial parking lots, maintenance services.">
+<meta property="twitter:description" content="Family-owned, ODOT Certified paving contractors serving Central & Southeastern Ohio since 1999.">
 <meta property="twitter:image" content="${siteConfig.baseUrl}/assets/images/twitter-image.jpg">
 
 <!-- Additional Meta Tags -->
@@ -433,13 +433,13 @@ function generateMetaTags() {
 <meta name="ICBM" content="[LATITUDE], [LONGITUDE]">
 
 <!-- Local Business -->
-<meta name="business:contact_data:street_address" content="123 Main Street">
+<meta name="business:contact_data:street_address" content="6575 W Pike">
 <meta name="business:contact_data:locality" content="[CITY]">
 <meta name="business:contact_data:region" content="[STATE]">
-<meta name="business:contact_data:postal_code" content="12345">
+<meta name="business:contact_data:postal_code" content="43701">
 <meta name="business:contact_data:country_name" content="United States">
-<meta name="business:contact_data:phone_number" content="+1-555-123-7283">
-<meta name="business:contact_data:email" content="info@neff-paving.com">
+<meta name="business:contact_data:phone_number" content="+1-740-453-3063">
+<meta name="business:contact_data:email" content="neffpaving@gmail.com">
 
 <!-- Theme Color -->
 <meta name="theme-color" content="#2C2C2C">
