@@ -59,7 +59,7 @@ export function generateOpenGraphMeta(options = {}) {
     url = DEFAULT_META.siteUrl,
     title = 'Neff Paving & Concrete — Built on Quality. Driven by Pride.',
     description = "Your Road. Our Reputation. Central Ohio's trusted asphalt, concrete & excavation contractor since 1999. Licensed, insured & satisfaction guaranteed.",
-    image = '/assets/images/opengraph.png',
+    image = '/opengraph-image.png',
     imageWidth = '1200',
     imageHeight = '630',
     siteName = DEFAULT_META.siteName,
@@ -90,7 +90,7 @@ export function generateTwitterMeta(options = {}) {
     url = DEFAULT_META.siteUrl,
     title = 'Neff Paving & Concrete — Built on Quality. Driven by Pride.',
     description = "Your Road. Our Reputation. Central Ohio's trusted asphalt, concrete & excavation contractor since 1999.",
-    image = '/assets/images/opengraph.png'
+    image = '/opengraph-image.png'
   } = options;
 
   return {
