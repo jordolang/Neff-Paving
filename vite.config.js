@@ -464,6 +464,21 @@ export default defineConfig(({ mode }) => {
           );
         };
 
+        // The homepage inlines its critical above-the-fold CSS (index.html
+        // <style id="critical-css">), so Vite's auto-injected full stylesheets no
+        // longer need to block first paint — they were the render-blocking requests
+        // that pinned LCP. Convert every still-blocking <link rel="stylesheet">
+        // (one WITHOUT a media= attribute) into the media="print" onload swap so it
+        // downloads without blocking, with a <noscript> fallback for no-JS. Links
+        // already made async (media=print) and preload/preconnect are skipped.
+        const deferBlockingStylesheets = (content) => {
+          return content.replace(
+            /<link\b(?=[^>]*\brel="stylesheet")(?![^>]*\bmedia=)([^>]*?)\s*\/?>/g,
+            (match, attrs) =>
+              `<link${attrs} media="print" onload="this.media='all'"><noscript><link${attrs}></noscript>`
+          );
+        };
+
         // Process HTML files from dist directory
         const distDir = options.dir || 'dist';
         const htmlFiles = [
@@ -517,7 +532,13 @@ export default defineConfig(({ mode }) => {
             
             // Add performance optimizations
             content = addPerformanceOptimizations(content);
-            
+
+            // Only the homepage inlines critical CSS, so only its render-blocking
+            // stylesheets are safe to defer (other pages still need theirs to block).
+            if (htmlFilePath === path.join(distDir, 'index.html')) {
+              content = deferBlockingStylesheets(content);
+            }
+
             // Add the main script tag to all HTML files
             content = addMainScript(content, bundle, buildTimestamp);
             

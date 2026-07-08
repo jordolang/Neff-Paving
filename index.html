@@ -71,8 +71,59 @@
     <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap&subset=latin">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap&subset=latin"></noscript>
 
-    <!-- Critical stylesheet blocks paint; lightbox styles are interaction-only, loaded async. -->
-    <link rel="stylesheet" href="styles/redesign.css">
+    <!-- Critical above-the-fold CSS, inlined so the header + hero (the LCP) paint
+         without waiting on a render-blocking stylesheet round-trip. The full
+         redesign.css then loads async below and upgrades the rest of the page. -->
+    <style id="critical-css">
+    *,*::before,*::after{box-sizing:border-box}
+    :root{--bg:#0b0b0d;--bg-2:#101014;--line:#26262e;--gold:#f5a524;--gold-2:#ffb84d;--gold-deep:#d98c0f;--on-gold:#0b0b0d;--text:#f4f5f6;--muted:#8a99a3;--maxw:1240px;--shadow-gold:0 12px 30px -10px rgba(245,165,36,.4);--font-head:'Oswald',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-body:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif}
+    html{scroll-behavior:smooth;scroll-padding-top:88px}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+    h1,h2,h3,h4,h5{font-family:var(--font-head);font-weight:700;line-height:1.04;letter-spacing:-.5px;margin:0 0 .5em;text-transform:uppercase}
+    p{margin:0 0 1rem;color:var(--muted)}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--font-head);font-weight:600;letter-spacing:1px;text-transform:uppercase;font-size:15px;padding:15px 28px;border-radius:999px;border:2px solid transparent;cursor:pointer;transition:transform .2s ease,background .2s ease,box-shadow .2s ease,color .2s ease;white-space:nowrap}
+    .btn-primary{background:var(--gold);color:var(--on-gold);box-shadow:var(--shadow-gold)}
+    .btn-outline{background:transparent;color:var(--text);border-color:var(--line)}
+    .btn-large{padding:18px 36px;font-size:16px}
+    header{position:fixed;inset:0 0 auto 0;z-index:1000;background:rgba(11,11,13,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .header-container{max-width:var(--maxw);margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .mark{width:46px;height:46px;flex:none;display:grid;place-items:center}
+    .brand .mark img{width:100%;height:100%;object-fit:contain;display:block}
+    .brand h1{font-size:1.4rem;margin:0;letter-spacing:2px;color:var(--text)}
+    .brand h1 span{color:var(--gold)}
+    .desktop-nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0}
+    .desktop-nav a{font-family:var(--font-head);font-weight:500;letter-spacing:1px;text-transform:uppercase;font-size:14px;color:var(--muted)}
+    .header-cta{display:flex;align-items:center;gap:16px}
+    .header-phone{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-head);font-weight:600;letter-spacing:1px;color:var(--text);font-size:15px;white-space:nowrap}
+    .mobile-menu-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
+    .mobile-menu-toggle .hamburger-line{width:26px;height:2px;background:var(--text);border-radius:2px}
+    #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:140px 0 90px;overflow:hidden}
+    #hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0}
+    .hero-poster{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+    .hero-poster img{width:100%;height:100%;object-fit:cover}
+    .hero-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(1200px 600px at 15% 10%,rgba(255,192,46,.10),transparent 60%),linear-gradient(180deg,rgba(11,11,13,.66) 0%,rgba(11,11,13,.82) 55%,rgba(11,11,13,.97) 100%)}
+    .hero-content{position:relative;z-index:2;max-width:760px;margin:0 auto;text-align:center}
+    .hero-title{font-size:clamp(2.8rem,7vw,5.4rem);margin:0 0 20px;text-transform:uppercase;letter-spacing:-2px;font-weight:700}
+    .hero-title .accent,.accent{color:var(--gold)}
+    .hero-title--brand{font-size:clamp(3.4rem,9vw,6.4rem);letter-spacing:2px;font-weight:700}
+    .hero-tagline{font-family:var(--font-head);font-size:clamp(1.15rem,2.6vw,1.7rem);font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--text);margin:0 0 14px}
+    .hero-subtitle{font-size:clamp(1.05rem,2vw,1.3rem);color:#c7cdd1;max-width:620px;margin:0 auto 34px}
+    .hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-bottom:44px}
+    .hero-credentials{margin:36px 0 0;font-family:var(--font-head);font-size:.95rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+    @media(max-width:1220px){.header-phone{display:none}}
+    @media(max-width:1150px){.desktop-nav{display:none}.mobile-menu-toggle{display:flex}}
+    @media(max-width:860px){.desktop-nav,.header-phone{display:none}.mobile-menu-toggle{display:flex}}
+    @media(max-width:560px){body{font-size:16px}}
+    </style>
+
+    <!-- The full redesign.css is pulled in via the preload above and injected by
+         the build, which then makes it non-render-blocking (media=print swap) since
+         the inline critical CSS already styles the fold. No manual <link> needed
+         here — a second one would download the stylesheet twice. -->
     <link rel="stylesheet" media="print" onload="this.media='all'" href="styles/lightbox.css">
     <noscript><link rel="stylesheet" href="styles/lightbox.css"></noscript>
 
