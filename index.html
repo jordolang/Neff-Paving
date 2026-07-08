@@ -64,14 +64,17 @@
     <link rel="preload" as="image" href="/assets/images/optimized/posters/hero-poster-1920x1080-large.avif" type="image/avif" imagesrcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.avif 480w, /assets/images/optimized/posters/hero-poster-1920x1080-tablet.avif 768w, /assets/images/optimized/posters/hero-poster-1920x1080-desktop.avif 1200w, /assets/images/optimized/posters/hero-poster-1920x1080-large.avif 1920w" imagesizes="100vw" fetchpriority="high">
     <link rel="preload" as="style" href="styles/redesign.css">
 
-    <!-- Fonts - optimized with font-display=swap and latin subset -->
+    <!-- Fonts - loaded async so they never block first paint; font-display=swap
+         renders text immediately in a fallback and swaps once the webfont arrives. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap&subset=latin" rel="stylesheet">
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap&subset=latin">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Inter:wght@400;500;600;700&display=swap&subset=latin"></noscript>
 
-    <!-- Stylesheets -->
+    <!-- Critical stylesheet blocks paint; lightbox styles are interaction-only, loaded async. -->
     <link rel="stylesheet" href="styles/redesign.css">
-    <link rel="stylesheet" href="styles/lightbox.css">
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="styles/lightbox.css">
+    <noscript><link rel="stylesheet" href="styles/lightbox.css"></noscript>
 
     <script type="application/ld+json">
         {
@@ -613,7 +616,23 @@
                     <div class="contact-grid">
                         <div class="contact-office">
                             <figure class="office-photo">
-                                <img src="/assets/images/office/zanesville-office.jpg" alt="Neff Paving &amp; Concrete office and shop in Zanesville, Ohio" width="1890" height="832" loading="lazy">
+                                <picture>
+                                    <source
+                                        type="image/avif"
+                                        srcset="/assets/images/optimized/office/zanesville-office-640.avif 640w,
+                                                /assets/images/optimized/office/zanesville-office-960.avif 960w,
+                                                /assets/images/optimized/office/zanesville-office-1400.avif 1400w,
+                                                /assets/images/optimized/office/zanesville-office-1890.avif 1890w"
+                                        sizes="(max-width: 900px) 100vw, 46vw">
+                                    <source
+                                        type="image/webp"
+                                        srcset="/assets/images/optimized/office/zanesville-office-640.webp 640w,
+                                                /assets/images/optimized/office/zanesville-office-960.webp 960w,
+                                                /assets/images/optimized/office/zanesville-office-1400.webp 1400w,
+                                                /assets/images/optimized/office/zanesville-office-1890.webp 1890w"
+                                        sizes="(max-width: 900px) 100vw, 46vw">
+                                    <img src="/assets/images/optimized/office/zanesville-office-1890.jpg" alt="Neff Paving &amp; Concrete office and shop in Zanesville, Ohio" width="1890" height="832" loading="lazy" decoding="async">
+                                </picture>
                             </figure>
                             <div class="office-details">
                                 <div class="detail-item">

@@ -253,6 +253,10 @@ header {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover; z-index: 0;
+    /* Start hidden so the preloaded AVIF hero-poster is the painted LCP element.
+       main.js fades the video in only once it is actually playing (desktop). */
+    opacity: 0;
+    transition: opacity .6s ease;
 }
 .hero-poster {
     position: absolute; inset: 0;

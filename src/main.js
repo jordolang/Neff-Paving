@@ -19,11 +19,19 @@ class NeffPavingApp {
     }
 
     init() {
-        this.initAnalytics();
         this.initHeroVideo();
         this.initNavigation();
         this.initFacebookGallery();
         this.initWorkLightbox();
+
+        // Analytics are non-visual: defer them to idle time so their script fetch
+        // and init never compete with first paint or add to Total Blocking Time.
+        const startAnalytics = () => this.initAnalytics();
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(startAnalytics, { timeout: 3000 });
+        } else {
+            window.addEventListener('load', () => setTimeout(startAnalytics, 1500));
+        }
     }
 
     // Fill the "Facebook Favorites" section from the synced album manifest,
@@ -91,6 +99,22 @@ class NeffPavingApp {
     initHeroVideo() {
         const video = document.getElementById('hero-video');
         if (!video) return;
+
+        // The hero background video is decoration: the preloaded AVIF poster is
+        // the real LCP element. On phones, data-saver, slow networks, or when the
+        // user prefers reduced motion, the 7 MB video is not worth the payload —
+        // it barely shows at phone size and it single-handedly triples the
+        // mobile transfer. Skip fetching it entirely and let the poster stand.
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const saveData = Boolean(connection && connection.saveData);
+        const slowNetwork = Boolean(connection && /(^|-)(2g|slow-2g)$/.test(connection.effectiveType || ''));
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const smallScreen = window.matchMedia('(max-width: 768px)').matches;
+
+        if (saveData || slowNetwork || reducedMotion || smallScreen) {
+            // Poster remains visible; the video is never requested.
+            return;
+        }
 
         // Transient network errors (e.g. ERR_QUIC_PROTOCOL_ERROR on HTTP/3) can
         // interrupt the video's range request. These are recoverable: reloading
