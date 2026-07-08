@@ -92,13 +92,25 @@ class NeffPavingApp {
         const video = document.getElementById('hero-video');
         if (!video) return;
 
-        // Add error handling
-        video.addEventListener('error', (e) => {
-            console.error('Video failed to load:', e);
-            const heroSection = document.getElementById('hero');
-            if (heroSection) {
-                heroSection.style.backgroundColor = '#2c2c2c';
+        // Transient network errors (e.g. ERR_QUIC_PROTOCOL_ERROR on HTTP/3) can
+        // interrupt the video's range request. These are recoverable: reloading
+        // makes the browser retry, and it typically falls back to HTTP/2. Retry
+        // once before giving up. The <video> poster stays visible throughout, so
+        // the hero never flashes an empty background during the retry.
+        let hasRetried = false;
+        video.addEventListener('error', () => {
+            if (!hasRetried) {
+                hasRetried = true;
+                // Re-fetch the source; QUIC failures generally succeed on the
+                // HTTP/2 fallback the browser negotiates on retry.
+                video.load();
+                video.play().catch(() => { /* poster remains as fallback */ });
+                return;
             }
+
+            // Retry also failed — the poster attribute keeps showing the hero
+            // still image, so no further UI intervention is needed.
+            console.error('Hero video could not be loaded after retry; showing poster.');
         });
 
         // Lazy load video using Intersection Observer
