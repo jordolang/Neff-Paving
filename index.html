@@ -101,6 +101,11 @@
     .header-phone{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-head);font-weight:600;letter-spacing:1px;color:var(--text);font-size:15px;white-space:nowrap}
     .mobile-menu-toggle{display:none;flex-direction:column;gap:5px;background:none;border:0;cursor:pointer;padding:8px}
     .mobile-menu-toggle .hamburger-line{width:26px;height:2px;background:var(--text);border-radius:2px}
+    /* Keep the off-canvas drawer + overlay out of flow from first paint. Without these,
+       the unstyled drawer renders in-flow above the hero until the deferred redesign.css
+       loads, then collapses — a full-viewport layout shift (CLS ~1.0). */
+    .mobile-nav{position:fixed;top:0;right:-100%;width:min(360px,86vw);height:100vh;z-index:1200;overflow-y:auto}
+    .mobile-nav-overlay{position:fixed;inset:0;z-index:1100;opacity:0;visibility:hidden}
     #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:140px 0 90px;overflow:hidden}
     #hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0}
     .hero-poster{position:absolute;inset:0;width:100%;height:100%;z-index:0}
