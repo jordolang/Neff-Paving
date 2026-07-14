@@ -19,7 +19,7 @@ class NeffPavingApp {
     }
 
     init() {
-        this.initHeroVideo();
+        this.initHeroCarousel();
         this.initNavigation();
         this.initFacebookGallery();
         this.initWorkLightbox();
@@ -96,70 +96,121 @@ class NeffPavingApp {
         }
     }
 
-    initHeroVideo() {
-        const video = document.getElementById('hero-video');
-        if (!video) return;
+    initHeroCarousel() {
+        const carousel = document.querySelector('[data-hero-carousel]');
+        if (!carousel) return;
 
-        // The hero background video is decoration: the preloaded AVIF poster is
-        // the real LCP element. On phones, data-saver, slow networks, or when the
-        // user prefers reduced motion, the 7 MB video is not worth the payload —
-        // it barely shows at phone size and it single-handedly triples the
-        // mobile transfer. Skip fetching it entirely and let the poster stand.
+        const slides = Array.from(carousel.querySelectorAll('[data-hero-slide]'));
+        if (slides.length < 2) return;
+
+        const SLIDE_MS = 30000;
+
+        // Slide 1 ships with a real src and is the LCP element. Slides 2..n carry
+        // their URLs in data-* so they are not fetched on load — they sit inside the
+        // viewport, where `loading="lazy"` would not defer them. Hydrating a slide is
+        // what actually triggers its download.
+        const hydrate = (slide) => {
+            if (slide.dataset.hydrated) return;
+            slide.dataset.hydrated = 'true';
+
+            // The <source> srcsets must be set before the <img> src, or the browser
+            // resolves a candidate while the sources are still empty and settles on
+            // the JPEG, throwing away the AVIF/WebP saving.
+            slide.querySelectorAll('source[data-srcset]').forEach((source) => {
+                source.srcset = source.dataset.srcset;
+                delete source.dataset.srcset;
+            });
+
+            const img = slide.querySelector('img[data-src]');
+            if (!img) return;
+            if (img.dataset.srcset) {
+                img.srcset = img.dataset.srcset;
+                delete img.dataset.srcset;
+            }
+            img.src = img.dataset.src;
+            delete img.dataset.src;
+        };
+
+        // Indicators are built here rather than in the markup so they never render as
+        // dead controls when JS is unavailable — in that case slide 1 just stands as
+        // a static hero.
+        const dots = document.createElement('div');
+        dots.className = 'hero-dots';
+        dots.setAttribute('role', 'tablist');
+        dots.setAttribute('aria-label', 'Hero image');
+
+        let index = 0;
+        let timer = null;
+
+        const show = (next) => {
+            if (next === index) return;
+            hydrate(slides[next]);
+            slides[index].classList.remove('is-active');
+            slides[next].classList.add('is-active');
+            dots.children[index].setAttribute('aria-selected', 'false');
+            dots.children[next].setAttribute('aria-selected', 'true');
+            index = next;
+            // Pull the following slide during this one's 30s dwell, so it is decoded
+            // and ready long before its own cross-fade starts.
+            hydrate(slides[(next + 1) % slides.length]);
+        };
+
+        slides.forEach((slide, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'hero-dot';
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-selected', String(i === 0));
+            dot.setAttribute('aria-label', `Show hero image ${i + 1} of ${slides.length}`);
+            dot.addEventListener('click', () => {
+                show(i);
+                restart();
+            });
+            dots.appendChild(dot);
+        });
+
+        (carousel.closest('#hero') || carousel.parentElement).appendChild(dots);
+
+        const advance = () => show((index + 1) % slides.length);
+
+        // Data-saver and 2G users keep slide 1 only: four more full-bleed photos are
+        // not worth the transfer. The dots still let them opt in by tapping.
         const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
         const saveData = Boolean(connection && connection.saveData);
         const slowNetwork = Boolean(connection && /(^|-)(2g|slow-2g)$/.test(connection.effectiveType || ''));
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const smallScreen = window.matchMedia('(max-width: 768px)').matches;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-        if (saveData || slowNetwork || reducedMotion || smallScreen) {
-            // Poster remains visible; the video is never requested.
-            return;
-        }
+        const shouldAutoplay = () => !saveData && !slowNetwork && !reducedMotion.matches;
 
-        // Transient network errors (e.g. ERR_QUIC_PROTOCOL_ERROR on HTTP/3) can
-        // interrupt the video's range request. These are recoverable: reloading
-        // makes the browser retry, and it typically falls back to HTTP/2. Retry
-        // once before giving up. The <video> poster stays visible throughout, so
-        // the hero never flashes an empty background during the retry.
-        let hasRetried = false;
-        video.addEventListener('error', () => {
-            if (!hasRetried) {
-                hasRetried = true;
-                // Re-fetch the source; QUIC failures generally succeed on the
-                // HTTP/2 fallback the browser negotiates on retry.
-                video.load();
-                video.play().catch(() => { /* poster remains as fallback */ });
-                return;
+        const stop = () => {
+            if (timer !== null) {
+                clearInterval(timer);
+                timer = null;
             }
+        };
+        const restart = () => {
+            stop();
+            if (shouldAutoplay()) timer = setInterval(advance, SLIDE_MS);
+        };
 
-            // Retry also failed — the poster attribute keeps showing the hero
-            // still image, so no further UI intervention is needed.
-            console.error('Hero video could not be loaded after retry; showing poster.');
+        // setInterval keeps firing in a background tab, so without this the carousel
+        // cycles unseen and the user comes back to a half-finished cross-fade.
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) stop();
+            else restart();
         });
+        reducedMotion.addEventListener('change', restart);
 
-        // Lazy load video using Intersection Observer
-        const videoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Video is in viewport, load and play it
-                    if (video.readyState === 0) {
-                        video.load();
-                    }
-                    video.play().catch(err => {
-                        console.error('Video autoplay failed:', err);
-                    });
-                    video.style.opacity = '1';
-
-                    // Stop observing once video is loaded
-                    videoObserver.unobserve(video);
-                }
-            });
-        }, {
-            rootMargin: '50px' // Start loading slightly before video enters viewport
-        });
-
-        // Start observing the video element
-        videoObserver.observe(video);
+        if (shouldAutoplay()) {
+            // Hold slide 2 until load, so the second image never competes with the
+            // LCP image for bandwidth.
+            const begin = () => {
+                hydrate(slides[1]);
+                restart();
+            };
+            if (document.readyState === 'complete') begin();
+            else window.addEventListener('load', begin, { once: true });
+        }
     }
 
     initNavigation() {

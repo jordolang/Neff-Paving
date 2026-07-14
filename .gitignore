@@ -116,3 +116,7 @@ node_modules
 .auto-claude-security.json
 .auto-claude-status
 .claude_settings.json
+
+# Full-res stock originals: kept locally, never committed (~48MB).
+# See design/source-images/README.md for how the web derivatives are generated.
+design/source-images/*.jpeg

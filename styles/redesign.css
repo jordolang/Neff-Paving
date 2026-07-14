@@ -1280,3 +1280,178 @@ footer { background: #08080a; border-top: 1px solid var(--line); padding: 64px 0
 }
 .footer-arealinks a { color: var(--muted); }
 .footer-arealinks a:hover { color: var(--gold); }
+
+/* =====================================================================
+   THE ROAD — sitewide asphalt backdrop
+   ---------------------------------------------------------------------
+   A single fixed layer paints the double-yellow-centerline asphalt behind
+   the whole site, so the page reads as content laid out on one continuous
+   road: the centerline runs down the page axis and splits each section's
+   two columns, left lane / right lane.
+
+   Because the layer is `position: fixed` (not `background-attachment: fixed`,
+   which iOS Safari renders incorrectly and repaints on every scroll), it
+   composites once and stays put while the content scrolls over it.
+
+   Sections sit on top as translucent asphalt "panels" inset a few px top and
+   bottom, so raw road — bright yellow line and all — shows through the gap
+   between every section. That gap is the section divider.
+   ===================================================================== */
+
+:root {
+    /* Procedural grit. The photographic grain in the asphalt shot is
+       high-entropy and cost >500KB to encode; the source is softened instead
+       and the crisp grunge re-added here for ~1KB. */
+    /* Grain sits as the top layer of every asphalt surface, so its alpha has to stay
+       low: mid-grey noise at any real opacity lifts the whole panel to flat grey and
+       washes the yellow centerline out with it. This is a whisper of grit, not a veil. */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.11'/%3E%3C/svg%3E");
+    --grain-size: 200px 200px;
+
+    /* Height of the raw-road strip left exposed at the top and bottom edge of
+       every section. Two adjacent sections therefore show 2x this. */
+    --road-gap: 22px;
+
+    /* Asphalt panels the content sits on. Dark enough to keep body copy legible
+       where it crosses the yellow line, sheer enough that the road reads through. */
+    --panel:     linear-gradient(180deg, rgba(9,9,11,.86) 0%, rgba(9,9,11,.82) 100%);
+    --panel-alt: linear-gradient(180deg, rgba(17,17,22,.80) 0%, rgba(10,10,14,.86) 100%);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background-color: var(--bg);
+    background-image:
+        var(--grain),
+        radial-gradient(130% 90% at 50% 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.62) 100%),
+        url("/images/texture/road-1440.jpg");
+    background-image:
+        var(--grain),
+        radial-gradient(130% 90% at 50% 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.62) 100%),
+        image-set(
+            url("/images/texture/road-1440.avif") type("image/avif"),
+            url("/images/texture/road-1440.webp") type("image/webp"),
+            url("/images/texture/road-1440.jpg")  type("image/jpeg")
+        );
+    background-size: var(--grain-size), cover, cover;
+    background-position: 0 0, center, center top;
+    background-repeat: repeat, no-repeat, no-repeat;
+}
+
+/* Sections become translucent panels floating on the road. `.section` sets no
+   background of its own, so the panel lives on a ::before that is inset top and
+   bottom — that inset is what exposes the road between sections. */
+.section { position: relative; background: transparent; }
+.section::before {
+    content: "";
+    position: absolute;
+    inset: var(--road-gap) 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--grain), var(--panel);
+    background-size: var(--grain-size), auto;
+    border-top: 1px solid rgba(245,165,36,.10);
+    border-bottom: 1px solid rgba(0,0,0,.55);
+}
+.section--alt { background: transparent; }
+.section--alt::before { background-image: var(--grain), var(--panel-alt); }
+
+/* Bottom CTA band and footer ride the same road. */
+.cta-band { background: rgba(16,16,20,.86); background-image: var(--grain), linear-gradient(180deg, rgba(16,16,20,.84), rgba(11,11,13,.90)); background-size: var(--grain-size), auto; }
+footer     { background: rgba(8,8,10,.90);  background-image: var(--grain), linear-gradient(180deg, rgba(10,10,12,.90), rgba(6,6,8,.95));  background-size: var(--grain-size), auto; }
+
+@media (max-width: 900px) {
+    /* Narrower viewport crops the road horizontally; the line stays centred
+       because the source was cropped symmetric about it. Serve the small file. */
+    body::before {
+        background-image:
+            var(--grain),
+            radial-gradient(130% 90% at 50% 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.62) 100%),
+            url("/images/texture/road-900.jpg");
+        background-image:
+            var(--grain),
+            radial-gradient(130% 90% at 50% 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.62) 100%),
+            image-set(
+                url("/images/texture/road-900.avif") type("image/avif"),
+                url("/images/texture/road-900.webp") type("image/webp"),
+                url("/images/texture/road-900.jpg")  type("image/jpeg")
+            );
+    }
+    /* On phones content spans the full width, so it always crosses the line.
+       Tighten the gap and firm the panel up so nothing sits on bare yellow. */
+    :root { --road-gap: 14px; }
+    .section::before { background-image: var(--grain), linear-gradient(180deg, rgba(9,9,11,.90), rgba(9,9,11,.88)); }
+    .section--alt::before { background-image: var(--grain), linear-gradient(180deg, rgba(17,17,22,.86), rgba(10,10,14,.90)); }
+}
+
+/* =====================================================================
+   HERO — cross-fading photo carousel (replaces the background video)
+   ---------------------------------------------------------------------
+   Only the first slide ships markup with a real src; the rest carry their
+   URLs in data-* and are hydrated by main.js after load. Without that, the
+   four off-screen slides would all fetch immediately (they are inside the
+   viewport, so `loading="lazy"` does not defer them) and turn a ~300KB hero
+   into a ~1.5MB one.
+   ===================================================================== */
+
+.hero-carousel { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    display: block;
+    opacity: 0;
+    transition: opacity 1.8s ease-in-out;
+    will-change: opacity;
+}
+.hero-slide.is-active { opacity: 1; }
+.hero-slide img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Slow push-in on whichever slide is showing, so a still photo still has the
+   drift the video used to give the hero. Runs for the full 30s dwell. */
+.hero-slide.is-active img { animation: hero-kenburns 32s ease-out both; }
+@keyframes hero-kenburns {
+    from { transform: scale(1.005); }
+    to   { transform: scale(1.075); }
+}
+
+/* Slide indicators, doubling as manual controls. */
+.hero-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    gap: 12px;
+}
+.hero-dot {
+    width: 34px;
+    height: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255,255,255,.28);
+    cursor: pointer;
+    transition: background .3s ease, width .3s ease;
+}
+.hero-dot:hover { background: rgba(255,255,255,.5); }
+.hero-dot[aria-selected="true"] { background: var(--gold); width: 52px; }
+.hero-dot:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 4px; }
+
+@media (max-width: 640px) {
+    .hero-dots { bottom: 22px; gap: 9px; }
+    .hero-dot { width: 26px; }
+    .hero-dot[aria-selected="true"] { width: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* No auto-advance (enforced in main.js) and no drift. Dots still switch
+       slides, just instantly. */
+    .hero-slide { transition: none; }
+    .hero-slide.is-active img { animation: none; }
+}

@@ -61,7 +61,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
     <!-- Preload Critical Assets for LCP Optimization -->
-    <link rel="preload" as="image" href="/assets/images/optimized/posters/hero-poster-1920x1080-large.avif" type="image/avif" imagesrcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.avif 480w, /assets/images/optimized/posters/hero-poster-1920x1080-tablet.avif 768w, /assets/images/optimized/posters/hero-poster-1920x1080-desktop.avif 1200w, /assets/images/optimized/posters/hero-poster-1920x1080-large.avif 1920w" imagesizes="100vw" fetchpriority="high">
+    <link rel="preload" as="image" href="/images/hero/roller-1920.avif" type="image/avif" imagesrcset="/images/hero/roller-480.avif 480w, /images/hero/roller-768.avif 768w, /images/hero/roller-1280.avif 1280w, /images/hero/roller-1920.avif 1920w" imagesizes="100vw" fetchpriority="high">
     <link rel="preload" as="style" href="styles/redesign.css">
 
     <!-- Fonts - loaded async so they never block first paint; font-display=swap
@@ -107,9 +107,14 @@
     .mobile-nav{position:fixed;top:0;right:-100%;width:min(360px,86vw);height:100vh;z-index:1200;overflow-y:auto}
     .mobile-nav-overlay{position:fixed;inset:0;z-index:1100;opacity:0;visibility:hidden}
     #hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:140px 0 90px;overflow:hidden}
-    #hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0}
-    .hero-poster{position:absolute;inset:0;width:100%;height:100%;z-index:0}
-    .hero-poster img{width:100%;height:100%;object-fit:cover}
+    /* Carousel geometry is critical: without it the five <picture> slides render
+       as in-flow blocks stacked down the page until redesign.css lands, which is
+       a full-viewport layout shift. Only slide 1 has a src, so only it can paint. */
+    .hero-carousel{position:absolute;inset:0;z-index:0;overflow:hidden}
+    .hero-slide{position:absolute;inset:0;display:block;opacity:0;transition:opacity 1.8s ease-in-out}
+    .hero-slide.is-active{opacity:1}
+    .hero-slide img{width:100%;height:100%;object-fit:cover}
+    .hero-dots{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);z-index:3;display:flex;gap:12px}
     .hero-overlay{position:absolute;inset:0;z-index:1;background:radial-gradient(1200px 600px at 15% 10%,rgba(255,192,46,.10),transparent 60%),linear-gradient(180deg,rgba(11,11,13,.66) 0%,rgba(11,11,13,.82) 55%,rgba(11,11,13,.97) 100%)}
     .hero-content{position:relative;z-index:2;max-width:760px;margin:0 auto;text-align:center}
     .hero-title{font-size:clamp(2.8rem,7vw,5.4rem);margin:0 0 20px;text-transform:uppercase;letter-spacing:-2px;font-weight:700}
@@ -167,7 +172,7 @@
                     "@id": "https://neffpaving.co/#localbusiness",
                     "name": "Neff Paving",
                     "image": [
-                        "https://neffpaving.co/assets/images/posters/hero-poster-1920x1080.jpg"
+                        "https://neffpaving.co/images/hero/roller-1920.jpg"
                     ],
                     "description": "Commercial and residential asphalt and concrete services for Central and Southeastern Ohio.",
                     "telephone": "+1-740-453-3063",
@@ -305,42 +310,64 @@
         <main>
             <!-- ============================== HERO ============================== -->
             <section id="hero">
-                <!-- Optimized hero poster with modern image formats for LCP -->
-                <picture class="hero-poster">
-                    <!-- AVIF for modern browsers (best compression) -->
-                    <source
-                        srcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.avif 480w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-tablet.avif 768w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-desktop.avif 1200w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-large.avif 1920w"
-                        sizes="100vw"
-                        type="image/avif">
+                <!-- Cross-fading photo carousel, 30s per slide. Slide 1 is the LCP
+                     element and is the only one with a real src/srcset: the other four
+                     sit inside the viewport, so `loading="lazy"` would NOT defer them
+                     and all five would fetch on load. main.js hydrates them from the
+                     data-* attributes after the page settles. With JS off, slide 1
+                     remains as a plain static hero. -->
+                <div class="hero-carousel" data-hero-carousel>
+                    <picture class="hero-slide is-active" data-hero-slide>
+                        <source srcset="/images/hero/roller-480.avif 480w, /images/hero/roller-768.avif 768w, /images/hero/roller-1280.avif 1280w, /images/hero/roller-1920.avif 1920w" sizes="100vw" type="image/avif">
+                        <source srcset="/images/hero/roller-480.webp 480w, /images/hero/roller-768.webp 768w, /images/hero/roller-1280.webp 1280w, /images/hero/roller-1920.webp 1920w" sizes="100vw" type="image/webp">
+                        <img src="/images/hero/roller-1280.jpg"
+                             srcset="/images/hero/roller-480.jpg 480w, /images/hero/roller-768.jpg 768w, /images/hero/roller-1280.jpg 1280w, /images/hero/roller-1920.jpg 1920w"
+                             sizes="100vw"
+                             alt="A road roller compacting a freshly laid asphalt surface"
+                             loading="eager" fetchpriority="high" decoding="async">
+                    </picture>
 
-                    <!-- WebP for wider browser support -->
-                    <source
-                        srcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.webp 480w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-tablet.webp 768w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-desktop.webp 1200w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-large.webp 1920w"
-                        sizes="100vw"
-                        type="image/webp">
+                    <picture class="hero-slide" data-hero-slide>
+                        <source data-srcset="/images/hero/paver-sunset-480.avif 480w, /images/hero/paver-sunset-768.avif 768w, /images/hero/paver-sunset-1280.avif 1280w, /images/hero/paver-sunset-1920.avif 1920w" sizes="100vw" type="image/avif">
+                        <source data-srcset="/images/hero/paver-sunset-480.webp 480w, /images/hero/paver-sunset-768.webp 768w, /images/hero/paver-sunset-1280.webp 1280w, /images/hero/paver-sunset-1920.webp 1920w" sizes="100vw" type="image/webp">
+                        <img data-src="/images/hero/paver-sunset-1280.jpg"
+                             data-srcset="/images/hero/paver-sunset-480.jpg 480w, /images/hero/paver-sunset-768.jpg 768w, /images/hero/paver-sunset-1280.jpg 1280w, /images/hero/paver-sunset-1920.jpg 1920w"
+                             sizes="100vw"
+                             alt="An asphalt paver laying a new road surface at sunset"
+                             decoding="async">
+                    </picture>
 
-                    <!-- JPEG fallback for older browsers -->
-                    <img
-                        src="/assets/images/posters/hero-poster-1920x1080.jpg"
-                        srcset="/assets/images/optimized/posters/hero-poster-1920x1080-mobile.jpg 480w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-tablet.jpg 768w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-desktop.jpg 1200w,
-                                /assets/images/optimized/posters/hero-poster-1920x1080-large.jpg 1920w"
-                        sizes="100vw"
-                        alt="Neff Paving asphalt paving and concrete construction"
-                        loading="eager"
-                        fetchpriority="high">
-                </picture>
+                    <picture class="hero-slide" data-hero-slide>
+                        <source data-srcset="/images/hero/dozer-dusk-480.avif 480w, /images/hero/dozer-dusk-768.avif 768w, /images/hero/dozer-dusk-1280.avif 1280w, /images/hero/dozer-dusk-1920.avif 1920w" sizes="100vw" type="image/avif">
+                        <source data-srcset="/images/hero/dozer-dusk-480.webp 480w, /images/hero/dozer-dusk-768.webp 768w, /images/hero/dozer-dusk-1280.webp 1280w, /images/hero/dozer-dusk-1920.webp 1920w" sizes="100vw" type="image/webp">
+                        <img data-src="/images/hero/dozer-dusk-1280.jpg"
+                             data-srcset="/images/hero/dozer-dusk-480.jpg 480w, /images/hero/dozer-dusk-768.jpg 768w, /images/hero/dozer-dusk-1280.jpg 1280w, /images/hero/dozer-dusk-1920.jpg 1920w"
+                             sizes="100vw"
+                             alt="A dozer grading a road base ahead of new asphalt"
+                             decoding="async">
+                    </picture>
 
-                <video id="hero-video" muted loop playsinline preload="none" poster="/assets/images/posters/hero-poster-1920x1080.jpg">
-                    <source src="/assets/videos/optimized/neff-paving-1080p.mp4" type="video/mp4">
-                </video>
+                    <picture class="hero-slide" data-hero-slide>
+                        <source data-srcset="/images/hero/crew-480.avif 480w, /images/hero/crew-768.avif 768w, /images/hero/crew-1280.avif 1280w, /images/hero/crew-1920.avif 1920w" sizes="100vw" type="image/avif">
+                        <source data-srcset="/images/hero/crew-480.webp 480w, /images/hero/crew-768.webp 768w, /images/hero/crew-1280.webp 1280w, /images/hero/crew-1920.webp 1920w" sizes="100vw" type="image/webp">
+                        <img data-src="/images/hero/crew-1280.jpg"
+                             data-srcset="/images/hero/crew-480.jpg 480w, /images/hero/crew-768.jpg 768w, /images/hero/crew-1280.jpg 1280w, /images/hero/crew-1920.jpg 1920w"
+                             sizes="100vw"
+                             alt="A site supervisor checking plans beside a freshly paved road"
+                             decoding="async">
+                    </picture>
+
+                    <picture class="hero-slide" data-hero-slide>
+                        <source data-srcset="/images/hero/grader-sunset-480.avif 480w, /images/hero/grader-sunset-768.avif 768w, /images/hero/grader-sunset-1280.avif 1280w, /images/hero/grader-sunset-1920.avif 1920w" sizes="100vw" type="image/avif">
+                        <source data-srcset="/images/hero/grader-sunset-480.webp 480w, /images/hero/grader-sunset-768.webp 768w, /images/hero/grader-sunset-1280.webp 1280w, /images/hero/grader-sunset-1920.webp 1920w" sizes="100vw" type="image/webp">
+                        <img data-src="/images/hero/grader-sunset-1280.jpg"
+                             data-srcset="/images/hero/grader-sunset-480.jpg 480w, /images/hero/grader-sunset-768.jpg 768w, /images/hero/grader-sunset-1280.jpg 1280w, /images/hero/grader-sunset-1920.jpg 1920w"
+                             sizes="100vw"
+                             alt="A motor grader silhouetted against the sunset on a grading site"
+                             decoding="async">
+                    </picture>
+                </div>
+
                 <div class="hero-overlay"></div>
                 <div class="container">
                     <div class="hero-content">
