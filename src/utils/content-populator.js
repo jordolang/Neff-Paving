@@ -115,13 +115,10 @@ export class ContentPopulator {
       }
     }
 
-    // NOTE: The hero <video> source and poster are intentionally NOT updated from
-    // content JSON. Those assets are fingerprinted by the Vite build (e.g.
-    // neff-paving-1080p.<hash>.mp4), and the markup already references the correct
-    // hashed URL. Overwriting them with the raw JSON paths
-    // (/assets/videos/optimized/neff-paving-1080p.mp4) points at files that do not
-    // exist in the production build, which 404s and leaves the hero blank. Let the
-    // build pipeline own the video/poster paths.
+    // NOTE: The hero carousel's images are intentionally NOT populated from content
+    // JSON. They live in public/, so their URLs are stable and already correct in the
+    // markup; more importantly slide 1 is the LCP element and its srcset must be in
+    // the HTML the browser parses, not written in afterwards by script.
   }
 
   /**

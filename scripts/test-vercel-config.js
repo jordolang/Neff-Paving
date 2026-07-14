@@ -103,8 +103,8 @@ class VercelConfigTester {
         const htmlContent = await fs.readFile(indexHtmlPath, 'utf8');
         
         // Test asset paths
-        const hasCorrectVideoPaths = htmlContent.includes('src="/assets/videos/');
-        this.test('Video assets use absolute paths (/assets/videos/)', hasCorrectVideoPaths);
+        const hasCorrectHeroPaths = htmlContent.includes('src="/images/hero/');
+        this.test('Hero carousel images use absolute paths (/images/hero/)', hasCorrectHeroPaths);
 
         const hasCorrectGalleryPaths = htmlContent.includes('data-src="/assets/gallery/');
         this.test('Gallery images use absolute paths (/assets/gallery/)', hasCorrectGalleryPaths);
