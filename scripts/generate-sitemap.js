@@ -12,7 +12,7 @@ const publicDir = join(projectRoot, 'dist') // Output directory
 
 // Site configuration
 const siteConfig = {
-  baseUrl: 'https://neff-paving.com', // Replace with actual domain
+  baseUrl: 'https://neffpaving.com',
   defaultChangeFreq: 'monthly',
   defaultPriority: '0.7'
 }
@@ -226,7 +226,7 @@ function generateStructuredData() {
         "description": "Professional paving contractor specializing in residential driveways, commercial parking lots, and maintenance services.",
         "priceRange": "$$",
         "telephone": "+1-740-453-3063",
-        "email": "neffpaving@gmail.com",
+        "email": "neffpavingzanesville@gmail.com",
         "url": siteConfig.baseUrl,
         "address": {
           "@type": "PostalAddress", 
@@ -439,7 +439,7 @@ function generateMetaTags() {
 <meta name="business:contact_data:postal_code" content="43701">
 <meta name="business:contact_data:country_name" content="United States">
 <meta name="business:contact_data:phone_number" content="+1-740-453-3063">
-<meta name="business:contact_data:email" content="neffpaving@gmail.com">
+<meta name="business:contact_data:email" content="neffpavingzanesville@gmail.com">
 
 <!-- Theme Color -->
 <meta name="theme-color" content="#2C2C2C">

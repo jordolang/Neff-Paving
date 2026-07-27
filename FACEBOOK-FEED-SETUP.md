@@ -2,7 +2,7 @@
 
 The owner posts photos to the **"Website Feed"** album on the Neff Paving & Concrete
 Facebook Page from his phone. Once a day, a GitHub Action pulls any new photos,
-optimizes them, and publishes them to the gallery on neffpaving.co — they appear on
+optimizes them, and publishes them to the gallery on neffpaving.com — they appear on
 the site within ~24 hours with **no further action required** from him.
 
 This is a **two-way sync**: a photo deleted from the album is also removed from the site.

@@ -5,7 +5,7 @@
  * Facebook Page, downloads + optimizes any new ones into the local gallery, and
  * regenerates the gallery manifest. Designed to run unattended on a daily
  * GitHub Actions schedule so the business owner can post photos from his phone
- * and have them appear on neffpaving.co within 24 hours.
+ * and have them appear on neffpaving.com within 24 hours.
  *
  * Two-way sync: photos removed from the album are also removed from the site.
  *

@@ -10,7 +10,7 @@ import { BASE_URL, createUrl } from './base-url.js';
  */
 const DEFAULT_META = {
   siteName: 'Neff Paving',
-  siteUrl: 'https://neffpaving.co',
+  siteUrl: 'https://neffpaving.com',
   themeColor: '#0e1117',
   tileColor: '#0e1117',
   locale: 'en_US',
@@ -18,7 +18,7 @@ const DEFAULT_META = {
   author: 'Neff Paving',
   business: {
     phone: '+1-740-453-3063',
-    email: 'neffpaving@gmail.com',
+    email: 'neffpavingzanesville@gmail.com',
     region: 'US',
     placename: 'Zanesville, Ohio'
   }
@@ -302,7 +302,7 @@ export function generateLocalBusinessSchema(options = {}) {
     description = 'Professional paving contractor specializing in residential driveways, commercial parking lots, and maintenance services. Your Road. Our Reputation.',
     slogan = 'Built on Quality. Driven by Pride.',
     phone = '+1-740-453-3063',
-    email = 'neffpaving@gmail.com',
+    email = 'neffpavingzanesville@gmail.com',
     address = {
       streetAddress: '6575 W Pike',
       addressLocality: 'Zanesville',

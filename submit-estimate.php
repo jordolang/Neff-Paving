@@ -92,11 +92,11 @@ try {
     $emailBody .= "User Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n\n";
     
     $emailBody .= "Please contact the customer within 24 hours to provide a detailed quote.\n";
-    $emailBody .= "For questions, call (740) 453-3063 or email sales@neffpaving.com";
+    $emailBody .= "For questions, call (740) 453-3063 or email neffpavingzanesville@gmail.com";
 
     // Email settings
-    $to = "estimates@neffpaving.com";
-    $headers = "From: noreply@neffpaving.com\r\n";
+    $to = "neffpavingzanesville@gmail.com";
+    $headers = "From: neffpavingzanesville@gmail.com\r\n";
     $headers .= "Reply-To: " . $customerEmail . "\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
     
@@ -150,10 +150,10 @@ try {
         $customerMessage .= "The Neff Paving Team\n";
         $customerMessage .= "6575 West Pike, Zanesville, OH 43701\n";
         $customerMessage .= "Phone: (740) 453-3063\n";
-        $customerMessage .= "Email: sales@neffpaving.com";
+        $customerMessage .= "Email: neffpavingzanesville@gmail.com";
 
-        $customerHeaders = "From: sales@neffpaving.com\r\n";
-        $customerHeaders .= "Reply-To: sales@neffpaving.com\r\n";
+        $customerHeaders = "From: neffpavingzanesville@gmail.com\r\n";
+        $customerHeaders .= "Reply-To: neffpavingzanesville@gmail.com\r\n";
         $customerHeaders .= "Content-Type: text/plain; charset=UTF-8\r\n";
         
         mail($customerEmail, $customerSubject, $customerMessage, $customerHeaders);

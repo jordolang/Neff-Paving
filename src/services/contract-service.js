@@ -6,7 +6,7 @@ export class ContractService {
       name: 'Neff Paving Company',
       address: '123 Main Street, Anytown, ST 12345',
       phone: '(555) 123-4567',
-      email: 'info@neffpaving.com',
+      email: 'neffpavingzanesville@gmail.com',
       license: 'Contractor License #12345',
       website: 'www.neffpaving.com'
     };
