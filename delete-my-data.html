@@ -255,7 +255,7 @@
 
     <script>
         /* =================================================================
-           Data deletion request — emails the request via FormSubmit.co
+           Data deletion request — posts to /api/send-form, which emails the office
            (no API key needed), mirroring the estimate form.
            ================================================================= */
         const FORM_EMAIL = "neffpavingzanesville@gmail.com";
@@ -310,28 +310,23 @@
             btn.disabled = true;
             btn.textContent = "Sending…";
 
-            const payload = {
-                _subject: "Data deletion request — " + data.name,
-                _template: "table",
-                _captcha: "false",
-                ...data,
-            };
+            const subject = "Data deletion request — " + data.name;
 
             try {
-                const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(FORM_EMAIL), {
+                const res = await fetch("/api/send-form", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify({ form: "delete-my-data", ...data }),
                 });
-                const out = await res.json();
-                if (res.ok && (out.success === true || out.success === "true")) {
+                const out = await res.json().catch(() => ({}));
+                if (res.ok && out.ok === true) {
                     showStatus("Your deletion request has been received. We'll process it within 30 days and email you to confirm.", true);
                     form.reset();
                 } else {
-                    showSendFailure(payload._subject, data);
+                    showSendFailure(subject, data);
                 }
             } catch (err) {
-                showSendFailure(payload._subject, data);
+                showSendFailure(subject, data);
             } finally {
                 btn.disabled = false;
                 btn.textContent = original;

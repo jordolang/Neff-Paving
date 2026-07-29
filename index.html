@@ -841,7 +841,8 @@
 
     <!-- Contact Form Handler -->
     <script>
-        // Submissions are emailed here via FormSubmit.co (no API key needed).
+        // Submissions go to /api/send-form, which emails the office. This address
+        // is only used for the fallback link if that send fails.
         const FORM_EMAIL = "neffpavingzanesville@gmail.com";
 
         /* If the send fails, hand the visitor a pre-addressed email containing
@@ -881,18 +882,13 @@
                     btn.disabled = true;
                     btn.textContent = 'Sending…';
                     try {
-                        const res = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORM_EMAIL), {
+                        const res = await fetch('/api/send-form', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                            body: JSON.stringify({
-                                _subject: 'Website contact — ' + data.name,
-                                _template: 'table',
-                                _captcha: 'false',
-                                ...data
-                            })
+                            body: JSON.stringify({ form: 'contact', ...data })
                         });
-                        const out = await res.json();
-                        if (res.ok && (out.success === true || out.success === 'true')) {
+                        const out = await res.json().catch(() => ({}));
+                        if (res.ok && out.ok === true) {
                             showContactStatus('Thank you for contacting us. We will be in touch.', true);
                             contactForm.reset();
                         } else {

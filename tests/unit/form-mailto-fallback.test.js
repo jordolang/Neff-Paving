@@ -1,18 +1,20 @@
 /**
- * The site's four forms post to a third-party backend that can reject a
- * submission at any time — it silently did exactly that for two days after the
- * domain moved. When that happens the visitor must still be handed a way to
- * reach us, carrying everything they typed, rather than a dead end.
+ * The forms post to /api/send-form, which can fail: a missing API key, an
+ * unverified sending domain, a provider outage. The previous backend failed
+ * exactly that way for two days and left visitors at a dead end. When a send
+ * fails the visitor must still be handed a way to reach us, carrying
+ * everything they typed.
  *
  * These tests drive each real page's markup and inline handler under a stubbed
- * fetch that returns FormSubmit's actual rejection payload.
+ * fetch returning the endpoint's failure response.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
 const ROOT = join(__dirname, '..', '..')
-const REJECTION = { success: 'false', message: 'This form needs Activation.' }
+// what /api/send-form returns when the send could not be completed
+const REJECTION = { ok: false, error: 'Could not send the message' }
 
 /** Load a page's markup + its classic inline scripts into the current DOM. */
 function loadPage (file) {
@@ -111,7 +113,7 @@ describe('form fallback when the send is rejected', () => {
     })
   }
 
-  it('does not leak FormSubmit control fields into the email body', async () => {
+  it('does not leak internal fields into the email body', async () => {
     loadPage('estimate-form.html')
     fill({ name: 'Pat Olsen', phone: '740-555-0111', email: 'pat@example.com' })
     await submitAndFlush('estimate-form')
@@ -119,14 +121,14 @@ describe('form fallback when the send is rejected', () => {
     const href = decodeURIComponent(
       document.getElementById('form-status').querySelector('a[href^="mailto:"]').getAttribute('href')
     )
-    expect(href).not.toContain('_template')
-    expect(href).not.toContain('_captcha')
+    expect(href).not.toContain('_gotcha')
+    expect(href).not.toContain('form:')
   })
 
   it('still succeeds normally when the backend accepts the submission', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ success: 'true' })
+      json: async () => ({ ok: true, id: 'email_123' })
     }))
     loadPage('estimate-form.html')
     fill({ name: 'Pat Olsen', phone: '740-555-0111', email: 'pat@example.com' })

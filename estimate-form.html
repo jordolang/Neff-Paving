@@ -436,7 +436,8 @@
         /* =================================================================
            CONFIG
            ================================================================= */
-        // Estimate requests are emailed here via FormSubmit.co (no API key needed).
+        // Requests go to /api/send-form, which emails the office. This address is
+        // only used for the fallback link if that send fails.
         const FORM_EMAIL = "neffpavingzanesville@gmail.com";
 
         // Map starting view (Zanesville, OH). Searching an address recenters it.
@@ -446,7 +447,7 @@
         const el = id => document.getElementById(id);
 
         /* =================================================================
-           Submission — emails the request via FormSubmit.co (no key needed)
+           Submission — posts to /api/send-form, which emails the office
            ================================================================= */
         const form = el("estimate-form");
         const statusEl = el("form-status");
@@ -491,29 +492,23 @@
             btn.disabled = true;
             btn.textContent = "Sending…";
 
-            // FormSubmit control fields + a clean subject line.
-            const payload = {
-                _subject: "New estimate request — " + data.name,
-                _template: "table",
-                _captcha: "false",
-                ...data,
-            };
+            const subject = "New estimate request — " + data.name;
 
             try {
-                const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(FORM_EMAIL), {
+                const res = await fetch("/api/send-form", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify({ form: "estimate", ...data }),
                 });
-                const out = await res.json();
-                if (res.ok && (out.success === true || out.success === "true")) {
+                const out = await res.json().catch(() => ({}));
+                if (res.ok && out.ok === true) {
                     showStatus("Thank you! Your estimate request has been sent. We'll be in touch to schedule your on-site estimate.", true);
                     form.reset();
                 } else {
-                    showSendFailure(payload._subject, data);
+                    showSendFailure(subject, data);
                 }
             } catch (err) {
-                showSendFailure(payload._subject, data);
+                showSendFailure(subject, data);
             } finally {
                 btn.disabled = false;
                 btn.textContent = original;
