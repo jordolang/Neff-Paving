@@ -14,9 +14,14 @@
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
 const SEND_TIMEOUT_MS = 10000;
 
-// Verified sending domain (Resend) — not where replies go.
-const FROM = 'Neff Paving Website <forms@neffpaving.com>';
-const TO = 'neffpavingzanesville@gmail.com';
+/**
+ * Sender must be on a domain verified with Resend — not where replies go.
+ * Overridable so delivery can start on Resend's shared sender (which only
+ * reaches the account owner's own address) before neffpaving.com DNS is
+ * verified, without a code change.
+ */
+const FROM = process.env.FORM_FROM_EMAIL || 'Neff Paving Website <forms@neffpaving.com>';
+const TO = process.env.FORM_TO_EMAIL || 'neffpavingzanesville@gmail.com';
 
 // Every form on the site, so an unknown `form` value can't be used to send
 // arbitrary mail through this endpoint.
