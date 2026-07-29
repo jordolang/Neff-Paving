@@ -840,6 +840,9 @@
 
     <!-- Contact Form Handler -->
     <script>
+        // Submissions are emailed here via FormSubmit.co (no API key needed).
+        const FORM_EMAIL = "neffpavingzanesville@gmail.com";
+
         document.addEventListener('DOMContentLoaded', function () {
             const contactForm = document.getElementById('contact-form');
             if (contactForm) {
@@ -851,7 +854,7 @@
                     btn.disabled = true;
                     btn.textContent = 'Sending…';
                     try {
-                        const res = await fetch('https://formsubmit.co/ajax/neffpaving%40gmail.com', {
+                        const res = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(FORM_EMAIL), {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                             body: JSON.stringify({
