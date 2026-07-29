@@ -51,50 +51,50 @@ const pages = [
   },
   // Service landing pages
   {
-    url: '/services/residential-asphalt.html',
+    url: '/services/residential-asphalt',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   {
-    url: '/services/commercial-asphalt.html',
+    url: '/services/commercial-asphalt',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   {
-    url: '/services/concrete-solutions.html',
+    url: '/services/concrete-solutions',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   {
-    url: '/services/maintenance.html',
+    url: '/services/maintenance',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   // Area landing pages
   {
-    url: '/areas/columbus-paving.html',
+    url: '/areas/columbus-paving',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   {
-    url: '/areas/zanesville-paving.html',
+    url: '/areas/zanesville-paving',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   {
-    url: '/areas/newark-paving.html',
+    url: '/areas/newark-paving',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
   },
   {
-    url: '/areas/lancaster-paving.html',
+    url: '/areas/lancaster-paving',
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]

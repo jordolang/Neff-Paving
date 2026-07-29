@@ -572,23 +572,23 @@ export default defineConfig(({ mode }) => {
         // Define all public pages (excluding 404)
         const pages = [
           { path: '', priority: '1.0', changefreq: 'weekly' },
-          { path: 'estimate-form.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'terms.html', priority: '0.3', changefreq: 'yearly' },
-          { path: 'privacy.html', priority: '0.3', changefreq: 'yearly' },
-          { path: 'data-protection.html', priority: '0.3', changefreq: 'yearly' },
-          { path: 'returns.html', priority: '0.3', changefreq: 'yearly' },
-          { path: 'delete-my-data.html', priority: '0.3', changefreq: 'yearly' },
-          { path: 'developer.html', priority: '0.4', changefreq: 'monthly' },
+          { path: 'estimate-form', priority: '0.9', changefreq: 'monthly' },
+          { path: 'terms', priority: '0.3', changefreq: 'yearly' },
+          { path: 'privacy', priority: '0.3', changefreq: 'yearly' },
+          { path: 'data-protection', priority: '0.3', changefreq: 'yearly' },
+          { path: 'returns', priority: '0.3', changefreq: 'yearly' },
+          { path: 'delete-my-data', priority: '0.3', changefreq: 'yearly' },
+          { path: 'developer', priority: '0.4', changefreq: 'monthly' },
           // Service landing pages
-          { path: 'services/residential-asphalt.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'services/commercial-asphalt.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'services/concrete-solutions.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'services/maintenance.html', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/residential-asphalt', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/commercial-asphalt', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/concrete-solutions', priority: '0.9', changefreq: 'monthly' },
+          { path: 'services/maintenance', priority: '0.9', changefreq: 'monthly' },
           // Area landing pages
-          { path: 'areas/columbus-paving.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'areas/zanesville-paving.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'areas/newark-paving.html', priority: '0.9', changefreq: 'monthly' },
-          { path: 'areas/lancaster-paving.html', priority: '0.9', changefreq: 'monthly' }
+          { path: 'areas/columbus-paving', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/zanesville-paving', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/newark-paving', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/lancaster-paving', priority: '0.9', changefreq: 'monthly' }
         ];
 
         // Generate sitemap XML
