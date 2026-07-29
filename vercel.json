@@ -9,6 +9,19 @@
   },
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "^(www\\.)?neffpaving\\.co$"
+        }
+      ],
+      "destination": "https://www.neffpaving.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/_vercel/speed-insights/script.js",
