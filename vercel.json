@@ -11,14 +11,14 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "^(www\\.)?neffpaving\\.co$"
         }
       ],
-      "destination": "https://www.neffpaving.com/:path*",
+      "destination": "https://www.neffpaving.com/$1",
       "permanent": true
     }
   ],
