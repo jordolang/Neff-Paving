@@ -456,6 +456,27 @@
             statusEl.className = "form-status show " + (ok ? "ok" : "err");
         }
 
+        /* If the send fails for any reason, don't strand the request behind an
+           error message — hand the visitor a pre-addressed email containing
+           everything they typed, so the lead still reaches us. */
+        function mailtoHref(subject, data) {
+            const body = Object.entries(data)
+                .filter(([k, v]) => !k.startsWith("_") && v)
+                .map(([k, v]) => k.replace(/_/g, " ") + ": " + v)
+                .join("\n");
+            return "mailto:" + FORM_EMAIL
+                + "?subject=" + encodeURIComponent(subject)
+                + "&body=" + encodeURIComponent(body.slice(0, 1500));
+        }
+
+        function showSendFailure(subject, data) {
+            statusEl.innerHTML = "We couldn't send that automatically. "
+                + '<a href="' + mailtoHref(subject, data) + '">Send it from your email app instead</a>'
+                + " — everything you typed is already filled in. Or call "
+                + '<a href="tel:7404533063">(740) 453-3063</a>.';
+            statusEl.className = "form-status show err";
+        }
+
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
@@ -489,10 +510,10 @@
                     showStatus("Thank you! Your estimate request has been sent. We'll be in touch to schedule your on-site estimate.", true);
                     form.reset();
                 } else {
-                    showStatus("We couldn't send that automatically. Please call (740) 453-3063 or email neffpavingzanesville@gmail.com.", false);
+                    showSendFailure(payload._subject, data);
                 }
             } catch (err) {
-                showStatus("Network error. Please call (740) 453-3063 or email neffpavingzanesville@gmail.com.", false);
+                showSendFailure(payload._subject, data);
             } finally {
                 btn.disabled = false;
                 btn.textContent = original;

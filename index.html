@@ -757,6 +757,7 @@
                                     <textarea id="message" name="message" rows="4" placeholder="Tell us about your project..."></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-large">Submit</button>
+                                <div class="form-status" id="contact-form-status" role="status" aria-live="polite"></div>
                             </form>
                         </div>
                     </div>
@@ -843,6 +844,32 @@
         // Submissions are emailed here via FormSubmit.co (no API key needed).
         const FORM_EMAIL = "neffpavingzanesville@gmail.com";
 
+        /* If the send fails, hand the visitor a pre-addressed email containing
+           everything they typed, so the message still reaches us rather than
+           dying in an alert box. */
+        function mailtoHref(subject, data) {
+            const body = Object.entries(data)
+                .filter(([k, v]) => !k.startsWith('_') && v)
+                .map(([k, v]) => k.replace(/_/g, ' ') + ': ' + v)
+                .join('\n');
+            return 'mailto:' + FORM_EMAIL
+                + '?subject=' + encodeURIComponent(subject)
+                + '&body=' + encodeURIComponent(body.slice(0, 1500));
+        }
+
+        function showContactStatus(html, ok) {
+            const s = document.getElementById('contact-form-status');
+            s.innerHTML = html;
+            s.className = 'form-status show ' + (ok ? 'ok' : 'err');
+        }
+
+        function showSendFailure(data) {
+            showContactStatus("We couldn't send that automatically. "
+                + '<a href="' + mailtoHref('Website contact — ' + data.name, data) + '">Send it from your email app instead</a>'
+                + ' — everything you typed is already filled in. Or call '
+                + '<a href="tel:7404533063">(740) 453-3063</a>.', false);
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const contactForm = document.getElementById('contact-form');
             if (contactForm) {
@@ -866,13 +893,13 @@
                         });
                         const out = await res.json();
                         if (res.ok && (out.success === true || out.success === 'true')) {
-                            alert('Thank you for contacting us. We will be in touch.');
+                            showContactStatus('Thank you for contacting us. We will be in touch.', true);
                             contactForm.reset();
                         } else {
-                            alert('We could not send your message. Please call (740) 453-3063 or email neffpavingzanesville@gmail.com.');
+                            showSendFailure(data);
                         }
                     } catch (err) {
-                        alert('Network error. Please call (740) 453-3063 or email neffpavingzanesville@gmail.com.');
+                        showSendFailure(data);
                     } finally {
                         btn.disabled = false;
                         btn.textContent = original;

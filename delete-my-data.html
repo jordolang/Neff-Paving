@@ -266,6 +266,28 @@
             s.className = 'form-status show ' + (ok ? 'ok' : 'err');
         }
 
+        /* A failed send must not silently drop a data-deletion request, which
+           carries a legal response window — fall back to a pre-addressed email
+           holding everything the requester typed. */
+        function mailtoHref(subject, data) {
+            const body = Object.entries(data)
+                .filter(([k, v]) => !k.startsWith("_") && v)
+                .map(([k, v]) => k.replace(/_/g, " ") + ": " + v)
+                .join("\n");
+            return "mailto:" + FORM_EMAIL
+                + "?subject=" + encodeURIComponent(subject)
+                + "&body=" + encodeURIComponent(body.slice(0, 1500));
+        }
+
+        function showSendFailure(subject, data) {
+            const s = document.getElementById('form-status');
+            s.innerHTML = "We couldn't send that automatically. "
+                + '<a href="' + mailtoHref(subject, data) + '">Send it from your email app instead</a>'
+                + " — everything you typed is already filled in. Or call "
+                + '<a href="tel:7404533063">(740) 453-3063</a>.';
+            s.className = 'form-status show err';
+        }
+
         const form = document.getElementById("delete-form");
 
         form.addEventListener("submit", async (e) => {
@@ -306,10 +328,10 @@
                     showStatus("Your deletion request has been received. We'll process it within 30 days and email you to confirm.", true);
                     form.reset();
                 } else {
-                    showStatus("We couldn't send that automatically. Please email neffpavingzanesville@gmail.com or call (740) 453-3063.", false);
+                    showSendFailure(payload._subject, data);
                 }
             } catch (err) {
-                showStatus("Network error. Please email neffpavingzanesville@gmail.com or call (740) 453-3063.", false);
+                showSendFailure(payload._subject, data);
             } finally {
                 btn.disabled = false;
                 btn.textContent = original;

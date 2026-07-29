@@ -521,6 +521,28 @@
             statusEl.className = "form-status show " + (ok ? "ok" : "err");
         }
 
+        /* If the send fails, hand the applicant a pre-addressed email holding
+           everything they typed so the application still reaches us. A mailto:
+           cannot carry the resume file, so the body asks them to attach it. */
+        function mailtoHref(subject, data, needsResume) {
+            let body = Object.entries(data)
+                .filter(([k, v]) => !k.startsWith("_") && v && k !== "resume")
+                .map(([k, v]) => k.replace(/_/g, " ") + ": " + v)
+                .join("\n");
+            if (needsResume) body += "\n\n(Please attach your resume to this email.)";
+            return "mailto:" + FORM_EMAIL
+                + "?subject=" + encodeURIComponent(subject)
+                + "&body=" + encodeURIComponent(body.slice(0, 1500));
+        }
+
+        function showSendFailure(subject, data, needsResume) {
+            statusEl.innerHTML = "We couldn't send that automatically. "
+                + '<a href="' + mailtoHref(subject, data, needsResume) + '">Send it from your email app instead</a>'
+                + " — everything you typed is already filled in. Or call "
+                + '<a href="tel:7404533063">(740) 453-3063</a>.';
+            statusEl.className = "form-status show err";
+        }
+
         const MAX_RESUME_BYTES = 10 * 1024 * 1024; // FormSubmit's cumulative attachment cap
 
         form.addEventListener("submit", async (e) => {
@@ -594,10 +616,10 @@
                     showStatus("Thank you! Your application" + (resume ? " and resume have" : " has") + " been received. We'll contact you about current openings.", true);
                     form.reset();
                 } else {
-                    showStatus("We couldn't send that automatically. Please call (740) 453-3063 or email neffpavingzanesville@gmail.com.", false);
+                    showSendFailure("Employment application — " + data.name, data, !!resume);
                 }
             } catch (err) {
-                showStatus("Network error. Please call (740) 453-3063 or email neffpavingzanesville@gmail.com.", false);
+                showSendFailure("Employment application — " + data.name, data, !!resume);
             }
             finally {
                 btn.disabled = false;
