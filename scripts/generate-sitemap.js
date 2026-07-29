@@ -12,7 +12,7 @@ const publicDir = join(projectRoot, 'dist') // Output directory
 
 // Site configuration
 const siteConfig = {
-  baseUrl: 'https://neffpaving.com',
+  baseUrl: 'https://www.neffpaving.com',
   defaultChangeFreq: 'monthly',
   defaultPriority: '0.7'
 }

@@ -46,7 +46,7 @@ npm run build:optimized
 npm run verify:build
 
 # Test deployed application
-npm run test:deployment --url https://neffpaving.com
+npm run test:deployment --url https://www.neffpaving.com
 ```
 
 ### CI/CD Integration

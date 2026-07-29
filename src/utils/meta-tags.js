@@ -10,7 +10,7 @@ import { BASE_URL, createUrl } from './base-url.js';
  */
 const DEFAULT_META = {
   siteName: 'Neff Paving',
-  siteUrl: 'https://neffpaving.com',
+  siteUrl: 'https://www.neffpaving.com',
   themeColor: '#0e1117',
   tileColor: '#0e1117',
   locale: 'en_US',

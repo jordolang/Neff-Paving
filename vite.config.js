@@ -558,12 +558,12 @@ export default defineConfig(({ mode }) => {
         const getSiteUrl = () => {
           if (mode === 'vercel' || process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
             // For Vercel, use production domain
-            return 'https://neffpaving.com';
+            return 'https://www.neffpaving.com';
           }
           if (mode === 'github') {
             return 'https://neffpaving.github.io/Neff-Paving';
           }
-          return 'https://neffpaving.com';
+          return 'https://www.neffpaving.com';
         };
 
         const siteUrl = getSiteUrl();
@@ -619,12 +619,12 @@ ${pages.map(page => `  <url>
         // Determine the sitemap URL based on deployment mode
         const getSitemapUrl = () => {
           if (mode === 'vercel' || process.env.VERCEL === '1' || process.env.VERCEL_ENV) {
-            return 'https://neffpaving.com/sitemap.xml';
+            return 'https://www.neffpaving.com/sitemap.xml';
           }
           if (mode === 'github') {
             return 'https://neffpaving.github.io/Neff-Paving/sitemap.xml';
           }
-          return 'https://neffpaving.com/sitemap.xml';
+          return 'https://www.neffpaving.com/sitemap.xml';
         };
 
         const sitemapUrl = getSitemapUrl();
