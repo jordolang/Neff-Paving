@@ -18,6 +18,7 @@ const PAGES = [
   { path: './areas/zanesville-paving.html', name: 'Zanesville Paving' },
   { path: './areas/newark-paving.html', name: 'Newark Paving' },
   { path: './areas/lancaster-paving.html', name: 'Lancaster Paving' },
+  { path: './areas/cambridge-paving.html', name: 'Cambridge Paving' },
 ];
 
 /**
@@ -116,6 +117,12 @@ function checkKeywordOptimization(page, meta) {
   if (page.path.includes('lancaster-paving')) {
     if (!meta.title?.toLowerCase().includes('lancaster')) {
       warnings.push('Missing "Lancaster" in title');
+    }
+  }
+
+  if (page.path.includes('cambridge-paving')) {
+    if (!meta.title?.toLowerCase().includes('cambridge')) {
+      warnings.push('Missing "Cambridge" in title');
     }
   }
 
