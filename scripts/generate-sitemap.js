@@ -98,6 +98,12 @@ const pages = [
     changeFreq: 'monthly',
     priority: '0.9',
     lastMod: new Date().toISOString().split('T')[0]
+  },
+  {
+    url: '/areas/cambridge-paving',
+    changeFreq: 'monthly',
+    priority: '0.9',
+    lastMod: new Date().toISOString().split('T')[0]
   }
 ]
 

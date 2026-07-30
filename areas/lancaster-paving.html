@@ -31,7 +31,9 @@
 
     <!-- Local Business Meta -->
     <meta name="geo.region" content="US-OH">
-    <meta name="geo.placename" content="Zanesville, Ohio">
+    <meta name="geo.placename" content="Lancaster, Ohio">
+    <meta name="geo.position" content="39.7137;-82.5993">
+    <meta name="ICBM" content="39.7137, -82.5993">
     <meta name="theme-color" content="#0e1117">
 
     <link rel="canonical" href="https://www.neffpaving.com/areas/lancaster-paving">
@@ -54,56 +56,111 @@
     <script type="application/ld+json">
         {
           "@context": "https://schema.org",
-          "@type": "LocalBusiness",
-          "name": "Neff Paving — Lancaster, OH",
-          "description": "Asphalt paving and concrete contractor serving Lancaster and Fairfield County, Ohio.",
-          "url": "https://www.neffpaving.com/areas/lancaster-paving",
-          "telephone": "+1-740-548-7014",
-          "areaServed": [
+          "@graph": [
             {
-              "@type": "City",
-              "name": "Lancaster"
+              "@type": "LocalBusiness",
+              "@id": "https://www.neffpaving.com/areas/lancaster-paving#business",
+              "name": "Neff Paving — Lancaster, OH",
+              "description": "Asphalt paving, concrete, and sealcoating contractor serving Lancaster and Fairfield County, Ohio. Family-owned and ODOT Certified since 1999.",
+              "url": "https://www.neffpaving.com/areas/lancaster-paving",
+              "telephone": "+1-740-548-7014",
+              "email": "neffpavingzanesville@gmail.com",
+              "image": "https://www.neffpaving.com/opengraph-image.png",
+              "priceRange": "$",
+              "foundingDate": "1999",
+              "parentOrganization": {
+                "@type": "Organization",
+                "name": "Neff Paving",
+                "url": "https://www.neffpaving.com/"
+              },
+              "areaServed": [
+                { "@type": "City", "name": "Lancaster" },
+                { "@type": "AdministrativeArea", "name": "Fairfield County" },
+                { "@type": "City", "name": "Pickerington" },
+                { "@type": "City", "name": "Baltimore" },
+                { "@type": "City", "name": "Carroll" },
+                { "@type": "City", "name": "Amanda" },
+                { "@type": "City", "name": "Sugar Grove" },
+                { "@type": "City", "name": "Bremen" },
+                { "@type": "City", "name": "Canal Winchester" }
+              ],
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "1847 Brice Road",
+                "addressLocality": "Reynoldsburg",
+                "addressRegion": "OH",
+                "postalCode": "43068",
+                "addressCountry": "US"
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": "39.9540",
+                "longitude": "-82.8140"
+              },
+              "openingHoursSpecification": [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  "opens": "07:00",
+                  "closes": "19:00"
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": "Saturday",
+                  "opens": "08:00",
+                  "closes": "16:00"
+                }
+              ],
+              "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Paving & Concrete Services in Lancaster, OH",
+                "itemListElement": [
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Residential Asphalt Paving" } },
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Commercial Asphalt & Parking Lots" } },
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Concrete Flatwork, Sidewalks & Curbs" } },
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Sealcoating & Asphalt Maintenance" } }
+                ]
+              },
+              "sameAs": [
+                "https://www.facebook.com/neffpaving"
+              ]
             },
             {
-              "@type": "City",
-              "name": "Fairfield County"
+              "@type": "BreadcrumbList",
+              "@id": "https://www.neffpaving.com/areas/lancaster-paving#breadcrumbs",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.neffpaving.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Service Areas", "item": "https://www.neffpaving.com/#service-areas" },
+                { "@type": "ListItem", "position": 3, "name": "Lancaster, OH", "item": "https://www.neffpaving.com/areas/lancaster-paving" }
+              ]
             },
             {
-              "@type": "City",
-              "name": "Pickerington"
-            },
-            {
-              "@type": "City",
-              "name": "Baltimore"
-            },
-            {
-              "@type": "City",
-              "name": "Carroll"
-            },
-            {
-              "@type": "City",
-              "name": "Amanda"
-            },
-            {
-              "@type": "City",
-              "name": "Sugar Grove"
-            },
-            {
-              "@type": "City",
-              "name": "Bremen"
-            },
-            {
-              "@type": "City",
-              "name": "Canal Winchester"
+              "@type": "FAQPage",
+              "@id": "https://www.neffpaving.com/areas/lancaster-paving#faq",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "Does Neff Paving serve Lancaster, Ohio?",
+                  "acceptedAnswer": { "@type": "Answer", "text": "Yes. Neff Paving serves Lancaster and all of Fairfield County, including Pickerington, Baltimore, Carroll, Amanda, Sugar Grove, Bremen, and Canal Winchester. Our crews run down US-33 from our Reynoldsburg base, so Lancaster is a short, familiar trip for our trucks and equipment." }
+                },
+                {
+                  "@type": "Question",
+                  "name": "How much does it cost to pave a driveway in Lancaster, OH?",
+                  "acceptedAnswer": { "@type": "Answer", "text": "Every Lancaster driveway is priced after a free on-site estimate. Cost depends on square footage, the condition of the base, drainage, and whether it is a new install or a resurface. Call (740) 548-7014 or request an estimate online and we will measure the job and give you a firm, itemized price with no pressure." }
+                },
+                {
+                  "@type": "Question",
+                  "name": "When is the best time of year to pave in Lancaster?",
+                  "acceptedAnswer": { "@type": "Answer", "text": "Hot-mix asphalt lays and compacts best when ground and air temperatures stay above roughly 50°F, so late spring through early fall is ideal in Fairfield County. We schedule Lancaster projects around Ohio's freeze-thaw cycle and can book early to hold your spot for the paving season." }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Are you licensed and insured to work in Lancaster?",
+                  "acceptedAnswer": { "@type": "Answer", "text": "Yes. Neff Paving is ODOT Certified, fully insured and bonded, and HSE Certified. We have been family-owned and operated since 1999 with 40+ years in construction, and we bring the same materials, equipment, and standards to every Lancaster residential and commercial job." }
+                }
+              ]
             }
-          ],
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "1847 Brice Road",
-            "addressLocality": "Reynoldsburg",
-            "addressRegion": "OH",
-            "addressCountry": "US"
-          }
+          ]
         }
     </script>
 </head>
@@ -297,6 +354,32 @@
                     </div>
                 </div>
             </section>
+            <section class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="eyebrow">Lancaster Paving FAQ</span>
+                        <h2>Common Questions from Lancaster Homeowners &amp; Businesses</h2>
+                    </div>
+                    <div class="faq-list">
+                        <details class="faq-item">
+                            <summary>Does Neff Paving serve Lancaster, Ohio?</summary>
+                            <p>Yes. Neff Paving serves Lancaster and all of Fairfield County, including Pickerington, Baltimore, Carroll, Amanda, Sugar Grove, Bremen, and Canal Winchester. Our crews run down US-33 from our Reynoldsburg base, so Lancaster is a short, familiar trip for our trucks and equipment.</p>
+                        </details>
+                        <details class="faq-item">
+                            <summary>How much does it cost to pave a driveway in Lancaster, OH?</summary>
+                            <p>Every Lancaster driveway is priced after a free on-site estimate. Cost depends on square footage, the condition of the base, drainage, and whether it is a new install or a resurface. Call <a href="tel:7405487014">(740) 548-7014</a> or <a href="../estimate-form.html">request an estimate online</a> and we will measure the job and give you a firm, itemized price with no pressure.</p>
+                        </details>
+                        <details class="faq-item">
+                            <summary>When is the best time of year to pave in Lancaster?</summary>
+                            <p>Hot-mix asphalt lays and compacts best when ground and air temperatures stay above roughly 50°F, so late spring through early fall is ideal in Fairfield County. We schedule Lancaster projects around Ohio's freeze-thaw cycle and can book early to hold your spot for the paving season.</p>
+                        </details>
+                        <details class="faq-item">
+                            <summary>Are you licensed and insured to work in Lancaster?</summary>
+                            <p>Yes. Neff Paving is ODOT Certified, fully insured and bonded, and HSE Certified. We have been family-owned and operated since 1999 with 40+ years in construction, and we bring the same materials, equipment, and standards to every Lancaster residential and commercial job.</p>
+                        </details>
+                    </div>
+                </div>
+            </section>
 
         <section class="cta-band">
             <div class="container">
@@ -365,7 +448,7 @@
 
                     <div class="footer-arealinks">
                         <p><strong>Services</strong><a href="../services/residential-asphalt.html">Residential Asphalt</a> &middot; <a href="../services/commercial-asphalt.html">Commercial Asphalt</a> &middot; <a href="../services/concrete-solutions.html">Concrete</a> &middot; <a href="../services/maintenance.html">Maintenance & Repair</a></p>
-                        <p><strong>Service Areas</strong><a href="../areas/columbus-paving.html">Columbus, OH</a> &middot; <a href="../areas/zanesville-paving.html">Zanesville, OH</a> &middot; <a href="../areas/newark-paving.html">Newark, OH</a> &middot; <a href="../areas/lancaster-paving.html">Lancaster, OH</a></p>
+                        <p><strong>Service Areas</strong><a href="../areas/columbus-paving.html">Columbus, OH</a> &middot; <a href="../areas/zanesville-paving.html">Zanesville, OH</a> &middot; <a href="../areas/newark-paving.html">Newark, OH</a> &middot; <a href="../areas/lancaster-paving.html">Lancaster, OH</a> &middot; <a href="../areas/cambridge-paving.html">Cambridge, OH</a></p>
                     </div>
 
                     <div class="footer-bottom">

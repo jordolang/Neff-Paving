@@ -1465,3 +1465,52 @@ footer     { background: rgba(8,8,10,.90);  background-image: var(--grain), line
     .hero-slide { transition: none; }
     .hero-slide.is-active img { animation: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Service-area FAQ (accordion) — used on /areas/*-paving pages
+--------------------------------------------------------------------------- */
+.faq-list {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.faq-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0 22px;
+    transition: border-color .2s ease;
+}
+.faq-item[open] { border-color: rgba(245,165,36,.45); }
+.faq-item summary {
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-head);
+    font-weight: 500;
+    font-size: 1.12rem;
+    color: var(--text);
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+    content: "+";
+    color: var(--gold);
+    font-size: 1.6rem;
+    line-height: 1;
+    font-weight: 300;
+    transition: transform .2s ease;
+}
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item p {
+    margin: 0;
+    padding: 0 0 22px;
+    color: var(--muted);
+    line-height: 1.7;
+}
+.faq-item p a { color: var(--gold); }

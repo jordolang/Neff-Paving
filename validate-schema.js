@@ -18,6 +18,7 @@ const pages = [
   { path: './areas/zanesville-paving.html', name: 'Zanesville Area Page' },
   { path: './areas/newark-paving.html', name: 'Newark Area Page' },
   { path: './areas/lancaster-paving.html', name: 'Lancaster Area Page' },
+  { path: './areas/cambridge-paving.html', name: 'Cambridge Area Page' },
 ];
 
 console.log('='.repeat(80));

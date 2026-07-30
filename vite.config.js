@@ -111,6 +111,7 @@ export default defineConfig(({ mode }) => {
         'zanesville-paving': resolve(__dirname, 'areas/zanesville-paving.html'),
         'newark-paving': resolve(__dirname, 'areas/newark-paving.html'),
         'lancaster-paving': resolve(__dirname, 'areas/lancaster-paving.html'),
+        'cambridge-paving': resolve(__dirname, 'areas/cambridge-paving.html'),
         // Customer portal
         'customer-portal': resolve(__dirname, 'customer-portal.html'),
         'customer-dashboard': resolve(__dirname, 'customer-dashboard.html')
@@ -588,7 +589,8 @@ export default defineConfig(({ mode }) => {
           { path: 'areas/columbus-paving', priority: '0.9', changefreq: 'monthly' },
           { path: 'areas/zanesville-paving', priority: '0.9', changefreq: 'monthly' },
           { path: 'areas/newark-paving', priority: '0.9', changefreq: 'monthly' },
-          { path: 'areas/lancaster-paving', priority: '0.9', changefreq: 'monthly' }
+          { path: 'areas/lancaster-paving', priority: '0.9', changefreq: 'monthly' },
+          { path: 'areas/cambridge-paving', priority: '0.9', changefreq: 'monthly' }
         ];
 
         // Generate sitemap XML
