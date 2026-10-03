@@ -8,9 +8,9 @@ import { test, expect } from '@playwright/test'
  *   1. An optional satellite map where the visitor outlines their project area
  *      (no measurements or pricing are ever displayed — the outline is carried
  *      on a hidden field for the estimators).
- *   2. A "Request Your Free Estimate" form that emails the request via FormSubmit.
+ *   2. A "Request Your Free Estimate" form that emails the request via /api/send-form.
  *
- * Network calls (FormSubmit, the keyless map geocoder/tiles) are mocked so the
+ * Network calls (/api/send-form, the keyless map geocoder/tiles) are mocked so the
  * tests are deterministic and offline-safe.
  */
 
@@ -21,7 +21,7 @@ test.describe('Estimate Request Flow', () => {
     // and the blocking <script> tags would otherwise stall page load and make
     // the suite depend on external CDNs being reachable. Aborting a blocking
     // script lets the browser continue parsing immediately.
-    // Test-level routes (e.g. the FormSubmit mock) are registered later and take
+    // Test-level routes (e.g. the /api/send-form mock) are registered later and take
     // precedence over this catch-all.
     await page.route('**/*', (route) => {
       const { hostname } = new URL(route.request().url())
@@ -91,12 +91,12 @@ test.describe('Estimate Request Flow', () => {
   })
 
   test('should successfully submit the estimate request', async ({ page }) => {
-    // Mock the FormSubmit AJAX endpoint with a success response.
-    await page.route('**/formsubmit.co/**', (route) =>
+    // Mock the /api/send-form endpoint with a success response.
+    await page.route('**/api/send-form', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true, message: 'The form was submitted successfully.' })
+        body: JSON.stringify({ ok: true })
       })
     )
 
@@ -114,12 +114,12 @@ test.describe('Estimate Request Flow', () => {
   })
 
   test('should show an error message when submission fails', async ({ page }) => {
-    // FormSubmit reachable but reports failure.
-    await page.route('**/formsubmit.co/**', (route) =>
+    // /api/send-form reachable but reports failure.
+    await page.route('**/api/send-form', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: false })
+        body: JSON.stringify({ ok: false })
       })
     )
 
@@ -143,8 +143,8 @@ test.describe('Estimate Request Flow', () => {
   })
 
   test('should re-enable the submit button after a network error', async ({ page }) => {
-    // FormSubmit unreachable — the page should recover and re-enable the button.
-    await page.route('**/formsubmit.co/**', (route) => route.abort())
+    // /api/send-form unreachable — the page should recover and re-enable the button.
+    await page.route('**/api/send-form', (route) => route.abort())
 
     await page.locator('#name').fill('Jane Customer')
     await page.locator('#phone').fill('740-555-0100')
