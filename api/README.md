@@ -132,3 +132,36 @@ Expected output: `Server listening on port 3000`
 - **cors** - Cross-origin resource sharing
 - **jsonwebtoken** - JWT authentication
 - **nodemon** (dev) - Auto-reload during development
+
+## Mobile apps API (`/api/v1`)
+
+The iOS (Swift) and Android (Flutter) apps for Neff Paving, Muskingum Materials and Austin
+Trucking share one multi-company API, mounted at `/api/v1`. The full contract is in
+[`mobile/API_CONTRACT.md`](../mobile/API_CONTRACT.md).
+
+- **Schema**: `migrations/003_mobile_platform.sql` creates everything in a separate `app`
+  schema (it never touches the website tables). It is applied automatically on start
+  (`AUTO_MIGRATE=false` to disable) and is idempotent.
+- **Roles**: `super_admin`, `admin`, `office_staff`, `estimator`, `crew_lead`, `mechanic`,
+  `employee`, `customer`. Defaults live in `v1/permissions.js`; admins can edit them in the app.
+- **Owner accounts**: set `SUPER_ADMIN_EMAIL` (enforced as super admin on every start) and
+  `ADMIN_EMAILS`, then run `npm run seed:admins` once. Accounts that don't exist yet are created
+  without a password — sign in with Google or use "Forgot password".
+- **Location tracking**: points are accepted only while the employee has an open shift
+  (`/time/clock-in` → `/time/clock-out`) and only after they accept the tracking disclosure.
+  Admins see live positions at `/admin/tracking/live`; trail views are audit-logged.
+- **Uploads**: stored on disk in `UPLOAD_DIR` and served at `/uploads`. Run the API on a host
+  with a persistent disk (Render, Fly.io, a VM). Vercel's serverless functions have no persistent
+  filesystem, so this server is not deployed there.
+- **Push**: notifications are always stored in-app. To deliver pushes, set `PUSH_WEBHOOK_URL`
+  to a relay (e.g. a Firebase Cloud Function using FCM for Android and APNs for iOS); it receives
+  `{ devices: [{ user_id, token, platform }], notification: { type, title, body, data } }`.
+- **Payments**: with `STRIPE_SECRET_KEY` set, customers pay invoices through Stripe Checkout;
+  point a Stripe webhook at `/api/v1/webhooks/stripe` with `STRIPE_WEBHOOK_SECRET`.
+
+### Tests
+
+```bash
+createdb neff_test                       # disposable database; its `app` schema is reset
+DB_PASSWORD=postgres npm test            # TEST_DB_NAME / DB_HOST / DB_USER override defaults
+```

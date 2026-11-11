@@ -91,12 +91,12 @@ test.describe('Estimate Request Flow', () => {
   })
 
   test('should successfully submit the estimate request', async ({ page }) => {
-    // Mock the FormSubmit AJAX endpoint with a success response.
-    await page.route('**/formsubmit.co/**', (route) =>
+    // Mock the /api/send-form endpoint with a success response.
+    await page.route('**/api/send-form', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: true, message: 'The form was submitted successfully.' })
+        body: JSON.stringify({ ok: true, id: 'test' })
       })
     )
 
@@ -114,12 +114,12 @@ test.describe('Estimate Request Flow', () => {
   })
 
   test('should show an error message when submission fails', async ({ page }) => {
-    // FormSubmit reachable but reports failure.
-    await page.route('**/formsubmit.co/**', (route) =>
+    // Endpoint reachable but reports failure.
+    await page.route('**/api/send-form', (route) =>
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ success: false })
+        body: JSON.stringify({ ok: false, error: 'Could not send the message' })
       })
     )
 
@@ -143,8 +143,8 @@ test.describe('Estimate Request Flow', () => {
   })
 
   test('should re-enable the submit button after a network error', async ({ page }) => {
-    // FormSubmit unreachable — the page should recover and re-enable the button.
-    await page.route('**/formsubmit.co/**', (route) => route.abort())
+    // Endpoint unreachable — the page should recover and re-enable the button.
+    await page.route('**/api/send-form', (route) => route.abort())
 
     await page.locator('#name').fill('Jane Customer')
     await page.locator('#phone').fill('740-555-0100')
