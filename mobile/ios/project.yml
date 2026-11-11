@@ -1,0 +1,172 @@
+# XcodeGen spec — run `xcodegen generate` in this folder to produce NeffService.xcodeproj.
+# One shared source tree, three branded app targets (one per company) and a unit-test target.
+name: NeffService
+
+options:
+  bundleIdPrefix: com.neffpaving
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+
+packages:
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: "7.1.0"
+
+targetTemplates:
+  BrandApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Core
+      - path: Services
+      - path: Features
+      - path: Resources
+    dependencies:
+      - package: GoogleSignIn
+        product: GoogleSignIn
+    entitlements:
+      path: Config/App.entitlements
+      properties:
+        aps-environment: development
+    info:
+      path: Generated/${target_name}-Info.plist
+      properties:
+        CFBundleDisplayName: $(APP_DISPLAY_NAME)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen:
+          UIColorName: AccentColor
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        COMPANY_KEY: $(COMPANY_KEY)
+        API_BASE_URL: $(API_BASE_URL)
+        GIDClientID: $(GOOGLE_CLIENT_ID)
+        GOOGLE_CLIENT_ID: $(GOOGLE_CLIENT_ID)
+        CFBundleURLTypes:
+          - CFBundleURLName: google-sign-in
+            CFBundleURLSchemes:
+              - $(GOOGLE_REVERSED_CLIENT_ID)
+        LSApplicationQueriesSchemes:
+          - comgooglemaps
+          - tel
+          - sms
+          - mailto
+        NSLocationWhenInUseUsageDescription: "$(APP_DISPLAY_NAME) uses your location to clock you in at the job site and to give you directions to your service address."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "While you are clocked in, the owners of $(APP_DISPLAY_NAME) can see your location so they can dispatch crews. Tracking stops the moment you clock out."
+        NSCameraUsageDescription: "Take photos and videos of your job so they are attached to the project."
+        NSMicrophoneUsageDescription: "Record audio with job site videos."
+        NSPhotoLibraryUsageDescription: "Choose photos for your profile, estimate requests and projects."
+        NSPhotoLibraryAddUsageDescription: "Save job photos to your library."
+        UIBackgroundModes:
+          - location
+          - remote-notification
+          - fetch
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+    settings:
+      base:
+        ENABLE_PREVIEWS: YES
+        GENERATE_INFOPLIST_FILE: NO
+      configs:
+        Debug:
+          API_BASE_URL: "http://localhost:3000/api/v1"
+        Release:
+          API_BASE_URL: "https://api.neffpaving.com/api/v1"
+
+targets:
+  NeffPaving:
+    templates: [BrandApp]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neffpaving.app
+        PRODUCT_MODULE_NAME: NeffPaving
+        APP_DISPLAY_NAME: Neff Paving
+        COMPANY_KEY: neff
+        GOOGLE_CLIENT_ID: REPLACE_ME_NEFF.apps.googleusercontent.com
+        GOOGLE_REVERSED_CLIENT_ID: com.googleusercontent.apps.REPLACE_ME_NEFF
+
+  MuskingumMaterials:
+    templates: [BrandApp]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.muskingummaterials.app
+        PRODUCT_MODULE_NAME: MuskingumMaterials
+        APP_DISPLAY_NAME: Muskingum Materials
+        COMPANY_KEY: muskingum
+        GOOGLE_CLIENT_ID: REPLACE_ME_MUSKINGUM.apps.googleusercontent.com
+        GOOGLE_REVERSED_CLIENT_ID: com.googleusercontent.apps.REPLACE_ME_MUSKINGUM
+
+  AustinTrucking:
+    templates: [BrandApp]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.austintrucking.app
+        PRODUCT_MODULE_NAME: AustinTrucking
+        APP_DISPLAY_NAME: Austin Trucking
+        COMPANY_KEY: austin
+        GOOGLE_CLIENT_ID: REPLACE_ME_AUSTIN.apps.googleusercontent.com
+        GOOGLE_REVERSED_CLIENT_ID: com.googleusercontent.apps.REPLACE_ME_AUSTIN
+
+  NeffServiceTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: NeffPaving
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.neffpaving.app.tests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NeffPaving.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NeffPaving"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+schemes:
+  NeffPaving:
+    build:
+      targets:
+        NeffPaving: all
+        NeffServiceTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - NeffServiceTests
+    archive:
+      config: Release
+  MuskingumMaterials:
+    build:
+      targets:
+        MuskingumMaterials: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  AustinTrucking:
+    build:
+      targets:
+        AustinTrucking: all
+    run:
+      config: Debug
+    archive:
+      config: Release

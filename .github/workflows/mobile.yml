@@ -1,0 +1,93 @@
+name: Mobile apps & API
+
+on:
+  pull_request:
+    paths: ['api/**', 'mobile/**', '.github/workflows/mobile.yml']
+  push:
+    branches: [main]
+    paths: ['api/**', 'mobile/**', '.github/workflows/mobile.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: neff_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+      - run: npm ci
+      - run: npm test
+        env:
+          DB_HOST: localhost
+          DB_PASSWORD: postgres
+
+  ios-build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: mobile/ios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Build all three apps
+        run: |
+          for scheme in NeffPaving MuskingumMaterials AustinTrucking; do
+            xcodebuild build -project NeffService.xcodeproj -scheme "$scheme" \
+              -destination 'generic/platform=iOS Simulator' \
+              CODE_SIGNING_ALLOWED=NO
+          done
+      - name: Unit tests
+        run: |
+          SIM=$(xcrun simctl list devices available -j | python3 -c "import json,sys;d=json.load(sys.stdin)['devices'];print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          xcodebuild test -project NeffService.xcodeproj -scheme NeffPaving \
+            -destination "id=$SIM" CODE_SIGNING_ALLOWED=NO
+
+  android-flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - name: Build each flavor (debug APK)
+        run: |
+          for f in neff muskingum austin; do
+            flutter build apk --debug --flavor "$f" -t "lib/main_$f.dart"
+          done
