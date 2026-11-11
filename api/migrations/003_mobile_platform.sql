@@ -4,8 +4,11 @@
 -- collides with the website customer-portal tables created by migrations 001/002.
 -- Idempotent: safe to re-run (CREATE ... IF NOT EXISTS, seed rows use ON CONFLICT).
 
+-- Runs in one transaction; SET LOCAL keeps `app` off the search_path of the pooled
+-- connection afterwards, so the website portal's unqualified queries keep hitting `public`.
+BEGIN;
 CREATE SCHEMA IF NOT EXISTS app;
-SET search_path TO app, public;
+SET LOCAL search_path TO app, public;
 
 CREATE OR REPLACE FUNCTION app.touch_updated_at() RETURNS TRIGGER AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;
@@ -307,7 +310,7 @@ CREATE TABLE IF NOT EXISTS tax_prefs (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     filing_status VARCHAR(10) NOT NULL DEFAULT 'single' CHECK (filing_status IN ('single','married','head')),
     allowances INTEGER NOT NULL DEFAULT 0 CHECK (allowances >= 0),
-    extra_withholding NUMERIC(10,2) NOT NULL DEFAULT 0,
+    extra_withholding NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (extra_withholding >= 0),
     pay_method VARCHAR(16) NOT NULL DEFAULT 'check' CHECK (pay_method IN ('direct_deposit','check')),
     bank_name VARCHAR(120) NOT NULL DEFAULT '',
     account_enc TEXT, routing_enc TEXT,       -- AES-256-GCM, see api/v1/crypto.js
@@ -427,3 +430,5 @@ INSERT INTO companies (key, name, phone, website, primary_color, invoice_prefix)
     ('muskingum', 'Muskingum Materials', NULL,             NULL,                     '#4F7A3A', 'MM'),
     ('austin',    'Austin Trucking',     NULL,             NULL,                     '#B3261E', 'AT')
 ON CONFLICT (key) DO NOTHING;
+
+COMMIT;

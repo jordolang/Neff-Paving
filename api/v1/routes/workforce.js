@@ -235,6 +235,8 @@ r.put('/tax-prefs', C.requirePerm('taxprefs.edit'), wrap(async (req, res) => {
   }
   const payMethod = b.payMethod ?? cur.pay_method ?? 'check';
   if (payMethod === 'direct_deposit' && (!accountEnc || !routingEnc)) throw badRequest('Direct deposit needs an account and routing number');
+  const extra = H.decimal(b.extraWithholding ?? cur.extra_withholding ?? 0, 'extraWithholding');
+  if (Number(extra) < 0) throw badRequest('extraWithholding cannot be negative');
   const allowances = b.allowances ?? cur.allowances ?? 0;
   if (!Number.isInteger(Number(allowances)) || Number(allowances) < 0) throw badRequest('allowances must be a whole number');
   const row = await one(
@@ -247,7 +249,7 @@ r.put('/tax-prefs', C.requirePerm('taxprefs.edit'), wrap(async (req, res) => {
        routing_last4 = EXCLUDED.routing_last4, updated_at = now()
      RETURNING *`,
     [req.auth.user.id, b.filingStatus ?? cur.filing_status ?? 'single', Number(allowances),
-      H.decimal(b.extraWithholding ?? cur.extra_withholding ?? 0, 'extraWithholding'), payMethod,
+      extra, payMethod,
       b.bankName ?? cur.bank_name ?? '', accountEnc, routingEnc, account4, routing4],
   );
   await svc.audit(req, 'tax_prefs.update', 'user', req.auth.user.id);

@@ -393,3 +393,48 @@ test('admin dashboard and back office', async () => {
   assert.equal(edit.status, 200);
   assert.equal((await neff.put('/admin/roles/admin', S.admin).send({ permissions: [] })).status, 403);
 });
+
+test('review hardening: search_path, upload types, withholding, internal photos', async () => {
+  // (The previous test trimmed the employee role, so this uses the crew lead.)
+  // Migration must not leave `app` on any pooled connection's search_path.
+  for (let i = 0; i < 5; i += 1) {
+    const { rows } = await pool.query('SHOW search_path');
+    assert.ok(!rows[0].search_path.includes('app'), rows[0].search_path);
+  }
+  // HTML disguised as an image is rejected; real uploads are served inert.
+  const html = await neff.post(`/jobs/${S.jobId}/media`, S.leadToken).attach('file', Buffer.from('<script>alert(1)</script>'), { filename: 'x.html', contentType: 'text/html' });
+  assert.equal(html.status, 400);
+  const svg = await neff.post(`/jobs/${S.jobId}/media`, S.leadToken).attach('file', Buffer.from('<svg/>'), { filename: 'x.svg', contentType: 'image/svg+xml' });
+  assert.equal(svg.status, 400);
+  const png = await neff.post(`/jobs/${S.jobId}/media`, S.leadToken).attach('file', PNG, { filename: 'evil.html', contentType: 'image/png' });
+  assert.equal(png.status, 201);
+  assert.match(png.body.data.url, /\.png$/);
+  const served = await request(app).get(new URL(png.body.data.url).pathname);
+  assert.equal(served.headers['x-content-type-options'], 'nosniff');
+  assert.match(served.headers['content-security-policy'], /sandbox/);
+
+  assert.equal((await neff.put('/tax-prefs', S.leadToken).send({ extraWithholding: '-500' })).status, 400);
+
+  // A photo on an internal-only update never becomes public or the cover.
+  const su = await neff.post(`/jobs/${S.jobId}/status`, S.leadToken).send({ message: 'Damage to fix, internal', visibleToCustomer: false });
+  const hidden = await neff.post(`/jobs/${S.jobId}/media`, S.leadToken).field('statusUpdateId', String(su.body.data.id)).attach('file', PNG, { filename: 'h.png', contentType: 'image/png' });
+  assert.equal(hidden.status, 201);
+  assert.equal(hidden.body.data.isPublic, false);
+  await neff.post(`/portal/jobs/${S.jobId}/share`, S.customer.accessToken).send({ share: true });
+  const gallery = await neff.get('/gallery', S.customer.accessToken);
+  assert.ok(!gallery.body.data[0].media.some((m) => m.id === hidden.body.data.id));
+  const job = await neff.get(`/portal/jobs/${S.jobId}`, S.customer.accessToken);
+  assert.notEqual(job.body.data.coverPhotoUrl, hidden.body.data.url);
+  assert.ok(!(await neff.get(`/portal/jobs/${S.jobId}/media`, S.customer.accessToken)).body.data.some((m) => m.id === hidden.body.data.id));
+});
+
+test('concurrent payroll runs never pay the same shift twice', async () => {
+  const ci = await neff.post('/time/clock-in', S.leadToken).send({ trackingConsent: true });
+  assert.equal(ci.status, 201);
+  const co = await neff.post('/time/clock-out', S.leadToken).send({});
+  await neff.post(`/admin/time/${co.body.data.id}/approve`, S.admin);
+  const body = { periodStart: '2026-01-01', periodEnd: '2026-12-31' };
+  const [a, b] = await Promise.all([neff.post('/admin/payroll/runs', S.admin).send(body), neff.post('/admin/payroll/runs', S.admin).send(body)]);
+  assert.equal(a.status, 201); assert.equal(b.status, 201);
+  assert.equal(a.body.data.stubCount + b.body.data.stubCount, 1);
+});

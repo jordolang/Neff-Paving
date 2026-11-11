@@ -73,7 +73,7 @@ r.post('/jobs/:id/share', wrap(async (req, res) => {
   const share = req.body.share === true;
   await H.tx(async (c) => {
     await q('UPDATE app.jobs SET shared_publicly = $1 WHERE id = $2', [share, j.id], c);
-    await q('UPDATE app.media SET is_public = $1 WHERE job_id = $2', [share, j.id], c);
+    await q(`UPDATE app.media m SET is_public = $1 WHERE m.job_id = $2 AND ($1 = false OR ${svc.CUSTOMER_VISIBLE_MEDIA})`, [share, j.id], c);
   });
   ok(res, S.job(await svc.loadCustomerJob(req, j.id), req.base));
 }));

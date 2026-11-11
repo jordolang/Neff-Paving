@@ -67,17 +67,30 @@ async function audit(req, action, target, targetId, detail = {}) {
 const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads'));
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
+const MEDIA_TYPES = {
+  'image/jpeg': '.jpg', 'image/png': '.png', 'image/heic': '.heic', 'image/heif': '.heif',
+  'image/webp': '.webp', 'image/gif': '.gif',
+  'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/3gpp': '.3gp', 'video/webm': '.webm',
+};
+
+/** Headers for serving uploads: never sniff, never run as a document. */
+function uploadHeaders(res) {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Security-Policy', "default-src 'none'; sandbox");
+}
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: UPLOAD_DIR,
+    // The extension comes from an allow-list keyed by MIME type, never from the client's
+    // filename, so an upload can't be served back as HTML/SVG/JS from the API origin.
     filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname || '').toLowerCase().replace(/[^.a-z0-9]/g, '').slice(0, 8);
-      cb(null, `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`);
+      cb(null, `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${MEDIA_TYPES[file.mimetype]}`);
     },
   }),
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    if (/^(image|video)\//.test(file.mimetype)) return cb(null, true);
+    if (Object.prototype.hasOwnProperty.call(MEDIA_TYPES, file.mimetype)) return cb(null, true);
     cb(badRequest('Only photos and videos can be uploaded'));
   },
 });
@@ -119,10 +132,14 @@ const verifyGoogle = (t) => googleVerifier(t);
 const setGoogleVerifier = (fn) => { googleVerifier = fn; };
 
 // ── Job access ─────────────────────────────────────────────────────────────
+/** Predicate (alias m): media not attached to an internal-only status update. */
+const CUSTOMER_VISIBLE_MEDIA = `NOT EXISTS (SELECT 1 FROM app.status_updates su
+  WHERE su.id = m.status_update_id AND NOT su.visible_to_customer)`;
+
 const JOB_SELECT = `
   SELECT j.*, TRIM(cu.first_name || ' ' || cu.last_name) AS customer_name,
          cu.phone AS customer_phone, cu.email AS customer_email, cr.name AS crew_name,
-         (SELECT url FROM app.media m WHERE m.job_id = j.id AND m.kind = 'photo'
+         (SELECT url FROM app.media m WHERE m.job_id = j.id AND m.kind = 'photo' AND ${CUSTOMER_VISIBLE_MEDIA}
           ORDER BY m.created_at DESC LIMIT 1) AS cover_photo_url
   FROM app.jobs j
   LEFT JOIN app.users cu ON cu.id = j.customer_id
@@ -166,7 +183,7 @@ async function loadCustomerJob(req, id) {
 }
 
 module.exports = {
-  notify, usersWithRoles, adminIds, audit, upload, uploadedPath, mediaKind, UPLOAD_DIR,
+  notify, usersWithRoles, adminIds, audit, upload, uploadedPath, mediaKind, UPLOAD_DIR, uploadHeaders, MEDIA_TYPES,
   encrypt, decrypt, verifyGoogle, setGoogleVerifier, JOB_SELECT, assignedPredicate,
-  loadInternalJob, loadCustomerJob,
+  loadInternalJob, loadCustomerJob, CUSTOMER_VISIBLE_MEDIA,
 };

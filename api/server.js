@@ -107,7 +107,7 @@ app.get('/health/db', async (req, res) => {
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
 const mobileApi = require('./v1');
-const { UPLOAD_DIR } = require('./v1/services');
+const { UPLOAD_DIR, uploadHeaders } = require('./v1/services');
 
 // API routes (auth endpoints get the stricter limiter on top of the global one)
 app.use('/api/auth', authLimiter, authRoutes);
@@ -115,7 +115,7 @@ app.use('/api/customer', customerRoutes);
 
 // Mobile platform (iOS + Android apps) — see mobile/API_CONTRACT.md
 app.use('/api/v1', mobileApi.router);
-app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d', fallthrough: false }));
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d', fallthrough: false, setHeaders: uploadHeaders }));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

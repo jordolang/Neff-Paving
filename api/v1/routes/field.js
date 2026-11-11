@@ -168,16 +168,18 @@ r.post('/jobs/:id/media', C.requirePerm('jobs.media_upload'), svc.upload.single(
   const job = await svc.loadInternalJob(req, intParam(req.params.id));
   if (!req.file) throw badRequest('Attach a photo or video in the "file" field');
   let suId = null;
+  let visible = true;
   if (req.body.statusUpdateId) {
-    const su = await one('SELECT id FROM app.status_updates WHERE id = $1 AND job_id = $2', [intParam(req.body.statusUpdateId, 'statusUpdateId'), job.id]);
+    const su = await one('SELECT id, visible_to_customer FROM app.status_updates WHERE id = $1 AND job_id = $2', [intParam(req.body.statusUpdateId, 'statusUpdateId'), job.id]);
     if (!su) throw badRequest('statusUpdateId does not belong to this job');
     suId = su.id;
+    visible = su.visible_to_customer;
   }
   const m = await one(
     `INSERT INTO app.media (company_id, job_id, status_update_id, kind, url, caption, uploaded_by, latitude, longitude, is_public)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
     [req.company.id, job.id, suId, svc.mediaKind(req.file), svc.uploadedPath(req.file), req.body.caption || '', req.auth.user.id,
-      H.coord(req.body.latitude, 'latitude', 90), H.coord(req.body.longitude, 'longitude', 180), job.shared_publicly],
+      H.coord(req.body.latitude, 'latitude', 90), H.coord(req.body.longitude, 'longitude', 180), job.shared_publicly && visible],
   );
   ok(res, S.media({ ...m, uploader_name: S.fullName(req.auth.user.first_name, req.auth.user.last_name) }, req.base), 201);
 }));

@@ -216,7 +216,7 @@ pub.get('/gallery', C.authenticate, wrap(async (req, res) => {
     [req.company.id],
   );
   const ids = jobs.map((j) => j.id);
-  const media = ids.length ? await q('SELECT * FROM app.media WHERE job_id = ANY($1) AND is_public ORDER BY created_at', [ids]) : [];
+  const media = ids.length ? await q(`SELECT * FROM app.media m WHERE m.job_id = ANY($1) AND m.is_public AND ${svc.CUSTOMER_VISIBLE_MEDIA} ORDER BY m.created_at`, [ids]) : [];
   const reviews = ids.length ? await q(
     `SELECT r.*, u.first_name AS customer_first, u.last_name AS customer_last
      FROM app.reviews r LEFT JOIN app.users u ON u.id = r.customer_id WHERE r.job_id = ANY($1) AND r.is_published`, [ids],

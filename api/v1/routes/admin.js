@@ -489,6 +489,8 @@ r.post('/payroll/runs', need('payroll.manage'), wrap(async (req, res) => {
   const rate = Number(process.env.PAYROLL_WITHHOLDING_RATE || 0);
   const tz = process.env.COMPANY_TIMEZONE || 'America/New_York';
   const out = await H.tx(async (c) => {
+    // One payroll run per company at a time, so two runs can't both claim the same shifts.
+    await q('SELECT pg_advisory_xact_lock(hashtext($1))', [`payroll:${req.company.id}`], c);
     const run = await one('INSERT INTO app.payroll_runs (company_id, period_start, period_end, created_by) VALUES ($1,$2,$3,$4) RETURNING *',
       [req.company.id, periodStart, periodEnd, req.auth.user.id], c);
     const weeks = await q(
