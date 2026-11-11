@@ -41,12 +41,12 @@ router.post('/webhooks/stripe', wrap(async (req, res) => {
 }));
 
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, max: Number(process.env.AUTH_RATE_LIMIT || 30), standardHeaders: true, legacyHeaders: false,
+  windowMs: 15 * 60 * 1000, max: Number(process.env.AUTH_RATE_LIMIT || 60), standardHeaders: true, legacyHeaders: false,
   handler: (req, res) => res.status(429).json({ error: { code: 'rate_limited', message: 'Too many attempts, please try again later.' } }),
 });
 
 router.use(C.tenant);
-router.use('/auth', (req, res, next) => (req.path === '/device' ? next() : authLimiter(req, res, next)), account.auth);
+router.use('/auth', authLimiter, account.auth);
 router.use('/me', account.me);
 router.use('/notifications', account.notifications);
 router.use('/portal', portal.router);
