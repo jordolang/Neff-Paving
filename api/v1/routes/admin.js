@@ -563,7 +563,7 @@ function crud(path, table, perm, fields, serialize, opts = {}) {
     ok(res, { ok: true });
   }));
 }
-const str = (k) => (b) => (b[k] === undefined ? undefined : String(b[k]));
+const str = (k) => (b) => (b[k] === undefined ? undefined : String(b[k] ?? ''));
 const bool = (k) => (b) => (b[k] === undefined ? undefined : b[k] === true);
 
 crud('suppliers', 'suppliers', 'suppliers.manage', {
