@@ -17,7 +17,7 @@ r.use(C.authenticate);
 const need = C.requirePerm;
 
 // ── Dashboard ────────────────────────────────────────────────────────────
-r.get('/dashboard', need('jobs.view_all', 'users.manage'), wrap(async (req, res) => {
+r.get('/dashboard', need('users.manage', 'invoices.manage'), wrap(async (req, res) => {
   const c = req.company.id;
   const row = await one(
     `SELECT

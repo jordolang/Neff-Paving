@@ -306,7 +306,7 @@ admins via `PUT /admin/roles/:key`.
 | GET | `/admin/reviews` · PUT `/admin/reviews/:id` `{ isPublished, response }` | `reviews.manage` |
 | PUT | `/admin/media/:id` `{ isPublic, caption }` · DELETE | `gallery.manage` |
 | POST | `/admin/accounts/:customerId/close` | `accounts.close` `{ reason?, force? }` — 409 if unpaid invoices unless `force: true` |
-| GET | `/admin/dashboard` | `{ activeJobs, clockedIn, pendingEstimates, pendingTimeOff, overdueInvoices, revenueMtd }` |
+| GET | `/admin/dashboard` (`users.manage` or `invoices.manage`) | `{ activeJobs, clockedIn, pendingEstimates, pendingTimeOff, overdueInvoices, revenueMtd }` |
 
 ## Location tracking rules (both clients must follow)
 
