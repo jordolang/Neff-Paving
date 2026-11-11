@@ -22,7 +22,8 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_PASSWORD: postgres
+          # Throwaway CI database on localhost: no password needed.
+          POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: neff_test
         ports: ['5432:5432']
         options: >-
@@ -41,7 +42,6 @@ jobs:
       - run: npm test
         env:
           DB_HOST: localhost
-          DB_PASSWORD: postgres
 
   ios-build:
     runs-on: macos-15
