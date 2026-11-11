@@ -173,15 +173,19 @@ final class APIClient: @unchecked Sendable {
         let token = authenticated ? tokenStore.load()?.accessToken : nil
         let (data, status) = try await send(build(token), upload: upload)
         if status == 401, authenticated, let current = tokenStore.load() {
+            let fresh: TokenPair
             do {
-                let fresh = try await refresher.refresh(current) { try await self.refreshTokens(current) }
-                let (retryData, retryStatus) = try await send(build(fresh.accessToken), upload: upload)
-                return try Self.check(retryData, status: retryStatus)
-            } catch {
+                fresh = try await refresher.refresh(current) { try await self.refreshTokens(current) }
+            } catch let error as APIError where Self.isRejectedRefresh(error) {
+                // Only a refresh token the server rejects ends the session. Network blips and
+                // server errors keep the user signed in (and clocked-in tracking running).
                 tokenStore.save(nil)
                 onSessionExpired?()
                 throw APIError.sessionExpired
             }
+            // Errors from the retried request are ordinary errors, not an expired session.
+            let (retryData, retryStatus) = try await send(build(fresh.accessToken), upload: upload)
+            return try Self.check(retryData, status: retryStatus)
         }
         return try Self.check(data, status: status)
     }
@@ -210,6 +214,12 @@ final class APIClient: @unchecked Sendable {
         } catch {
             throw APIError.transport(error.localizedDescription)
         }
+    }
+
+    /// A refresh the server refused (bad, revoked or expired refresh token, or a disabled account).
+    static func isRejectedRefresh(_ error: APIError) -> Bool {
+        if case .http(let status, _, _) = error { return status == 401 || status == 403 }
+        return false
     }
 
     static func check(_ data: Data, status: Int) throws -> Data {

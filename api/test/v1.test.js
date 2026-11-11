@@ -438,3 +438,31 @@ test('concurrent payroll runs never pay the same shift twice', async () => {
   assert.equal(a.status, 201); assert.equal(b.status, 201);
   assert.equal(a.body.data.stubCount + b.body.data.stubCount, 1);
 });
+
+test('shifts are per company; internal completion notes stay internal', async () => {
+  // The crew lead also works for Austin Trucking (first visit creates the membership).
+  const austinOwner = api('austin');
+  await austinOwner.get('/me', S.leadToken);
+  const role = await austinOwner.put(`/admin/users/${S.lead.user.id}/role`, S.owner).send({ role: 'crew_lead' });
+  assert.equal(role.status, 200, JSON.stringify(role.body));
+  const ci = await neff.post('/time/clock-in', S.leadToken).send({ trackingConsent: true });
+  assert.equal(ci.status, 201);
+  const st = await austinOwner.get('/time/status', S.leadToken);
+  assert.equal(st.body.data.clockedIn, false, 'Austin app must not see the Neff shift');
+  const co = await austinOwner.post('/time/clock-out', S.leadToken).send({});
+  assert.equal(co.status, 409);
+  const loc = await austinOwner.post('/time/locations', S.leadToken).send({ points: [{ latitude: 39, longitude: -82 }] });
+  assert.equal(loc.status, 409);
+  const dup = await austinOwner.post('/time/clock-in', S.leadToken).send({ trackingConsent: true });
+  assert.equal(dup.status, 409);
+  assert.match(dup.body.error.message, /Neff Paving/);
+  assert.equal((await neff.post('/time/clock-out', S.leadToken).send({})).status, 200);
+
+  const c = await signup('quiet@example.test', 'Quinn');
+  const job = await neff.post('/jobs', S.admin).send({ title: 'Patch', customerId: c.user.id, crewId: S.crewId });
+  await neff.post(`/jobs/${job.body.data.id}/status`, S.leadToken).send({ status: 'completed', message: 'Customer was rude, bill extra', visibleToCustomer: false });
+  const n = await neff.get('/notifications', c.accessToken);
+  const done = n.body.data.find((x) => x.type === 'job_completed');
+  assert.ok(done);
+  assert.ok(!done.body.includes('rude'));
+});

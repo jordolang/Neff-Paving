@@ -90,11 +90,14 @@ class ApiClient {
             req.extra['retried'] != true &&
             (tokens.refreshToken ?? '').isNotEmpty;
         if (!canRetry) return handler.next(e);
-        final ok = await _refresh();
-        if (!ok) {
+        final outcome = await _refresh();
+        if (outcome == _RefreshOutcome.rejected) {
+          // Only a refresh token the server rejects ends the session. A network blip or
+          // server error keeps the user signed in (and keeps clocked-in tracking alive).
           onSessionExpired?.call();
           return handler.next(e);
         }
+        if (outcome == _RefreshOutcome.failed) return handler.next(e);
         try {
           req.extra['retried'] = true;
           req.headers['Authorization'] = 'Bearer ${tokens.accessToken}';
@@ -119,9 +122,9 @@ class ApiClient {
   /// Called when the refresh token is rejected; the session layer signs out.
   void Function()? onSessionExpired;
 
-  Future<bool>? _refreshing;
+  Future<_RefreshOutcome>? _refreshing;
 
-  Future<bool> _refresh() {
+  Future<_RefreshOutcome> _refresh() {
     return _refreshing ??= () async {
       try {
         final res = await _dio.post<dynamic>(
@@ -131,11 +134,12 @@ class ApiClient {
         );
         final data = asMap(asMap(res.data)['data']);
         final access = asString(data['accessToken']);
-        if (access.isEmpty) return false;
+        if (access.isEmpty) return _RefreshOutcome.failed;
         await tokens.save(access: access, refresh: asStringOrNull(data['refreshToken']));
-        return true;
-      } on DioException {
-        return false;
+        return _RefreshOutcome.ok;
+      } on DioException catch (err) {
+        final code = err.response?.statusCode;
+        return code == 401 || code == 403 ? _RefreshOutcome.rejected : _RefreshOutcome.failed;
       } finally {
         _refreshing = null;
       }
@@ -219,3 +223,5 @@ class ApiClient {
     return out;
   }
 }
+
+enum _RefreshOutcome { ok, rejected, failed }
