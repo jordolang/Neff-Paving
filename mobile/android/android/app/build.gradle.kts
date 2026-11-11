@@ -7,6 +7,11 @@ plugins {
 android {
     namespace = "com.neffpaving.neff_service"
     compileSdk = flutter.compileSdkVersion
+
+    // AGP 9 turns resValue off by default; the flavors use it for app name and brand colour.
+    buildFeatures {
+        resValues = true
+    }
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
