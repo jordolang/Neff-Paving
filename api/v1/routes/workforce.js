@@ -18,14 +18,15 @@ r.use(C.authenticate);
 const PING_INTERVAL_SECONDS = Number(process.env.TRACKING_PING_SECONDS || 60);
 const MAX_POINTS_PER_BATCH = 500;
 
-const openEntry = (userId) => one(
+/** The caller's open shift in THIS company (a person can only be on one clock at a time). */
+const openEntry = (userId, companyId) => one(
   `SELECT t.*, j.title AS job_title FROM app.time_entries t LEFT JOIN app.jobs j ON j.id = t.job_id
-   WHERE t.user_id = $1 AND t.clock_out IS NULL`, [userId],
+   WHERE t.user_id = $1 AND t.company_id = $2 AND t.clock_out IS NULL`, [userId, companyId],
 );
 
 // ── Clock & tracking ─────────────────────────────────────────────────────
 r.get('/time/status', C.requirePerm('time.clock'), wrap(async (req, res) => {
-  const e = await openEntry(req.auth.user.id);
+  const e = await openEntry(req.auth.user.id, req.company.id);
   ok(res, {
     clockedIn: !!e, entry: e ? S.timeEntry(e) : null,
     trackingRequired: req.auth.isInternal, pingIntervalSeconds: PING_INTERVAL_SECONDS,
@@ -49,7 +50,15 @@ r.post('/time/clock-in', C.requirePerm('time.clock'), wrap(async (req, res) => {
       [req.company.id, req.auth.user.id, jobId, lat, lng, b.trackingConsent === true],
     );
   } catch (e) {
-    if (e.code === '23505') throw conflict('You are already clocked in');
+    if (e.code === '23505') {
+      const other = await one(
+        `SELECT c.name FROM app.time_entries t JOIN app.companies c ON c.id = t.company_id
+         WHERE t.user_id = $1 AND t.clock_out IS NULL`, [req.auth.user.id],
+      );
+      throw conflict(other && other.name !== req.company.name
+        ? `You are clocked in at ${other.name}. Clock out there first.`
+        : 'You are already clocked in');
+    }
     throw e;
   }
   if (lat !== null && lng !== null) {
@@ -58,11 +67,11 @@ r.post('/time/clock-in', C.requirePerm('time.clock'), wrap(async (req, res) => {
       [entry.id, req.auth.user.id, lat, lng],
     );
   }
-  ok(res, S.timeEntry(await openEntry(req.auth.user.id)), 201);
+  ok(res, S.timeEntry(await openEntry(req.auth.user.id, req.company.id)), 201);
 }));
 
 r.post('/time/clock-out', C.requirePerm('time.clock'), wrap(async (req, res) => {
-  const e = await openEntry(req.auth.user.id);
+  const e = await openEntry(req.auth.user.id, req.company.id);
   if (!e) throw new ApiError(409, 'not_clocked_in', 'You are not clocked in');
   const row = await one(
     `UPDATE app.time_entries SET clock_out = now(), clock_out_lat = $1, clock_out_lng = $2,
@@ -77,7 +86,7 @@ r.post('/time/clock-out', C.requirePerm('time.clock'), wrap(async (req, res) => 
  * when recorded during it — nothing is ever stored off the clock.
  */
 r.post('/time/locations', C.requirePerm('time.clock'), wrap(async (req, res) => {
-  const e = await openEntry(req.auth.user.id);
+  const e = await openEntry(req.auth.user.id, req.company.id);
   if (!e) throw new ApiError(409, 'not_clocked_in', 'You are not clocked in; stop location tracking');
   const points = Array.isArray(req.body.points) ? req.body.points.slice(0, MAX_POINTS_PER_BATCH) : [];
   const start = new Date(e.clock_in).getTime() - 5 * 60e3;

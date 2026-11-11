@@ -125,7 +125,8 @@ async function applyStatus(req, job, status, message, visible) {
     if (job.customer_id) {
       await svc.notify(req.company.id, [job.customer_id], {
         type: 'job_completed', title: `${job.title} is complete`,
-        body: message || `Your ${req.company.name} project is finished. Tap to see photos and leave a review.`, data: { jobId: job.id },
+        // An internal-only completion note never reaches the customer.
+        body: (visible && message) || `Your ${req.company.name} project is finished. Tap to see photos and leave a review.`, data: { jobId: job.id },
       });
     }
     const staff = await svc.usersWithRoles(req.company.id, ['super_admin', 'admin', 'office_staff']);
