@@ -13,7 +13,14 @@ const svc = require('../services');
 const { wrap, ok, list, q, one, required, badRequest, ApiError } = H;
 const REFRESH_DAYS = 30;
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** Linear-time email shape check (no backtracking regex on user input). */
+function isEmail(v) {
+  if (typeof v !== 'string' || v.length > 254 || /\s/.test(v)) return false;
+  const parts = v.split('@');
+  if (parts.length !== 2 || !parts[0]) return false;
+  const dot = parts[1].lastIndexOf('.');
+  return dot > 0 && dot < parts[1].length - 1;
+}
 
 async function issueTokens(userId, client) {
   const refreshToken = crypto.randomBytes(48).toString('base64url');
@@ -42,7 +49,7 @@ const auth = express.Router();
 auth.post('/signup', wrap(async (req, res) => {
   const { email, password, firstName, lastName, phone } = req.body;
   required(req.body, ['email', 'password', 'firstName', 'lastName']);
-  if (!EMAIL_RE.test(email)) throw badRequest('Enter a valid email address');
+  if (!isEmail(email)) throw badRequest('Enter a valid email address');
   validatePassword(password);
   const exists = await one('SELECT id FROM app.users WHERE lower(email) = lower($1)', [email]);
   if (exists) throw new ApiError(409, 'conflict', 'An account with that email already exists. Try signing in.');
