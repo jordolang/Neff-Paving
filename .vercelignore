@@ -1,0 +1,11 @@
+# Vercel turns every .js file under api/ into a serverless function. Only the form/jobs
+# functions (api/send-form.js, api/indeed-jobs.js) are meant for Vercel; the Express server
+# and the mobile-apps API run on a host with a database and persistent disk (see api/README.md).
+api/server.js
+api/v1/
+api/test/
+api/scripts/
+api/uploads/
+api/migrations/
+# Native app sources are not part of the website.
+mobile/

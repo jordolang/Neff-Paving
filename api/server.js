@@ -58,18 +58,27 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Company'],
   exposedHeaders: ['Authorization'],
   maxAge: 86400 // 24 hours
 };
 
 // Middleware
 app.use(cors(corsOptions));
-app.use(express.json());
+// Keep the raw body so webhook signatures (Stripe) can be verified.
+app.use(express.json({ limit: '2mb', verify: (req, res, buf) => { req.rawBody = buf.toString('utf8'); } }));
 app.use(express.urlencoded({ extended: true }));
 
-// Apply the global rate limiter to every request.
-app.use(globalLimiter);
+// Apply the global rate limiter to every request except the mobile API, which has its own
+// (higher) budget because clocked-in devices upload location batches every minute.
+const mobileLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: Number(process.env.MOBILE_RATE_LIMIT || 1500),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: { code: 'rate_limited', message: 'Too many requests, please try again later.' } }
+});
+app.use((req, res, next) => (req.path.startsWith('/api/v1') ? mobileLimiter : globalLimiter)(req, res, next));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -97,10 +106,16 @@ app.get('/health/db', async (req, res) => {
 // Import routes
 const authRoutes = require('./routes/auth');
 const customerRoutes = require('./routes/customer');
+const mobileApi = require('./v1');
+const { UPLOAD_DIR } = require('./v1/services');
 
 // API routes (auth endpoints get the stricter limiter on top of the global one)
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/customer', customerRoutes);
+
+// Mobile platform (iOS + Android apps) — see mobile/API_CONTRACT.md
+app.use('/api/v1', mobileApi.router);
+app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d', fallthrough: false }));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -116,21 +131,32 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-});
+// Start server (only when run directly, so tests can import the app)
+if (require.main === module) {
+  mobileApi.init()
+    .then(() => {
+      const server = app.listen(PORT, () => {
+        console.log(`Server listening on port ${PORT}`);
+      });
+      registerShutdown(server);
+    })
+    .catch((err) => {
+      console.error('Failed to initialise mobile API:', err);
+      process.exit(1);
+    });
+}
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
-    pool.end(() => {
-      console.log('Database pool closed');
-      process.exit(0);
+function registerShutdown(server) {
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+      pool.end(() => {
+        console.log('Database pool closed');
+        process.exit(0);
+      });
     });
   });
-});
+}
 
 module.exports = app;
