@@ -9,6 +9,8 @@
 BEGIN;
 CREATE SCHEMA IF NOT EXISTS app;
 SET LOCAL search_path TO app, public;
+-- Serverless instances can cold-start together; run this migration one at a time.
+SELECT pg_advisory_xact_lock(hashtext('neff:migration:003'));
 
 CREATE OR REPLACE FUNCTION app.touch_updated_at() RETURNS TRIGGER AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;

@@ -150,9 +150,10 @@ Trucking share one multi-company API, mounted at `/api/v1`. The full contract is
 - **Location tracking**: points are accepted only while the employee has an open shift
   (`/time/clock-in` → `/time/clock-out`) and only after they accept the tracking disclosure.
   Admins see live positions at `/admin/tracking/live`; trail views are audit-logged.
-- **Uploads**: stored on disk in `UPLOAD_DIR` and served at `/uploads`. Run the API on a host
-  with a persistent disk (Render, Fly.io, a VM). Vercel's serverless functions have no persistent
-  filesystem, so this server is not deployed there.
+- **Uploads**: with `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` set they go to Supabase Storage;
+  otherwise they're stored on disk in `UPLOAD_DIR` and served at `/uploads` (needs a persistent
+  disk). The production deployment is the `neff-service-api` Vercel project (root `api/`) — see
+  "Hosting on Vercel + Supabase" below.
 - **Push**: notifications are always stored in-app. To deliver pushes, set `PUSH_WEBHOOK_URL`
   to a relay (e.g. a Firebase Cloud Function using FCM for Android and APNs for iOS); it receives
   `{ devices: [{ user_id, token, platform }], notification: { type, title, body, data } }`.

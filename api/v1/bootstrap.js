@@ -15,11 +15,10 @@ const { q, one } = require('./http');
 const emails = (v) => String(v || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 
 async function ensureRole(email, role, log = () => {}) {
-  let user = await one('SELECT id FROM app.users WHERE lower(email) = $1', [email]);
-  if (!user) {
-    user = await one('INSERT INTO app.users (email) VALUES ($1) RETURNING id', [email]);
-    log(`created account ${email}`);
-  }
+  // ON CONFLICT: several server instances can start at once and race to create the account.
+  const created = await one('INSERT INTO app.users (email) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id', [email]);
+  if (created) log(`created account ${email}`);
+  const user = created || await one('SELECT id FROM app.users WHERE lower(email) = $1', [email]);
   await q(
     `INSERT INTO app.memberships (user_id, company_id, role, closed_at)
      SELECT $1, c.id, $2, NULL FROM app.companies c

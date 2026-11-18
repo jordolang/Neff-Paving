@@ -476,3 +476,10 @@ test('shifts are per company; internal completion notes stay internal', async ()
   assert.ok(done);
   assert.ok(!done.body.includes('rude'));
 });
+
+test('bootstrap survives instances racing to create the super admin', async () => {
+  const { ensureRole } = require('../v1/bootstrap');
+  const ids = await Promise.all([1, 2, 3, 4].map(() => ensureRole('race@example.test', 'super_admin')));
+  assert.equal(new Set(ids).size, 1);
+  await Promise.all([init(), init()]); // concurrent cold starts: migration + bootstrap together
+});
