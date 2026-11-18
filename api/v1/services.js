@@ -65,7 +65,8 @@ async function audit(req, action, target, targetId, detail = {}) {
 
 // ── Uploads ────────────────────────────────────────────────────────────────
 const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads'));
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// Serverless filesystems are read-only; there uploads go to Supabase Storage instead.
+try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) { if (!process.env.VERCEL) throw e; }
 
 const MEDIA_TYPES = {
   'image/jpeg': '.jpg', 'image/png': '.png', 'image/heic': '.heic', 'image/heif': '.heif',
@@ -79,23 +80,72 @@ function uploadHeaders(res) {
   res.setHeader('Content-Security-Policy', "default-src 'none'; sandbox");
 }
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: UPLOAD_DIR,
-    // The extension comes from an allow-list keyed by MIME type, never from the client's
-    // filename, so an upload can't be served back as HTML/SVG/JS from the API origin.
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${MEDIA_TYPES[file.mimetype]}`);
-    },
-  }),
-  limits: { fileSize: 200 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (Object.prototype.hasOwnProperty.call(MEDIA_TYPES, file.mimetype)) return cb(null, true);
-    cb(badRequest('Only photos and videos can be uploaded'));
-  },
-});
+const fileFilter = (req, file, cb) => {
+  if (Object.prototype.hasOwnProperty.call(MEDIA_TYPES, file.mimetype)) return cb(null, true);
+  cb(badRequest('Only photos and videos can be uploaded'));
+};
+// The stored name comes from an allow-list keyed by MIME type, never from the client's
+// filename, so an upload can't be served back as HTML/SVG/JS.
+const storedName = (file) => `${Date.now()}-${crypto.randomBytes(8).toString('hex')}${MEDIA_TYPES[file.mimetype]}`;
 
-const uploadedPath = (file) => `/uploads/${file.filename}`;
+/**
+ * Object storage. With SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY set (hosted / serverless),
+ * uploads go to the public Supabase Storage bucket MEDIA_BUCKET; otherwise to UPLOAD_DIR on disk.
+ */
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const BUCKET = process.env.MEDIA_BUCKET || 'media';
+const useSupabase = !!(SUPABASE_URL && SUPABASE_KEY);
+
+let bucketReady = null;
+function ensureBucket() {
+  bucketReady ??= fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${SUPABASE_KEY}`, apikey: SUPABASE_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: BUCKET, name: BUCKET, public: true, allowed_mime_types: Object.keys(MEDIA_TYPES) }),
+  }).then(async (r) => {
+    // 409 / "already exists" is fine.
+    if (!r.ok && r.status !== 409 && !/exist/i.test(await r.text())) throw new Error(`bucket setup failed (${r.status})`);
+  }).catch((e) => { bucketReady = null; throw e; });
+  return bucketReady;
+}
+
+async function putObject(file) {
+  await ensureBucket();
+  const name = storedName(file);
+  const r = await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${name}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${SUPABASE_KEY}`, apikey: SUPABASE_KEY,
+      'Content-Type': file.mimetype, 'cache-control': '604800', 'x-upsert': 'false',
+    },
+    body: file.buffer,
+  });
+  if (!r.ok) throw new Error(`storage upload failed (${r.status})`);
+  file.filename = name;
+  file.storedUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${name}`;
+  file.buffer = null;
+}
+
+const diskUpload = multer({
+  storage: multer.diskStorage({ destination: UPLOAD_DIR, filename: (req, file, cb) => cb(null, storedName(file)) }),
+  limits: { fileSize: 200 * 1024 * 1024 },
+  fileFilter,
+});
+const memoryUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 200 * 1024 * 1024 }, fileFilter });
+
+/** Drop-in for multer: `upload.single('file')` returns the middleware(s) for the active backend. */
+const upload = {
+  single(field) {
+    if (!useSupabase) return diskUpload.single(field);
+    return [memoryUpload.single(field), (req, res, next) => {
+      if (!req.file) return next();
+      putObject(req.file).then(() => next(), next);
+    }];
+  },
+};
+
+const uploadedPath = (file) => file.storedUrl || `/uploads/${file.filename}`;
 const mediaKind = (file) => (file.mimetype.startsWith('video/') ? 'video' : 'photo');
 
 // ── Field encryption (bank numbers) ────────────────────────────────────────

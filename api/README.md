@@ -165,3 +165,20 @@ Trucking share one multi-company API, mounted at `/api/v1`. The full contract is
 createdb neff_test                       # disposable database; its `app` schema is reset
 DB_PASSWORD=postgres npm test            # TEST_DB_NAME / DB_HOST / DB_USER override defaults
 ```
+
+### Hosting on Vercel + Supabase
+
+The API can run as its own Vercel project (root directory `api/`, framework "Express"),
+with Postgres and media storage on Supabase:
+
+| Variable | Value |
+| --- | --- |
+| `DATABASE_URL` | Supabase pooled connection string (port 6543, transaction mode) |
+| `DB_SSL` | `true` |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Uploads go to the public `media` bucket (created automatically) |
+| `JWT_SECRET`, `DATA_ENCRYPTION_KEY` | `openssl rand -hex 32` each |
+| `SUPER_ADMIN_EMAIL`, `PUBLIC_BASE_URL`, `GOOGLE_CLIENT_IDS` | as above |
+
+Setup runs on the first request of each instance. Vercel limits request bodies to 4.5 MB, so
+photos (resized to 2560 px by both apps) upload fine, but long videos need a host without that
+limit or direct-to-storage uploads.

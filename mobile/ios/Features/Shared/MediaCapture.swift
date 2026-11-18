@@ -66,9 +66,26 @@ struct PickedMovie: Transferable {
 }
 
 enum MediaFiles {
+    static func scaled(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
+        let pixelSize = CGSize(width: image.size.width * image.scale, height: image.size.height * image.scale)
+        let longEdge = max(pixelSize.width, pixelSize.height)
+        guard longEdge > maxDimension else { return image }
+        let factor = maxDimension / longEdge
+        let target = CGSize(width: (pixelSize.width * factor).rounded(), height: (pixelSize.height * factor).rounded())
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: target, format: format).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: target))
+        }
+    }
+
     /// Writes a JPEG to a temp file.
-    static func jpegFile(_ image: UIImage, quality: CGFloat = 0.85) throws -> URL {
-        guard let data = image.jpegData(compressionQuality: quality) else { throw APIError.decoding("Could not encode image") }
+    /// Writes a JPEG to a temp file, scaled so the long edge is at most `maxDimension` points
+    /// (keeps photos small enough for the API's upload limit, like the Android app).
+    static func jpegFile(_ image: UIImage, quality: CGFloat = 0.85, maxDimension: CGFloat = 2560) throws -> URL {
+        guard let data = scaled(image, maxDimension: maxDimension).jpegData(compressionQuality: quality) else {
+            throw APIError.decoding("Could not encode image")
+        }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("jpg")
         try data.write(to: url)
         return url

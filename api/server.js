@@ -114,6 +114,13 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/customer', customerRoutes);
 
 // Mobile platform (iOS + Android apps) — see mobile/API_CONTRACT.md
+// On serverless hosts there is no app.listen(), so set up once per instance on first request.
+let ready = null;
+app.use('/api/v1', (req, res, next) => {
+  if (require.main === module) return next();
+  ready ??= mobileApi.init().catch((e) => { ready = null; throw e; });
+  ready.then(() => next(), next);
+});
 app.use('/api/v1', mobileApi.router);
 app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '7d', fallthrough: false, setHeaders: uploadHeaders }));
 

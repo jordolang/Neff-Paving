@@ -1,0 +1,8 @@
+# Deploying the API as its own Vercel project (root directory: api/).
+node_modules
+test/
+uploads/
+scripts/
+setup-test-data.cjs
+.env
+.env.*
