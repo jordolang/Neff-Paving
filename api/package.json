@@ -9,7 +9,7 @@
     "dev": "nodemon server.js",
     "test": "node --test --test-concurrency=1 test/*.test.js",
     "seed:admins": "node scripts/seed-admins.js",
-    "vercel-build": "echo 'API has no build step'"
+    "vercel-build": "rm -rf dist && mkdir dist && cp -r server.js package.json config middleware models routes v1 migrations dist/"
   },
   "keywords": [
     "api",
