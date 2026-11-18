@@ -10,7 +10,17 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs');
 
-process.env.DB_HOST = process.env.DB_HOST || 'localhost';
+// These tests DROP the `app` schema. Never let them reach a real database: ignore any
+// DATABASE_URL (e.g. from .env), and only run against a database named like a test one.
+require('dotenv').config();
+delete process.env.DATABASE_URL;
+delete process.env.DB_SSL;
+delete process.env.SUPABASE_URL;
+delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!/test/i.test(process.env.TEST_DB_NAME || 'neff_test')) {
+  throw new Error('TEST_DB_NAME must name a disposable test database (it must contain "test")');
+}
+process.env.DB_HOST = process.env.TEST_DB_HOST || process.env.DB_HOST || 'localhost';
 process.env.DB_PORT = process.env.DB_PORT || '5432';
 process.env.DB_USER = process.env.DB_USER || 'postgres';
 process.env.DB_PASSWORD = process.env.DB_PASSWORD || 'postgres';
