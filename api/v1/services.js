@@ -64,7 +64,10 @@ async function audit(req, action, target, targetId, detail = {}) {
 }
 
 // ── Uploads ────────────────────────────────────────────────────────────────
-const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads'));
+// Serverless filesystems are read-only except the temp dir. There uploads belong in Supabase
+// Storage; the temp-dir fallback only keeps the server booting until that's configured.
+const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR
+  || (process.env.VERCEL ? path.join(require('os').tmpdir(), 'neff-uploads') : path.join(__dirname, '..', 'uploads')));
 // Serverless filesystems are read-only; there uploads go to Supabase Storage instead.
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) { if (!process.env.VERCEL) throw e; }
 
@@ -127,7 +130,8 @@ async function putObject(file) {
   file.buffer = null;
 }
 
-const diskUpload = multer({
+let diskUploader = null;
+const diskUpload = () => diskUploader ??= multer({
   storage: multer.diskStorage({ destination: UPLOAD_DIR, filename: (req, file, cb) => cb(null, storedName(file)) }),
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter,
@@ -137,7 +141,7 @@ const memoryUpload = multer({ storage: multer.memoryStorage(), limits: { fileSiz
 /** Drop-in for multer: `upload.single('file')` returns the middleware(s) for the active backend. */
 const upload = {
   single(field) {
-    if (!useSupabase) return diskUpload.single(field);
+    if (!useSupabase) return diskUpload().single(field);
     return [memoryUpload.single(field), (req, res, next) => {
       if (!req.file) return next();
       putObject(req.file).then(() => next(), next);
