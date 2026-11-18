@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
-const { q, one, badRequest, notFound, forbidden } = require('./http');
+const { q, one, badRequest, notFound, forbidden, ApiError } = require('./http');
 
 // ── Notifications ─────────────────────────────────────────────────────────
 /**
@@ -141,7 +141,19 @@ const memoryUpload = multer({ storage: multer.memoryStorage(), limits: { fileSiz
 /** Drop-in for multer: `upload.single('file')` returns the middleware(s) for the active backend. */
 const upload = {
   single(field) {
-    if (!useSupabase) return diskUpload().single(field);
+    if (!useSupabase) {
+      // A serverless instance's temp dir is not durable: refuse rather than lose the file.
+      if (process.env.VERCEL) {
+        return (req, res, next) => next(new ApiError(503, 'server_error',
+          'Photo and video storage is not set up yet. Please try again later.'));
+      }
+      // Built on first upload, so a folder problem can't stop the server from starting.
+      return (req, res, next) => {
+        let mw;
+        try { mw = diskUpload().single(field); } catch (e) { return next(e); }
+        return mw(req, res, next);
+      };
+    }
     return [memoryUpload.single(field), (req, res, next) => {
       if (!req.file) return next();
       putObject(req.file).then(() => next(), next);
