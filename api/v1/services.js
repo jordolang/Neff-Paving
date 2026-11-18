@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
-const { q, one, badRequest, notFound, forbidden } = require('./http');
+const { q, one, badRequest, notFound, forbidden, ApiError } = require('./http');
 
 // ── Notifications ─────────────────────────────────────────────────────────
 /**
@@ -64,7 +64,10 @@ async function audit(req, action, target, targetId, detail = {}) {
 }
 
 // ── Uploads ────────────────────────────────────────────────────────────────
-const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads'));
+// Serverless filesystems are read-only except the temp dir. There uploads belong in Supabase
+// Storage; the temp-dir fallback only keeps the server booting until that's configured.
+const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR
+  || (process.env.VERCEL ? path.join(require('os').tmpdir(), 'neff-uploads') : path.join(__dirname, '..', 'uploads')));
 // Serverless filesystems are read-only; there uploads go to Supabase Storage instead.
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch (e) { if (!process.env.VERCEL) throw e; }
 
@@ -127,7 +130,8 @@ async function putObject(file) {
   file.buffer = null;
 }
 
-const diskUpload = multer({
+let diskUploader = null;
+const diskUpload = () => diskUploader ??= multer({
   storage: multer.diskStorage({ destination: UPLOAD_DIR, filename: (req, file, cb) => cb(null, storedName(file)) }),
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter,
@@ -137,7 +141,19 @@ const memoryUpload = multer({ storage: multer.memoryStorage(), limits: { fileSiz
 /** Drop-in for multer: `upload.single('file')` returns the middleware(s) for the active backend. */
 const upload = {
   single(field) {
-    if (!useSupabase) return diskUpload.single(field);
+    if (!useSupabase) {
+      // A serverless instance's temp dir is not durable: refuse rather than lose the file.
+      if (process.env.VERCEL) {
+        return (req, res, next) => next(new ApiError(503, 'server_error',
+          'Photo and video storage is not set up yet. Please try again later.'));
+      }
+      // Built on first upload, so a folder problem can't stop the server from starting.
+      return (req, res, next) => {
+        let mw;
+        try { mw = diskUpload().single(field); } catch (e) { return next(e); }
+        return mw(req, res, next);
+      };
+    }
     return [memoryUpload.single(field), (req, res, next) => {
       if (!req.file) return next();
       putObject(req.file).then(() => next(), next);
